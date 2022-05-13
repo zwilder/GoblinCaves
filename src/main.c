@@ -7,7 +7,7 @@ int main(int argc, char* argv[]) {
         engine_init();
         engine_run();
         engine_close();
-        mvprintw(20, 50, "Success!");
+        mvprintw(20, 50, "Goodbye!");
         getch();
         curses_close();
     } else {

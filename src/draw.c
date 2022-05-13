@@ -8,32 +8,48 @@ Glyph* create_screen(void) {
     Glyph* newScreen = calloc(SCREEN_WIDTH * SCREEN_HEIGHT, sizeof(Glyph));
 
     for(int i = 0; i < (SCREEN_WIDTH * SCREEN_HEIGHT); i++) {
-        newScreen->ch = '.';
-        newScreen->color = 0;
+        newScreen[i].ch = '.';
+        newScreen[i].color = 0;
     }
 
     return newScreen;
 }
 
-int get_index(int x, int y) {
+int get_screen_index(int x, int y) {
     return (x + (SCREEN_WIDTH * y));
 }
 
 void draw_screen(void) {
-/* Willl attempt to divorce the main loop from the curses engine - draw translates the
- * game screen (glyphs - x,y,fg,bg) into a window screen to be drawn by 
- * whichever render is being used (only curses for now, but ability to change in
- * the future is important to me. */
     int x, y, index;
-    clear();
+
+    /* clear the screen */
+    clear_screen();
+
+    /* draw the map (tiles) on the screen */
+
+    /* draw the pickups on the screen */
+    
+    /* draw the enemies on the screen */
+
+    /* draw the player on the screen */
+    if(g_player) {
+        x = g_player->pos.x;
+        y = g_player->pos.y;
+        index = get_screen_index(x,y);
+        g_screen[index].ch = g_player->glyph.ch;
+        g_screen[index].color = g_player->glyph.color;
+    }
+
+    curses_draw();
+}
+
+void clear_screen(void) {
+    int x, y, index;
     for (x = 0; x < SCREEN_WIDTH; x++) {
         for(y = 0; y < SCREEN_HEIGHT; y++) {
-            index = get_index(x, y);
-            mvaddch(y, x, g_screen->ch);
+            index = get_screen_index(x,y);
+            g_screen[index].ch = ' ';
         }
-    }
-    if(g_player) {
-        mvaddch(g_player->pos.y, g_player->pos.x, g_player->glyph.ch);
     }
 }
 

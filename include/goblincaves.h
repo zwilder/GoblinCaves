@@ -40,6 +40,7 @@ typedef struct {
  ***************************/
 bool curses_setup(void);
 void curses_close(void);
+void curses_draw(void);
 
 /*************************
  * game_engine.c functions
@@ -64,7 +65,8 @@ int handle_keyboard(int input);
 Glyph* create_screen(void);
 void draw_screen(void);
 void destroy_screen(void);
-int get_index(int x, int y);
+void clear_screen(void);
+int get_screen_index(int x, int y);
 
 /********************
  * player.c functions
