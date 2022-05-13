@@ -5,6 +5,7 @@ bool curses_setup(void) {
     initscr();
     noecho();
     curs_set(0);
+    cbreak();
     if(has_colors()) {
         success = true;
         /* Color init stuff here */
@@ -14,4 +15,9 @@ bool curses_setup(void) {
         getch();
     }
     return success;
+}
+
+void curses_close(void) {
+    /* Stupid function for now, but there may be other cleanup added later */
+    endwin();
 }

@@ -1,0 +1,7 @@
+*.un~
+*.d
+*.o
+*.bak
+*.swp
+Scratch*
+GoblinCaves
