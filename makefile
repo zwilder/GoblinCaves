@@ -14,3 +14,5 @@ run:
 
 clean:
 	rm GoblinCaves
+
+fresh: clean GoblinCaves run

@@ -65,22 +65,12 @@ int colornum(int fg, int bg) {
     return (B | bbb | ffff);
 }
 
-/*
- * OG function 
- */
-int is_bold(int fg) {
-    int i;
-    i = 1 << 3;         
-    return (i & fg); 
-}
 /* Neat trick here, since the binary AND will only return a non-zero number
  * if the result is 1000 to 1111.
  * EX Bright Black & Bright Cyan = (1000 & 1011) = 1000 = 15
  *    Bright Black & Cyan = (1000 & 0011) = 0000 = 0
  * SO, really, this can be used as a true/false.
  */
-/*
 bool is_bold(int fg) {
     return (((1 << 3) & fg) > 0);
 }
-*/
