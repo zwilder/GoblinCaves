@@ -12,6 +12,8 @@
 #include <ncurses.h>
 #include <stdlib.h>
 
+#include <color.h>
+
 /***********************
  * Minor data structures
  ***********************/
@@ -24,6 +26,11 @@ typedef struct {
     char ch;
     int color;
 } Glyph;
+
+typedef struct {
+    Vec2i dim;
+    Vec2i pos;
+} Rect;
 
 /***********************
  * Major data structures

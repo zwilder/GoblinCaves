@@ -9,7 +9,7 @@ Glyph* create_screen(void) {
 
     for(int i = 0; i < (SCREEN_WIDTH * SCREEN_HEIGHT); i++) {
         newScreen[i].ch = '.';
-        newScreen[i].color = 0;
+        newScreen[i].color = PAIR_WHITE;
     }
 
     return newScreen;
@@ -49,6 +49,7 @@ void clear_screen(void) {
         for(y = 0; y < SCREEN_HEIGHT; y++) {
             index = get_screen_index(x,y);
             g_screen[index].ch = ' ';
+            g_screen[index].color = PAIR_WHITE;
         }
     }
 }
