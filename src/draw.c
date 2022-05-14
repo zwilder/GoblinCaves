@@ -9,7 +9,8 @@ Glyph* create_screen(void) {
 
     for(int i = 0; i < (SCREEN_WIDTH * SCREEN_HEIGHT); i++) {
         newScreen[i].ch = '.';
-        newScreen[i].color = PAIR_WHITE;
+        newScreen[i].fg = WHITE;
+        newScreen[i].bg = BLACK;
     }
 
     return newScreen;
@@ -37,7 +38,8 @@ void draw_screen(void) {
         y = g_player->pos.y;
         index = get_screen_index(x,y);
         g_screen[index].ch = g_player->glyph.ch;
-        g_screen[index].color = g_player->glyph.color;
+        g_screen[index].fg = g_player->glyph.fg;
+        g_screen[index].bg = g_player->glyph.bg;
     }
 
     curses_draw();
@@ -49,7 +51,8 @@ void clear_screen(void) {
         for(y = 0; y < SCREEN_HEIGHT; y++) {
             index = get_screen_index(x,y);
             g_screen[index].ch = ' ';
-            g_screen[index].color = PAIR_WHITE;
+            g_screen[index].fg = WHITE;
+            g_screen[index].bg = BLACK;
         }
     }
 }

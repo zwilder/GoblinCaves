@@ -7,7 +7,8 @@ Player* create_player(Vec2i pos) {
     newPlayer->pos.x = pos.x;
 
     newPlayer->glyph.ch = '@';
-    newPlayer->glyph.color = PAIR_WHITE; /* Temporary */
+    newPlayer->glyph.fg = BRIGHT_WHITE; 
+    newPlayer->glyph.bg = BLACK;
     
     return newPlayer;
 }

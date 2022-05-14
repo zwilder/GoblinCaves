@@ -2,7 +2,6 @@
 
 bool curses_setup(void) {
     bool success = false;
-    int bg_color = COLOR_BLACK;
 
     initscr();
     noecho();
@@ -12,25 +11,7 @@ bool curses_setup(void) {
     if(has_colors()) {
         success = true;
         start_color();
-        /* Prepare the color pairs */
-		/* PAIR_WHITE (pair 0) is *always* WHITE on BLACK */
-		init_pair(PAIR_RED, COLOR_RED, bg_color);
-		init_pair(PAIR_GREEN, COLOR_GREEN, bg_color);
-		init_pair(PAIR_YELLOW, COLOR_YELLOW, bg_color);
-		init_pair(PAIR_BLUE, COLOR_BLUE, bg_color);
-		init_pair(PAIR_MAGENTA, COLOR_MAGENTA, bg_color);
-		init_pair(PAIR_CYAN, COLOR_CYAN, bg_color);
-		init_pair(PAIR_BLACK, COLOR_BLACK, bg_color);
-
-		/* These pairs are used for drawing solid walls */
-		init_pair(PAIR_WHITE_WHITE, COLOR_WHITE, COLOR_WHITE);
-		init_pair(PAIR_RED_RED, COLOR_RED, COLOR_RED);
-		init_pair(PAIR_GREEN_GREEN, COLOR_GREEN, COLOR_GREEN);
-		init_pair(PAIR_YELLOW_YELLOW, COLOR_YELLOW, COLOR_YELLOW);
-		init_pair(PAIR_BLUE_BLUE, COLOR_BLUE, COLOR_BLUE);
-		init_pair(PAIR_MAGENTA_MAGENTA, COLOR_MAGENTA, COLOR_MAGENTA);
-		init_pair(PAIR_CYAN_CYAN, COLOR_CYAN, COLOR_CYAN);
-		init_pair(PAIR_BLACK_BLACK, COLOR_BLACK, COLOR_BLACK);
+        init_colorpairs();
     } else {
         /* System does not support color, print error message */
         mvprintw(20, 50, "Your system does not support color, unable to start game!");
@@ -39,15 +20,36 @@ bool curses_setup(void) {
     return success;
 }
 
+void setcolor(int fg, int bg) {
+    /* Set the color pair (colornum) and bold/bright (A_BOLD) */
+    attron(COLOR_PAIR(colornum(fg,bg)));
+    if(is_bold(fg)) {
+        attron(A_BOLD);
+    }
+}
+
+void unsetcolor(int fg, int bg) {
+    /* Unset the color pair (colornum) and bold/bright (A_BOLD) */
+    attroff(COLOR_PAIR(colornum(fg,bg)));
+    if(is_bold(fg)) {
+        attroff(A_BOLD);
+    }
+}
+
 void curses_draw(void) {
-    int x,y,index;
+    int x,y,index,fg,bg;
     /* clear the screen - curses call */
     clear();
     /* Draw the screen on the terminal with curses */
     for (x = 0; x < SCREEN_WIDTH; x++) {
         for(y = 0; y < SCREEN_HEIGHT; y++) {
             index = get_screen_index(x,y);
-            mvaddch(y, x, g_screen[index].ch | COLOR_PAIR(g_screen[index].color));
+            /* Rewrite this to match ColorDemo */
+            fg = g_screen[index].fg;
+            bg = g_screen[index].bg;
+            setcolor(fg,bg);
+            mvaddch(y, x, g_screen[index].ch);
+            unsetcolor(fg,bg);
         }
     }
 }

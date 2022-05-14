@@ -24,7 +24,8 @@ typedef struct {
 
 typedef struct {
     char ch;
-    int color;
+    Color fg;
+    Color bg;
 } Glyph;
 
 typedef struct {
@@ -46,8 +47,10 @@ typedef struct {
  * curses_engine.c functions
  ***************************/
 bool curses_setup(void);
-void curses_close(void);
+void setcolor(int fg, int bg);
+void unsetcolor(int fg, int bg);
 void curses_draw(void);
+void curses_close(void);
 
 /*************************
  * game_engine.c functions
