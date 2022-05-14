@@ -1,7 +1,7 @@
 #include <goblincaves.h>
 
-const int SCREEN_WIDTH = 100;
-const int SCREEN_HEIGHT = 40; /* Arbitrary dimensions, for now */
+const int SCREEN_WIDTH = 80;
+const int SCREEN_HEIGHT = 24; /* Arbitrary dimensions, for now */
 Glyph* g_screen;
 
 Glyph* create_screen(void) {
@@ -50,7 +50,7 @@ void clear_screen(void) {
     for (x = 0; x < SCREEN_WIDTH; x++) {
         for(y = 0; y < SCREEN_HEIGHT; y++) {
             index = get_screen_index(x,y);
-            g_screen[index].ch = ' ';
+            g_screen[index].ch = '.';
             g_screen[index].fg = WHITE;
             g_screen[index].bg = BLACK;
         }

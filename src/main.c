@@ -7,7 +7,11 @@ int main(int argc, char* argv[]) {
         engine_init();
         engine_run();
         engine_close();
-        mvprintw(20, 50, "Goodbye!");
+
+        setcolor(0,7);
+        mvprintw(LINES / 2, (COLS / 2) - 8, " Goodbye! ");
+        unsetcolor(0,7);
+
         getch();
         curses_close();
     } else {

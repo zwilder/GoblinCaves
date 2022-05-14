@@ -38,6 +38,10 @@ void unsetcolor(int fg, int bg) {
 
 void curses_draw(void) {
     int x,y,index,fg,bg;
+    int xoffset = COLS / 2; /* absolute center x */
+    int yoffset = LINES / 2; /* absolute center y */
+    xoffset -= SCREEN_WIDTH / 2;
+    yoffset -= SCREEN_HEIGHT / 2;
     /* clear the screen - curses call */
     clear();
     /* Draw the screen on the terminal with curses */
@@ -48,7 +52,7 @@ void curses_draw(void) {
             fg = g_screen[index].fg;
             bg = g_screen[index].bg;
             setcolor(fg,bg);
-            mvaddch(y, x, g_screen[index].ch);
+            mvaddch(y + yoffset, x + xoffset, g_screen[index].ch);
             unsetcolor(fg,bg);
         }
     }
