@@ -34,15 +34,42 @@ typedef struct {
     Vec2i pos;
 } Rect;
 
+typedef enum {
+    NONE            = 1 << 0,
+    VISIBLE         = 1 << 1,
+    BLOCKS_MOVEMENT = 1 << 2,
+    EXPLORED        = 1 << 3,
+    BLOCKS_LIGHT    = 1 << 4,
+    DOOR            = 1 << 5
+} TileFlags;
+
 /***********************
  * Major data structures
  ***********************/
 /* Major Goal: Five (major) data types - structured like Angband: Player, Enemy, Tile,
 Effect, Pickup. */
-typedef struct {
+typedef struct { 
     Vec2i pos;
     Glyph glyph;
 } Player;
+
+typedef struct {
+    char name[32];
+    Vec2i pos;
+    TileFlags flags;
+    Glyph glyph;
+} Tile;
+
+/*********
+ * Externs
+ *********/
+extern Player* g_player;
+extern const int SCREEN_WIDTH;
+extern const int SCREEN_HEIGHT;
+extern Glyph* g_screen;
+extern Tile* g_map;
+extern const int MAP_WIDTH;
+extern const int MAP_HEIGHT;
 
 /***************************
  * curses_engine.c functions
@@ -86,11 +113,11 @@ int get_screen_index(int x, int y);
 Player* create_player(Vec2i pos);
 void destroy_player(void);
 
-/*********
- * Externs
- *********/
-extern Player* g_player;
-extern const int SCREEN_WIDTH;
-extern const int SCREEN_HEIGHT;
-extern Glyph* g_screen;
+/*****************
+ * map.c functions
+ *****************/
+Tile* create_map(void);
+int get_map_index(int x, int y);
+void destroy_map(void);
+
 #endif

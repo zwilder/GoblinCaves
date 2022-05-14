@@ -50,7 +50,7 @@ void clear_screen(void) {
     for (x = 0; x < SCREEN_WIDTH; x++) {
         for(y = 0; y < SCREEN_HEIGHT; y++) {
             index = get_screen_index(x,y);
-            g_screen[index].ch = '.';
+            g_screen[index].ch = ' ';
             g_screen[index].fg = WHITE;
             g_screen[index].bg = BLACK;
         }

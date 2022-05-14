@@ -65,7 +65,7 @@ void msg_box(char* msg, Color fg, Color bg) {
      * need tweaking for fancy things like line wrapping, etc */
     int msglength = strlen(msg);
     setcolor(fg,bg);
-    mvprintw(LINES / 2, (COLS / 2) - msglength, msg);
+    mvprintw(LINES / 2, (COLS / 2) - (msglength / 2), msg);
     unsetcolor(fg,bg);
 }
 
