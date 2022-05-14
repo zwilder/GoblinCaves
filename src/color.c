@@ -1,7 +1,7 @@
 #include <goblincaves.h>
 
 /* 
- * Credit for this goes to Jim Hall, About ncurses Colors
+ * Credit for this goes to Jim Hall, "About ncurses Colors"
  * https://www.linuxjournal.com/content/about-ncurses-colors-0
  *
  * I **finally** understand how curses colors can work for me, and a whole lot

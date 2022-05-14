@@ -8,11 +8,9 @@ int main(int argc, char* argv[]) {
         engine_run();
         engine_close();
 
-        setcolor(0,7);
-        mvprintw(LINES / 2, (COLS / 2) - 8, " Goodbye! ");
-        unsetcolor(0,7);
-
+        msg_box(" Goodbye! ", BLACK, WHITE);
         getch();
+
         curses_close();
     } else {
         /* Print startup failed message */

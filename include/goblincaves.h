@@ -11,6 +11,7 @@
  **********/
 #include <ncurses.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <color.h>
 
@@ -50,6 +51,7 @@ bool curses_setup(void);
 void setcolor(int fg, int bg);
 void unsetcolor(int fg, int bg);
 void curses_draw(void);
+void msg_box(char* msg, Color fg, Color bg);
 void curses_close(void);
 
 /*************************

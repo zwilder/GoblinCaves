@@ -38,12 +38,14 @@ void unsetcolor(int fg, int bg) {
 
 void curses_draw(void) {
     int x,y,index,fg,bg;
-    int xoffset = COLS / 2; /* absolute center x */
-    int yoffset = LINES / 2; /* absolute center y */
+    int xoffset = COLS / 2; /* terminal center x */
+    int yoffset = LINES / 2; /* terminal center y */
+
     xoffset -= SCREEN_WIDTH / 2;
     yoffset -= SCREEN_HEIGHT / 2;
-    /* clear the screen - curses call */
+
     clear();
+
     /* Draw the screen on the terminal with curses */
     for (x = 0; x < SCREEN_WIDTH; x++) {
         for(y = 0; y < SCREEN_HEIGHT; y++) {
@@ -56,6 +58,15 @@ void curses_draw(void) {
             unsetcolor(fg,bg);
         }
     }
+}
+
+void msg_box(char* msg, Color fg, Color bg) {
+    /* Simple message box, displayed at the center of the screen. Will probably
+     * need tweaking for fancy things like line wrapping, etc */
+    int msglength = strlen(msg);
+    setcolor(fg,bg);
+    mvprintw(LINES / 2, (COLS / 2) - msglength, msg);
+    unsetcolor(fg,bg);
 }
 
 void curses_close(void) {
