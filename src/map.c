@@ -23,10 +23,10 @@ typedef enum {
 Tile tileTable[NUM_TILES] = 
 {
     /* Glyph                        , Vec2i, TileFlags */
-    {{'.', WHITE, BLACK}            , {0,0}, (NONE)},
-    {{'#', WHITE, BLACK}            , {0,0}, (BLOCKS_MOVEMENT | BLOCKS_LIGHT)},
-    {{'+', BROWN, BLACK}            , {0,0}, (BLOCKS_MOVEMENT | BLOCKS_LIGHT | DOOR)},
-    {{'*', BRIGHT_BLACK, BROWN}     , {0,0}, (BLOCKS_MOVEMENT | BLOCKS_LIGHT)}
+    {{'.', WHITE, BLACK}            , {0,0}, (TF_NONE)},
+    {{'#', WHITE, BLACK}            , {0,0}, (TF_BLK_MV | TF_BLK_LT)},
+    {{'+', BROWN, BLACK}            , {0,0}, (TF_BLK_MV | TF_BLK_LT | TF_DOOR)},
+    {{'*', BRIGHT_BLACK, BROWN}     , {0,0}, (TF_BLK_MV | TF_BLK_LT)}
 };
 
 Tile* create_map(void) {
@@ -45,12 +45,19 @@ Tile* create_map(void) {
             tile.pos.y = y;
         }
     }
-
     return newMap;
 }
 
 void draw_dungeon(void) {
     place_border();
+    /* Fill with rock */
+    /* Place rooms */
+    /* Connect rooms */
+    /* Draw border */
+    /* Place stairs */
+    /* Place player */
+    /* Place enemies */
+    /* Place pickups */
 }
 
 void place_border(void) {

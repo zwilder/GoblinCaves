@@ -35,12 +35,12 @@ typedef struct {
 } Rect;
 
 typedef enum {
-    NONE            = 1 << 0,
-    VISIBLE         = 1 << 1,
-    BLOCKS_MOVEMENT = 1 << 2,
-    EXPLORED        = 1 << 3,
-    BLOCKS_LIGHT    = 1 << 4,
-    DOOR            = 1 << 5
+    TF_NONE            = 1 << 0,
+    TF_VIS             = 1 << 1,
+    TF_BLK_MV          = 1 << 2,
+    TF_EXP             = 1 << 3,
+    TF_BLK_LT          = 1 << 4,
+    TF_DOOR            = 1 << 5
 } TileFlags;
 
 /***********************
