@@ -118,7 +118,10 @@ void destroy_player(void);
 Tile* create_map(void);
 int get_map_index(int x, int y);
 bool point_in_rect(Rect a, Vec2i b);
+bool rect_intersect(Rect a, Rect b);
+Vec2i get_center(Rect a);
 void draw_dungeon(void);
+void place_room(Rect room);
 void place_border(void);
 void destroy_map(void);
 

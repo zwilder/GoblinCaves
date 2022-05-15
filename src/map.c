@@ -48,16 +48,100 @@ Tile* create_map(void) {
     return newMap;
 }
 
+int get_map_index(int x, int y) {
+    return (x + (MAP_WIDTH * y));
+}
+
+bool point_in_rect(Rect a, Vec2i b) {
+    bool x = ((b.x > a.pos.x) && (b.x < a.dim.x));
+    bool y = ((b.y > a.pos.y) && (b.y < a.dim.y));
+    return (x && y);
+}
+
+bool rect_intersect(Rect a, Rect b) {
+    /* https://silentmatt.com/rectangle-intersection/ */
+    int ax1,ay1,ax2,ay2;
+    int bx1,by1,bx2,by2;
+    bool result = false;
+
+    ax1 = a.pos.x;
+    ay1 = a.pos.y;
+    ax2 = ax1 + a.dim.x;
+    ay2 = ay1 + a.dim.y;
+    bx1 = b.pos.x;
+    by1 = b.pos.y;
+    bx2 = bx1 + b.dim.x;
+    by2 = by1 + b.dim.y;
+    
+    if((ax1 < bx2) && (ax2 > bx1) && (ay1 < by2) && (ay2 > by1)) {
+        result = true;
+    }
+
+    return result; 
+}
+
+Vec2i get_center(Rect a) {
+    Vec2i result;
+    result.x = a.pos.x + (int)(a.dim.x / 2);
+    result.y = a.pos.y + (int)(a.dim.y / 2);
+    return result;
+}
+
 void draw_dungeon(void) {
-    place_border();
+    /* Simple hardcoded two rooms, procedural generation t'later */
+    int x, y, i;
+    Rect newRoom;
     /* Fill with rock */
+    for(x = 0; x < MAP_WIDTH; x++) {
+        for(y = 0; y < MAP_HEIGHT; y++) {
+            i = get_map_index(x,y);
+            g_map[i] = tileTable[TILE_ROCK];
+            g_map[i].pos.x = x;
+            g_map[i].pos.y = y;
+        }
+    }
     /* Place rooms */
+    newRoom.pos.x = 1;
+    newRoom.pos.y = 1;
+    newRoom.dim.x = 15;
+    newRoom.dim.y = 15;
+    place_room(newRoom);
+
+    newRoom.pos.x = 16;
+    newRoom.pos.y = 10;
+    newRoom.dim.x = 17;
+    newRoom.dim.y = 12;
+    place_room(newRoom);
+
     /* Connect rooms */
-    /* Draw border */
+    g_map[get_map_index(16,13)] = tileTable[TILE_FLOOR];
+    g_map[get_map_index(16,13)].pos.x = 16;
+    g_map[get_map_index(16,13)].pos.x = 13;
+
     /* Place stairs */
     /* Place player */
+    g_player->pos = get_center(newRoom);
     /* Place enemies */
     /* Place pickups */
+}
+
+void place_room(Rect room) {
+    int x, y, i;
+    for(x = room.pos.x; x <= room.pos.x + room.dim.x; x++){
+        for(y=room.pos.y; y <= room.pos.y + room.dim.y; y++) {
+            i = get_map_index(x,y);
+            if(room.pos.x == x 
+                   || room.pos.y == y
+                   || room.dim.x + room.pos.x == x 
+                   || room.dim.y + room.pos.y == y) {
+                g_map[i] = tileTable[TILE_WALL];
+            } else {
+                g_map[i] = tileTable[TILE_FLOOR];
+            }
+            g_map[i].pos.x = x;
+            g_map[i].pos.y = y;
+        }
+    }
 }
 
 void place_border(void) {
@@ -82,16 +166,6 @@ void place_border(void) {
         g_map[i].pos.x = MAP_WIDTH - 1;
         g_map[i].pos.y = y;
     }
-}
-
-int get_map_index(int x, int y) {
-    return (x + (MAP_WIDTH * y));
-}
-
-bool point_in_rect(Rect a, Vec2i b) {
-    bool x = ((b.x > a.pos.x) && (b.x < a.dim.x));
-    bool y = ((b.y > a.pos.y) && (b.y < a.dim.y));
-    return (x && y);
 }
 
 void destroy_map(void) {
