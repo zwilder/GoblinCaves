@@ -30,7 +30,11 @@ int handle_keyboard(int input) {
         default:
             break;
     }
-    g_player->pos.y = newPos.y;
-    g_player->pos.x = newPos.x;
+    /* Again, temporary position of this code until update routines added */
+    if((g_map[get_map_index(newPos.x,newPos.y)].flags & TF_BLK_MV) != TF_BLK_MV) {
+        g_player->pos.y = newPos.y;
+        g_player->pos.x = newPos.x;
+        fov();
+    }
     return output;
 }

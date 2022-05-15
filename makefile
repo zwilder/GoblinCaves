@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = -lncurses -I./include/ -g
+CFLAGS = -lncurses -lm -I./include/ -g
 
 SOURCES = ./src/*.c
 

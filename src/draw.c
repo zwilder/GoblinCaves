@@ -116,7 +116,15 @@ void draw_screen(void) {
             /* This is only temporary, while MAP_WIDTH and MAP_HEIGHT equal
              * SCREEN_WIDTH and SCREEN_HEIGHT */
             index = get_screen_index(x,y);
-            g_screen[index] = g_map[get_map_index(x,y)].glyph;
+            mapIndex = get_map_index(x,y);
+            if((g_map[mapIndex].flags & TF_VIS) == TF_VIS) {
+                g_map[mapIndex].flags |= TF_EXP;
+                g_screen[index] = g_map[mapIndex].glyph;
+            } else if ((g_map[mapIndex].flags & TF_EXP) == TF_EXP) {
+                g_screen[index].ch = g_map[mapIndex].glyph.ch;
+                g_screen[index].fg = BLUE;
+                g_screen[index].bg = BLACK;
+            }
         }
     }
     /* draw the pickups on the screen */

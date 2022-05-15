@@ -12,6 +12,7 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include <color.h>
 
@@ -51,6 +52,7 @@ Effect, Pickup. */
 typedef struct { 
     Vec2i pos;
     Glyph glyph;
+    int fovRadius;
 } Player;
 
 typedef struct {
@@ -111,6 +113,12 @@ int get_screen_index(int x, int y);
  ********************/
 Player* create_player(Vec2i pos);
 void destroy_player(void);
+
+/*****************
+ * fov.c functions
+ *****************/
+void fov(void);
+void calculate_fov(float x, float y);
 
 /*****************
  * map.c functions
