@@ -5,7 +5,7 @@
  * http://roguebasin.com/index.php/Eligloscode
  */
 
-void fov(void) {
+void update_fov(void) {
     float x,y;
     int i;
 
@@ -22,15 +22,16 @@ void fov(void) {
 }
 
 void calculate_fov(float x, float y) {
-    int i;
+    int i, mapIndex;
     float ox, oy;
 
     ox = (float) g_player->pos.x + 0.5f;
     oy = (float) g_player->pos.y + 0.5f;
 
     for(i = 0; i < g_player->fovRadius; i++) {
-        g_map[get_map_index((int)ox,(int)oy)].flags |= TF_VIS;
-        if((g_map[get_map_index((int)ox,(int)oy)].flags & TF_BLK_LT) == TF_BLK_LT) {
+        mapIndex = get_map_index((int)ox,(int)oy);
+        g_map[mapIndex].flags |= TF_VIS;
+        if(check_flag(g_map[mapIndex].flags, TF_BLK_LT)) {
             return;
         }
         ox += x;

@@ -88,6 +88,10 @@ void curses_close(void);
 void engine_init(void);
 void engine_run(void);
 void engine_close(void);
+bool check_flag(int mask, int flag);
+int toggle_flag(int mask, int flag);
+int remove_flag(int mask, int flag);
+int engage_flag(int mask, int flag);
 
 /***************************
  * handle_events.c functions
@@ -117,7 +121,7 @@ void destroy_player(void);
 /*****************
  * fov.c functions
  *****************/
-void fov(void);
+void update_fov(void);
 void calculate_fov(float x, float y);
 
 /*****************
