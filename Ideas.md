@@ -82,3 +82,34 @@ if they had randomly assigned jobs - "You have slain B'leb the chef!"
 "Glar the bodyguard flees in terror!". There could be a whole goblin
 economy set up in the caves - random generated themed rooms (forge,
 kitchen, brewery, carpenter's shop, etc etc). 
+
+Stretch Goal (comment on one of my comments on r/roguelikedev back in 2018):
+"""
+Comment by u/dystheria
+I sometimes feel like I'd be better suited to game "design" than "development".
+
+Here are a bunch of ideas your post has given me that I'm sure you probably
+would have eventually arrived at yourself:
+
+- change the result of combat based on the degree of overkill, by that I mean
+  when the player does enough damage to kill an enemy in a single hit, have the
+enemy be cut in to two pieces, or have their corpse be obliterated in to just a
+"bloody mess" on the floor. You could develop this further if you wanted to
+attempt to implement limbs and potential decapitation. 
+- the fireball animations were a bit hit, if you can animate the result of
+  attacks to have a similar impact on the world (blood splatters, damaged
+flooring, etc) you provide the player with a greater sense of agency, even in
+ASCII art. 
+- create a rage mechanic that increases gradually as the player does damage and
+  greatly as they receive damage which allows them access to a small set of
+powerful skills (a direct Shield Bash, an area sweep Cleaving Attack, a close
+proximity AoE Ground Smash attack) allowing the player to engage more without
+the concern of only being able to hit one enemy at a time.  as an extension of
+the player rage, have rage accumulated by damage dealt also provide a temporary
+buff to hit-points, encouraging the players to continue to deal damage as much
+as possible.
+- give everything weight and implement a very basic physics system that allows
+  the player to kick stools and throw tables at enemies, or better yet, shield
+bash an enemy with such force it sends them flying in to a wall with force,
+causing further damage to them. 
+"""

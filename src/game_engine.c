@@ -7,6 +7,7 @@ void engine_init(void) {
     g_player = create_player(startPos);
     g_screen = create_screen();
     g_map = create_map();
+    draw_dungeon();
     draw_screen();
 }
 

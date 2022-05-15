@@ -4,4 +4,6 @@
 *.bak
 *.swp
 Scratch*
+a.out
+scratch.c
 GoblinCaves

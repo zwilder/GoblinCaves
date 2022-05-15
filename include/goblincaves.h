@@ -54,10 +54,9 @@ typedef struct {
 } Player;
 
 typedef struct {
-    char name[32];
+    Glyph glyph;
     Vec2i pos;
     TileFlags flags;
-    Glyph glyph;
 } Tile;
 
 /*********
@@ -118,6 +117,9 @@ void destroy_player(void);
  *****************/
 Tile* create_map(void);
 int get_map_index(int x, int y);
+bool point_in_rect(Rect a, Vec2i b);
+void draw_dungeon(void);
+void place_border(void);
 void destroy_map(void);
 
 #endif
