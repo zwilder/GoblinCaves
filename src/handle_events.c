@@ -1,40 +1,34 @@
 #include <goblincaves.h>
 
 int handle_keyboard(int input) {
-    /* Output will contain and return event flags, eg QUIT_GAME,
-     * OPEN_INVENTORY, etc */
-    int output = 0;
-    /* Position setting is temporary, what these keypresses should and will do
-     * eventually is change the dX,dY of the player... then the update routine
-     * will check if the dx,dy is blocked, if theres a creature there etc */
+    int output = EV_NONE;
     Vec2i newPos = {g_player->pos.x, g_player->pos.y};
     switch(input) {
         case 'k':
             /* up */
             newPos.y--;
+            output = EV_MOVE;
             break;
         case 'j':
             /* down */
             newPos.y++;
+            output = EV_MOVE;
             break;
         case 'h':
             /* left */
             newPos.x--;
+            output = EV_MOVE;
             break;
         case 'l':
             /* right */
             newPos.x++;
+            output = EV_MOVE;
             break;
         case 'q':
-            output = -1; /* Temporary */
+            output = EV_QUIT; 
         default:
             break;
     }
-    /* Again, temporary position of this code until update routines added */
-    if(!(check_flag(g_map[get_map_index(newPos.x,newPos.y)].flags, TF_BLK_MV))){
-        g_player->pos.y = newPos.y;
-        g_player->pos.x = newPos.x;
-        update_fov();
-    }
+    g_player->dpos = newPos;
     return output;
 }

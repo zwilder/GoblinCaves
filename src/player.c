@@ -6,6 +6,9 @@ Player* create_player(Vec2i pos) {
     newPlayer->pos.y = pos.y;
     newPlayer->pos.x = pos.x;
 
+    newPlayer->dpos.y = pos.y;
+    newPlayer->dpos.x = pos.x;
+
     newPlayer->glyph.ch = '@';
     newPlayer->glyph.fg = BRIGHT_WHITE; 
     newPlayer->glyph.bg = BLACK;

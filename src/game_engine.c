@@ -14,16 +14,17 @@ void engine_init(void) {
 
 void engine_run(void) {
     /* Enter main loop */
+    int ch, events;
     bool running = true;
-    int ch;
-    int events;
     while(running) {
+        /* Handle Events */
         ch = getch();
         events = handle_keyboard(ch);
-        if(-1 == events) {
+        if(check_flag(events, EV_QUIT)) {
             running = false;
         }
         /* update */
+        events = update(events);
         /* draw */
         draw_screen();
     }

@@ -44,6 +44,13 @@ typedef enum {
     TF_DOOR            = 1 << 5
 } TileFlags;
 
+typedef enum {
+    EV_NONE            = 1 << 0,
+    EV_QUIT            = 1 << 1,
+    EV_MOVE            = 1 << 2,
+    EV_OPEN            = 1 << 3,
+    EV_CLOSE           = 1 << 4
+} EventFlags;
 /***********************
  * Major data structures
  ***********************/
@@ -51,6 +58,7 @@ typedef enum {
 Effect, Pickup. */
 typedef struct { 
     Vec2i pos;
+    Vec2i dpos;
     Glyph glyph;
     int fovRadius;
 } Player;
@@ -101,7 +109,8 @@ int handle_keyboard(int input);
 /********************
  * update.c functions
  ********************/
-/* Game logic functions */
+int update(int events);
+void player_move(void);
 
 /******************
  * draw.c functions
