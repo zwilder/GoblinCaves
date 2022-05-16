@@ -17,6 +17,7 @@ typedef enum {
     TILE_WALL,
     TILE_DOOR,
     TILE_ROCK,
+    TILE_WATER,
     NUM_TILES
 } TileTypes;
 
@@ -26,7 +27,8 @@ Tile tileTable[NUM_TILES] =
     {{'.', WHITE, BLACK}            , {0,0}, (TF_NONE)},
     {{'#', WHITE, BLACK}            , {0,0}, (TF_BLK_MV | TF_BLK_LT)},
     {{'+', BROWN, BLACK}            , {0,0}, (TF_BLK_MV | TF_BLK_LT | TF_DOOR)},
-    {{'*', BRIGHT_BLACK, BROWN}     , {0,0}, (TF_BLK_MV | TF_BLK_LT)}
+    {{'*', BRIGHT_BLACK, BROWN}     , {0,0}, (TF_BLK_MV | TF_BLK_LT)},
+    {{'~', BRIGHT_CYAN, BLUE}       , {0,0}, (TF_BLK_MV)}
 };
 
 Tile* create_map(void) {

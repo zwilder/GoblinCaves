@@ -54,3 +54,13 @@ int engage_flag(int mask, int flag) {
     /* Turns on flag */
     return(mask |= flag);
 }
+
+/* Random numbers from mt19937 generator */
+int mt_rand(int min, int max) {
+    return ((int)(genrand_int32() % max + min));
+}
+
+bool mt_bool() {
+    int result = mt_rand(0,10);
+    return (result <= 5);
+}

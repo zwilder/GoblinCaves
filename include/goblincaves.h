@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
+#include <mt19937.h>
 
 #include <color.h>
 
@@ -100,6 +102,8 @@ bool check_flag(int mask, int flag);
 int toggle_flag(int mask, int flag);
 int remove_flag(int mask, int flag);
 int engage_flag(int mask, int flag);
+int mt_rand(int min, int max); 
+bool mt_bool(); 
 
 /***************************
  * handle_events.c functions
