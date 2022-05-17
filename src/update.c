@@ -5,6 +5,14 @@ int update(int events) {
         player_move();
         events = remove_flag(events, EV_MOVE);
     }
+    if(check_flag(events, EV_OPEN)) {
+        open_door(sum_vec(get_direction(), g_player->pos));
+        events = remove_flag(events, EV_OPEN);
+    }
+    if(check_flag(events, EV_CLOSE)) {
+        close_door(sum_vec(get_direction(), g_player->pos));
+        events = remove_flag(events, EV_CLOSE);
+    }
     return events;
 }
 
@@ -31,9 +39,25 @@ void player_move(void) {
 void open_door(Vec2i pos) {
     int mapIndex = get_map_index(pos.x,pos.y);
     int mask = g_map[mapIndex].flags;
-    mask = remove_flag(mask, TF_CDOOR | TF_BLK_MV | TF_BLK_LT);
-    mask = engage_flag(mask, TF_ODOOR);
-    g_map[mapIndex].flags = mask;
-    g_map[mapIndex].glyph.ch = '_';
-    update_fov();
+    /*check to see if there is even a closed door at the location first */
+    if(check_flag(mask, TF_CDOOR)) {
+        mask = remove_flag(mask, TF_CDOOR | TF_BLK_MV | TF_BLK_LT);
+        mask = engage_flag(mask, TF_ODOOR);
+        g_map[mapIndex].flags = mask;
+        g_map[mapIndex].glyph.ch = '/';
+        update_fov();
+    }
+}
+
+void close_door(Vec2i pos) {
+    int mapIndex = get_map_index(pos.x,pos.y);
+    int mask = g_map[mapIndex].flags;
+    /*check to see if there is even an open door at the location first */
+    if(check_flag(mask, TF_ODOOR)) {
+        mask = remove_flag(mask, TF_ODOOR);
+        mask = engage_flag(mask, TF_CDOOR | TF_BLK_MV | TF_BLK_LT);
+        g_map[mapIndex].flags = mask;
+        g_map[mapIndex].glyph.ch = '+';
+        update_fov();
+    }
 }

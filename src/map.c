@@ -28,7 +28,7 @@ Tile tileTable[NUM_TILES] =
     {{'.', WHITE, BLACK}            , {0,0}, (TF_NONE)},
     {{'#', WHITE, BLACK}            , {0,0}, (TF_BLK_MV | TF_BLK_LT)},
     {{'+', BROWN, BLACK}            , {0,0}, (TF_BLK_MV | TF_BLK_LT | TF_CDOOR)},
-    {{'_', BROWN, BLACK}            , {0,0}, (TF_ODOOR)},
+    {{'/', BROWN, BLACK}            , {0,0}, (TF_ODOOR)},
     {{'*', BRIGHT_BLACK, BROWN}     , {0,0}, (TF_BLK_MV | TF_BLK_LT)},
     {{'~', BRIGHT_CYAN, BLUE}       , {0,0}, (TF_BLK_MV)}
 };

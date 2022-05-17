@@ -40,8 +40,7 @@ typedef struct {
 typedef enum {
     TF_NONE            = 1 << 0,
     TF_VIS             = 1 << 1,
-    TF_BLK_MV          = 1 << 2,
-    TF_EXP             = 1 << 3,
+    TF_BLK_MV          = 1 << 2, TF_EXP             = 1 << 3,
     TF_BLK_LT          = 1 << 4,
     TF_ODOOR           = 1 << 5,
     TF_CDOOR           = 1 << 6
@@ -83,6 +82,11 @@ extern Tile* g_map;
 extern const int MAP_WIDTH;
 extern const int MAP_HEIGHT;
 
+/*******************
+ * vec2i.c functions
+ *******************/
+Vec2i sum_vec(Vec2i a, Vec2i b);
+
 /***************************
  * curses_engine.c functions
  ***************************/
@@ -110,6 +114,7 @@ bool mt_bool();
  * handle_events.c functions
  ***************************/
 int handle_keyboard(int input);
+Vec2i get_direction();
 
 /********************
  * update.c functions
@@ -117,6 +122,7 @@ int handle_keyboard(int input);
 int update(int events);
 void player_move(void);
 void open_door(Vec2i pos);
+void close_door(Vec2i pos);
 
 /******************
  * draw.c functions
