@@ -43,7 +43,8 @@ typedef enum {
     TF_BLK_MV          = 1 << 2,
     TF_EXP             = 1 << 3,
     TF_BLK_LT          = 1 << 4,
-    TF_DOOR            = 1 << 5
+    TF_ODOOR           = 1 << 5,
+    TF_CDOOR           = 1 << 6
 } TileFlags;
 
 typedef enum {
@@ -115,6 +116,7 @@ int handle_keyboard(int input);
  ********************/
 int update(int events);
 void player_move(void);
+void open_door(Vec2i pos);
 
 /******************
  * draw.c functions

@@ -15,7 +15,8 @@ Tile* g_map;
 typedef enum {
     TILE_FLOOR = 0,
     TILE_WALL,
-    TILE_DOOR,
+    TILE_CDOOR,
+    TILE_ODOOR,
     TILE_ROCK,
     TILE_WATER,
     NUM_TILES
@@ -26,7 +27,8 @@ Tile tileTable[NUM_TILES] =
     /* Glyph                        , Vec2i, TileFlags */
     {{'.', WHITE, BLACK}            , {0,0}, (TF_NONE)},
     {{'#', WHITE, BLACK}            , {0,0}, (TF_BLK_MV | TF_BLK_LT)},
-    {{'+', BROWN, BLACK}            , {0,0}, (TF_BLK_MV | TF_BLK_LT | TF_DOOR)},
+    {{'+', BROWN, BLACK}            , {0,0}, (TF_BLK_MV | TF_BLK_LT | TF_CDOOR)},
+    {{'_', BROWN, BLACK}            , {0,0}, (TF_ODOOR)},
     {{'*', BRIGHT_BLACK, BROWN}     , {0,0}, (TF_BLK_MV | TF_BLK_LT)},
     {{'~', BRIGHT_CYAN, BLUE}       , {0,0}, (TF_BLK_MV)}
 };
@@ -116,7 +118,7 @@ void draw_dungeon(void) {
     place_room(newRoom);
 
     /* Connect rooms */
-    g_map[get_map_index(16,13)] = tileTable[TILE_FLOOR];
+    g_map[get_map_index(16,13)] = tileTable[TILE_CDOOR];
     g_map[get_map_index(16,13)].pos.x = 16;
     g_map[get_map_index(16,13)].pos.x = 13;
 

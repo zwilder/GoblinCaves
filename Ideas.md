@@ -83,6 +83,10 @@ if they had randomly assigned jobs - "You have slain B'leb the chef!"
 economy set up in the caves - random generated themed rooms (forge,
 kitchen, brewery, carpenter's shop, etc etc). 
 
+Stretch Goal: Monster intelligence - intellegent monsters can use items. Really
+intellegent monsters can be literate and read scrolls. Monsters use the
+equipment they have, and then drop it on death.
+
 Stretch Goal (comment on one of my comments on r/roguelikedev back in 2018):
 """
 Comment by u/dystheria
