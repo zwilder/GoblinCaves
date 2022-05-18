@@ -6,11 +6,11 @@ int update(int events) {
         events = remove_flag(events, EV_MOVE);
     }
     if(check_flag(events, EV_OPEN)) {
-        open_door(sum_vec(get_direction(), g_player->pos));
+        open_door(add_vec(get_direction(), g_player->pos));
         events = remove_flag(events, EV_OPEN);
     }
     if(check_flag(events, EV_CLOSE)) {
-        close_door(sum_vec(get_direction(), g_player->pos));
+        close_door(add_vec(get_direction(), g_player->pos));
         events = remove_flag(events, EV_CLOSE);
     }
     return events;
