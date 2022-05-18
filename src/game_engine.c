@@ -14,12 +14,11 @@ void engine_init(void) {
 
 void engine_run(void) {
     /* Enter main loop */
-    int ch, events;
+    int events;
     bool running = true;
     while(running) {
         /* Handle Events */
-        ch = getch();
-        events = handle_keyboard(ch);
+        events = handle_keyboard(get_input());
         if(check_flag(events, EV_QUIT)) {
             running = false;
         }
@@ -28,6 +27,15 @@ void engine_run(void) {
         /* draw */
         draw_screen();
     }
+}
+
+int get_input(void) {
+    /* Design goal: don't tie engine to curses.
+     * SO - this stupid wrapper function MAY eventually check to see which
+     * engine is running, use that engine to get/interpret the keypress, and
+     * then return the result */
+    int result = getch();
+    return result;
 }
 
 void engine_close(void) {

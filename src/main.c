@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
         engine_run();
         engine_close();
 
-        msg_box(" Goodbye! ", BLACK, WHITE);
+        msg_box("Goodbye!", BLACK, WHITE);
         getch();
 
         curses_close();

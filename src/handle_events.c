@@ -41,11 +41,11 @@ int handle_keyboard(int input) {
 
 Vec2i get_direction() {
     Vec2i result = {0, 0};
-    int ch;
+    int input;
     /* Temporary, need a better way to ask the player */
     msg_box("In which direction?", BLACK, WHITE);
-    ch = getch();
-    switch(ch) {
+    input = get_input();
+    switch(input) {
         case 'k':
             result.y--;
             break;

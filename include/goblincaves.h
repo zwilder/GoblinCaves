@@ -40,7 +40,8 @@ typedef struct {
 typedef enum {
     TF_NONE            = 1 << 0,
     TF_VIS             = 1 << 1,
-    TF_BLK_MV          = 1 << 2, TF_EXP             = 1 << 3,
+    TF_BLK_MV          = 1 << 2,
+    TF_EXP             = 1 << 3,
     TF_BLK_LT          = 1 << 4,
     TF_ODOOR           = 1 << 5,
     TF_CDOOR           = 1 << 6
@@ -103,6 +104,7 @@ void curses_close(void);
 void engine_init(void);
 void engine_run(void);
 void engine_close(void);
+int get_input(void);
 bool check_flag(int mask, int flag);
 int toggle_flag(int mask, int flag);
 int remove_flag(int mask, int flag);

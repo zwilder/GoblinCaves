@@ -64,8 +64,16 @@ void msg_box(char* msg, Color fg, Color bg) {
     /* Simple message box, displayed at the center of the screen. Will probably
      * need tweaking for fancy things like line wrapping, etc */
     int msglength = strlen(msg);
+    int i,x,y;
+    x = (COLS / 2) - (msglength / 2);
+    y = (LINES / 2);
     setcolor(fg,bg);
-    mvprintw(LINES / 2, (COLS / 2) - (msglength / 2), msg);
+    for(i = -1; i <= msglength; i++) {
+        mvaddch(y - 1, x + i, ' ');
+        mvaddch(y, x + i, ' ');
+        mvaddch(y + 1, x + i, ' ');
+    }
+    mvprintw(y, x, msg);
     unsetcolor(fg,bg);
 }
 
