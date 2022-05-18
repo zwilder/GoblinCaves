@@ -111,10 +111,10 @@ void draw_screen(void) {
             */
 
     /* draw the map (tiles) on the screen */
+    /* This is only temporary, while MAP_WIDTH and MAP_HEIGHT equal
+     * SCREEN_WIDTH and SCREEN_HEIGHT */
     for(x = 0; x < SCREEN_WIDTH; x++) {
         for(y = 0; y < SCREEN_HEIGHT; y++) {
-            /* This is only temporary, while MAP_WIDTH and MAP_HEIGHT equal
-             * SCREEN_WIDTH and SCREEN_HEIGHT */
             index = get_screen_index(x,y);
             mapIndex = get_map_index(x,y);
             if((g_map[mapIndex].flags & TF_VIS) == TF_VIS) {

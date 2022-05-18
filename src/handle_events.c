@@ -24,6 +24,26 @@ int handle_keyboard(int input) {
             newPos.x++;
             output = EV_MOVE;
             break;
+        case 'y':
+            newPos.x--;
+            newPos.y--;
+            output = EV_MOVE;
+            break;
+        case 'u':
+            newPos.x++;
+            newPos.y--;
+            output = EV_MOVE;
+            break;
+        case 'b':
+            newPos.x--;
+            newPos.y++;
+            output = EV_MOVE;
+            break;
+        case 'n':
+            newPos.x++;
+            newPos.y++;
+            output = EV_MOVE;
+            break;
         case 'o':
             output = EV_OPEN;
             break;
@@ -46,6 +66,22 @@ Vec2i get_direction() {
     msg_box("In which direction?", BLACK, WHITE);
     input = get_input();
     switch(input) {
+        case 'y':
+            result.y--;
+            result.x--;
+            break;
+        case 'u':
+            result.y--;
+            result.x++;
+            break;
+        case 'b':
+            result.y++;
+            result.x--;
+            break;
+        case 'n':
+            result.y++;
+            result.x++;
+            break;
         case 'k':
             result.y--;
             break;
