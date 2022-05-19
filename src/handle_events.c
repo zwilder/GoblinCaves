@@ -51,7 +51,10 @@ int handle_keyboard(int input) {
             output = EV_CLOSE;
             break;
         case 'q':
-            output = EV_QUIT; 
+            if(yn_prompt("Are you sure you want to quit?", BLACK, WHITE)) {
+                output = EV_QUIT; 
+            }
+            break;
         default:
             break;
     }
@@ -59,11 +62,13 @@ int handle_keyboard(int input) {
     return output;
 }
 
-Vec2i get_direction() {
+Vec2i get_direction(char* action_str) {
     Vec2i result = {0, 0};
+    char msg_str[32];
+    strcpy(msg_str, action_str);
+    strcat(msg_str, ": Which direction?");
     int input;
-    /* Temporary, need a better way to ask the player */
-    msg_box("In which direction?", BLACK, WHITE);
+    msg_box(msg_str, BLACK, WHITE);
     input = get_input();
     switch(input) {
         case 'y':

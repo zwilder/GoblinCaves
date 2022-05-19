@@ -78,6 +78,39 @@ void msg_box(char* msg, Color fg, Color bg) {
     unsetcolor(fg,bg);
 }
 
+bool yn_prompt(char* msg, Color fg, Color bg) {
+    int msglength = strlen(msg);
+    int i,j,x,y;
+    int boxHeight = 1;
+    char input;
+    x = (COLS / 2) - (msglength / 2);
+    y = (LINES / 2);
+    while(true) {
+        setcolor(fg,bg);
+        for(i = -1; i <= msglength; i++) {
+            for(j = 0 - boxHeight; j <= boxHeight + 1; j++) {
+                mvaddch(y + j, x + i, ' ');
+            }
+        }
+        mvprintw(y, x, msg);
+        mvprintw(y + 1, x + msglength - 6, "[y/n]");
+        unsetcolor(fg,bg);
+        input = getch();
+        switch(input) {
+            case 'y':
+            case 'Y':
+                return true;
+                break;
+            case 'n':
+            case 'N':
+                return false;
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 void curses_close(void) {
     /* Stupid function for now, but there may be other cleanup added later */
     endwin();

@@ -37,6 +37,18 @@ typedef struct {
     Vec2i pos;
 } Rect;
 
+struct Node {
+    Rect data;
+    struct Node* leftChild;
+    struct Node* rightChild;
+};
+
+typedef struct Node Node;
+
+/*******
+ * Flags
+ *******/
+
 typedef enum {
     TF_NONE            = 1 << 0,
     TF_VIS             = 1 << 1,
@@ -54,10 +66,11 @@ typedef enum {
     EV_OPEN            = 1 << 3,
     EV_CLOSE           = 1 << 4
 } EventFlags;
+
 /***********************
  * Major data structures
  ***********************/
-/* Major Goal: Five (major) data types - structured like Angband: Player, Enemy, Tile,
+/* Major Goal: Five (major) data types - structured like: Player, Enemy, Tile,
 Effect, Pickup. */
 typedef struct { 
     Vec2i pos;
@@ -83,6 +96,12 @@ extern Tile* g_map;
 extern const int MAP_WIDTH;
 extern const int MAP_HEIGHT;
 
+/******************
+ * tree.c functions
+ ******************/
+Node* new_node(Rect data);
+void destroy_node(Node* node);
+
 /*******************
  * vec2i.c functions
  *******************/
@@ -97,6 +116,7 @@ void setcolor(int fg, int bg);
 void unsetcolor(int fg, int bg);
 void curses_draw(void);
 void msg_box(char* msg, Color fg, Color bg);
+bool yn_prompt(char* msg, Color fg, Color bg);
 void curses_close(void);
 
 /*************************
@@ -117,7 +137,7 @@ bool mt_bool();
  * handle_events.c functions
  ***************************/
 int handle_keyboard(int input);
-Vec2i get_direction();
+Vec2i get_direction(char* action_str);
 
 /********************
  * update.c functions
