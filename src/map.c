@@ -4,7 +4,7 @@
  * getting the camera/rendering sorted, bad things will happen if the const
  * SCREEN_WIDTH and SCREEN_HEIGHT do not equal exactly MAP_WIDTH and MAP_HEIGHT. */
 const int MAP_WIDTH = 80;
-const int MAP_HEIGHT = 24;
+const int MAP_HEIGHT = 80;
 Tile* g_map;
 
 /* Playing with this idea for tiles - sure makes it easy to grab some presets
@@ -96,6 +96,7 @@ void draw_dungeon(void) {
     int x, y, i;
     Rect newRoom;
     /* Fill with rock */
+    /*
     for(x = 0; x < MAP_WIDTH; x++) {
         for(y = 0; y < MAP_HEIGHT; y++) {
             i = get_map_index(x,y);
@@ -104,12 +105,16 @@ void draw_dungeon(void) {
             g_map[i].pos.y = y;
         }
     }
+    */
+    place_border();
     /* Place rooms */
+    /*
     newRoom.pos.x = 1;
     newRoom.pos.y = 1;
     newRoom.dim.x = 15;
     newRoom.dim.y = 15;
     place_room(newRoom);
+    */
 
     newRoom.pos.x = 16;
     newRoom.pos.y = 10;
