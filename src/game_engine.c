@@ -5,7 +5,6 @@ Player* g_player;
 void engine_init(void) {
     Vec2i startPos = {1, 1};
     g_player = create_player(startPos);
-    g_screen = create_screen();
     g_map = create_map();
     draw_dungeon();
     update_fov();
@@ -25,6 +24,7 @@ void engine_run(void) {
         /* update */
         events = update(events);
         /* draw */
+        clear(); /* Curses call, will need to be fixed if I add graphics */
         draw_screen();
     }
 }

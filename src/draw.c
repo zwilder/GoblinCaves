@@ -1,14 +1,15 @@
 #include <goblincaves.h>
 
+/* Standard term dimensions, 80x24, minus guiHeight eventually*/
 const int SCREEN_WIDTH = 80;
-const int SCREEN_HEIGHT = 24; /* Standard term dimensions, for now */
+const int SCREEN_HEIGHT = 24; 
 Glyph* g_screen;
 
 Glyph* create_screen(void) {
     Glyph* newScreen = calloc(SCREEN_WIDTH * SCREEN_HEIGHT, sizeof(Glyph));
 
     for(int i = 0; i < (SCREEN_WIDTH * SCREEN_HEIGHT); i++) {
-        newScreen[i].ch = '.';
+        newScreen[i].ch = ' ';
         newScreen[i].fg = WHITE;
         newScreen[i].bg = BLACK;
     }
@@ -24,8 +25,7 @@ void draw_screen(void) {
     int x, y, index, screenIndex, mapIndex;
     Vec2i camera, screenpos, mappos;
 
-    /* clear the screen */
-    clear_screen();
+    Glyph *screen = create_screen();
     
     /* Get the camera */
     camera.x = g_player->pos.x - (SCREEN_WIDTH / 2);
@@ -66,32 +66,14 @@ void draw_screen(void) {
             }
             if((g_map[mapIndex].flags & TF_VIS) == TF_VIS) {
                 g_map[mapIndex].flags |= TF_EXP;
-                g_screen[index] = g_map[mapIndex].glyph;
+                screen[index] = g_map[mapIndex].glyph;
             } else if ((g_map[mapIndex].flags & TF_EXP) == TF_EXP) {
-                g_screen[index].ch = g_map[mapIndex].glyph.ch;
-                g_screen[index].fg = BLUE;
-                g_screen[index].bg = BLACK;
+                screen[index].ch = g_map[mapIndex].glyph.ch;
+                screen[index].fg = BLUE;
+                screen[index].bg = BLACK;
             }
         }
     }
-    /* This is only temporary, while MAP_WIDTH and MAP_HEIGHT equal
-     * SCREEN_WIDTH and SCREEN_HEIGHT */
-    /*
-    for(x = 0; x < SCREEN_WIDTH; x++) {
-        for(y = 0; y < SCREEN_HEIGHT; y++) {
-            index = get_screen_index(x,y);
-            mapIndex = get_map_index(x,y);
-            if((g_map[mapIndex].flags & TF_VIS) == TF_VIS) {
-                g_map[mapIndex].flags |= TF_EXP;
-                g_screen[index] = g_map[mapIndex].glyph;
-            } else if ((g_map[mapIndex].flags & TF_EXP) == TF_EXP) {
-                g_screen[index].ch = g_map[mapIndex].glyph.ch;
-                g_screen[index].fg = BLUE;
-                g_screen[index].bg = BLACK;
-            }
-        }
-    }
-    */
     /* draw the pickups on the screen */
     
     /* draw the enemies on the screen */
@@ -101,28 +83,37 @@ void draw_screen(void) {
         x = g_player->pos.x - camera.x;
         y = g_player->pos.y - camera.y;
         index = get_screen_index(x,y);
-        g_screen[index].ch = g_player->glyph.ch;
-        g_screen[index].fg = g_player->glyph.fg;
-        g_screen[index].bg = g_player->glyph.bg;
+        screen[index].ch = g_player->glyph.ch;
+        screen[index].fg = g_player->glyph.fg;
+        screen[index].bg = g_player->glyph.bg;
     }
 
-    curses_draw();
+    for(x = 0; x < SCREEN_WIDTH; x++) {
+        for(y = 0; y < SCREEN_HEIGHT; y++) {
+            index = get_screen_index(x,y);
+            if(index > (SCREEN_WIDTH * SCREEN_HEIGHT - 1)) {
+                break;
+            }
+            curses_draw(x,y, screen[index]);
+        }
+    }
+    free(screen);
 }
 
-void clear_screen(void) {
+void clear_screen(Glyph *screen) {
     int x, y, index;
     for (x = 0; x < SCREEN_WIDTH; x++) {
         for(y = 0; y < SCREEN_HEIGHT; y++) {
             index = get_screen_index(x,y);
-            g_screen[index].ch = ' ';
-            g_screen[index].fg = WHITE;
-            g_screen[index].bg = BLACK;
+            screen[index].ch = ' ';
+            screen[index].fg = WHITE;
+            screen[index].bg = BLACK;
         }
     }
 }
 
-void destroy_screen(void) {
-    if(NULL != g_screen) {
-        free(g_screen);
+void destroy_screen(Glyph *screen) {
+    if(NULL != screen) {
+        free(screen);
     }
 }

@@ -114,7 +114,7 @@ Vec2i subtract_vec(Vec2i a, Vec2i b);
 bool curses_setup(void);
 void setcolor(int fg, int bg);
 void unsetcolor(int fg, int bg);
-void curses_draw(void);
+void curses_draw(int x, int y, Glyph glyph);
 void msg_box(char* msg, Color fg, Color bg);
 bool yn_prompt(char* msg, Color fg, Color bg);
 void curses_close(void);
@@ -152,8 +152,8 @@ void close_door(Vec2i pos);
  ******************/
 Glyph* create_screen(void);
 void draw_screen(void);
-void destroy_screen(void);
-void clear_screen(void);
+void destroy_screen(Glyph *screen);
+void clear_screen(Glyph *screen);
 int get_screen_index(int x, int y);
 
 /********************

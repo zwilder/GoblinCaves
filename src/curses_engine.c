@@ -36,28 +36,16 @@ void unsetcolor(int fg, int bg) {
     }
 }
 
-void curses_draw(void) {
-    int x,y,index,fg,bg;
+void curses_draw(int x, int y, Glyph glyph) {
     int xoffset = COLS / 2; /* terminal center x */
     int yoffset = LINES / 2; /* terminal center y */
 
     xoffset -= SCREEN_WIDTH / 2;
     yoffset -= SCREEN_HEIGHT / 2;
 
-    clear();
-
-    /* Draw the screen on the terminal with curses */
-    for (x = 0; x < SCREEN_WIDTH; x++) {
-        for(y = 0; y < SCREEN_HEIGHT; y++) {
-            index = get_screen_index(x,y);
-            /* Rewrite this to match ColorDemo */
-            fg = g_screen[index].fg;
-            bg = g_screen[index].bg;
-            setcolor(fg,bg);
-            mvaddch(y + yoffset, x + xoffset, g_screen[index].ch);
-            unsetcolor(fg,bg);
-        }
-    }
+    setcolor(glyph.fg, glyph.bg);
+    mvaddch(y + yoffset, x + xoffset, glyph.ch);
+    unsetcolor(glyph.fg, glyph.bg);
 }
 
 void msg_box(char* msg, Color fg, Color bg) {
