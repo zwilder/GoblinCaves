@@ -58,8 +58,8 @@ void draw_screen(void) {
             }
             index = get_screen_index(screenpos.x, screenpos.y);
             mapIndex = get_map_index(x, y);
-            if(index > SCREEN_WIDTH * SCREEN_HEIGHT ||
-               mapIndex > MAP_WIDTH * MAP_HEIGHT) {
+            if(index > (SCREEN_WIDTH * SCREEN_HEIGHT - 1) ||
+               mapIndex > (MAP_WIDTH * MAP_HEIGHT - 1)) {
                 /* Unsure why this is necessary, but draw_screen will cause
                  * segfaults without it */
                 break;

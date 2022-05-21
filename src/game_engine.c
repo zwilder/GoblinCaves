@@ -41,7 +41,7 @@ int get_input(void) {
 void engine_close(void) {
     destroy_player();
     destroy_map();
-    destroy_screen();
+    /*destroy_screen();*/
 }
 
 /* Mostly unnecessary helper functions, but keeping them here as a reminder how
