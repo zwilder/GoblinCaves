@@ -58,6 +58,12 @@ void draw_screen(void) {
             }
             index = get_screen_index(screenpos.x, screenpos.y);
             mapIndex = get_map_index(x, y);
+            if(index > SCREEN_WIDTH * SCREEN_HEIGHT ||
+               mapIndex > MAP_WIDTH * MAP_HEIGHT) {
+                /* Unsure why this is necessary, but draw_screen will cause
+                 * segfaults without it */
+                break;
+            }
             if((g_map[mapIndex].flags & TF_VIS) == TF_VIS) {
                 g_map[mapIndex].flags |= TF_EXP;
                 g_screen[index] = g_map[mapIndex].glyph;
