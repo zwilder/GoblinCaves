@@ -1,5 +1,13 @@
 #include <goblincaves.h>
 
+Rect make_rect(int x, int y, int width, int height) {
+    Rect result;
+    result.pos.x = x;
+    result.pos.y = y;
+    result.dim.x = width;
+    result.dim.y = height;
+    return result;
+}
 bool point_in_rect(Rect a, Vec2i b) {
     bool x = ((b.x > a.pos.x) && (b.x < a.dim.x));
     bool y = ((b.y > a.pos.y) && (b.y < a.dim.y));

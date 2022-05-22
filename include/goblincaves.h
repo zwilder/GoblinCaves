@@ -67,6 +67,16 @@ typedef enum {
     EV_CLOSE           = 1 << 4
 } EventFlags;
 
+typedef enum {
+    TILE_FLOOR = 0,
+    TILE_WALL,
+    TILE_CDOOR,
+    TILE_ODOOR,
+    TILE_ROCK,
+    TILE_WATER,
+    NUM_TILES
+} TileTypes;
+
 /***********************
  * Major data structures
  ***********************/
@@ -99,17 +109,23 @@ extern const int MAP_HEIGHT;
  * tree.c functions
  ******************/
 Node* new_node(Rect data);
+void make_bsp_dungeon(void); 
+void make_rooms_in_leaves(Node *node);
+void connect_leaves(Node *node);
+bool split_node(Node *node);
 void destroy_node(Node* node);
 
 /*******************
  * vec2i.c functions
  *******************/
+Vec2i make_vec(int x, int y);
 Vec2i add_vec(Vec2i a, Vec2i b);
 Vec2i subtract_vec(Vec2i a, Vec2i b);
 
 /******************
  * rect.c functions
  ******************/
+Rect make_rect(int x, int y, int width, int height); 
 bool point_in_rect(Rect a, Vec2i b);
 bool rect_intersect(Rect a, Rect b);
 Vec2i get_center(Rect a);
@@ -178,12 +194,14 @@ void calculate_fov(float x, float y);
  * map.c functions
  *****************/
 Tile* create_map(void);
+void place_tile(Vec2i pos, int type);
 int get_map_index(int x, int y);
 bool point_in_rect(Rect a, Vec2i b);
 bool rect_intersect(Rect a, Rect b);
 Vec2i get_center(Rect a);
 void draw_dungeon(void);
 void place_room(Rect room);
+void place_corridor(Vec2i a, Vec2i b); 
 void place_border(void);
 void destroy_map(void);
 
