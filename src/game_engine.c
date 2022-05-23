@@ -3,6 +3,7 @@
 Player* g_player;
 
 void engine_init(void) {
+    start_log();
     Vec2i startPos = {1, 1};
     g_player = create_player(startPos);
     g_map = create_map();
@@ -65,10 +66,13 @@ int engage_flag(int mask, int flag) {
 
 /* Random numbers from mt19937 generator */
 int mt_rand(int min, int max) {
-    return ((int)(genrand_int32() % max + min));
+    return ((genrand_int32() % max) + min);
+    /*
+    return ((rand() % max) + min);
+    */
 }
 
 bool mt_bool() {
-    int result = mt_rand(0,10);
+    int result = mt_rand(1,10);
     return (result <= 5);
 }

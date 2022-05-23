@@ -104,6 +104,10 @@ extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
 extern const int MAP_WIDTH;
 extern const int MAP_HEIGHT;
+extern const int MIN_ROOM_SIZE;
+extern const int MAX_ROOM_SIZE;
+extern const int MIN_NUM_ROOMS;
+extern const int MAX_NUM_ROOMS;
 
 /******************
  * tree.c functions
@@ -112,7 +116,9 @@ Node* new_node(Rect data);
 void make_bsp_dungeon(void); 
 void make_rooms_in_leaves(Node *node);
 void connect_leaves(Node *node);
+int count_leaves(Node *node);
 bool split_node(Node *node);
+void split_tree(Node *node);
 void destroy_node(Node* node);
 
 /*******************
@@ -201,8 +207,23 @@ bool rect_intersect(Rect a, Rect b);
 Vec2i get_center(Rect a);
 void draw_dungeon(void);
 void place_room(Rect room);
+void place_htunnel(int x1, int x2, int y);
+void place_vtunnel(int y1, int y2, int x);
+void place_orthogonal_tunnel(Vec2i a, Vec2i b);
 void place_corridor(Vec2i a, Vec2i b); 
+void make_basic_dungeon(void);
 void place_border(void);
 void destroy_map(void);
+
+/*****************
+ * log.c functions 
+ *****************/
+void start_log(void);
+void write_log(char *msg);
+void log_map(void);
+void log_time(void);
+void log_vec(Vec2i a);
+void log_rect(Rect a);
+void log_leaves(Node *node);
 
 #endif

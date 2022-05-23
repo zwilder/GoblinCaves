@@ -5,5 +5,7 @@
 *.swp
 Scratch*
 a.out
-scratch.c
+scratch.*
+map_dump.txt
+log.txt
 GoblinCaves

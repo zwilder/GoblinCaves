@@ -8,6 +8,7 @@ Rect make_rect(int x, int y, int width, int height) {
     result.dim.y = height;
     return result;
 }
+
 bool point_in_rect(Rect a, Vec2i b) {
     bool x = ((b.x > a.pos.x) && (b.x < a.dim.x));
     bool y = ((b.y > a.pos.y) && (b.y < a.dim.y));
@@ -29,7 +30,7 @@ bool rect_intersect(Rect a, Rect b) {
     bx2 = bx1 + b.dim.x;
     by2 = by1 + b.dim.y;
     
-    if((ax1 < bx2) && (ax2 > bx1) && (ay1 < by2) && (ay2 > by1)) {
+    if((ax1 <= bx2) && (ax2 >= bx1) && (ay1 <= by2) && (ay2 >= by1)) {
         result = true;
     }
 

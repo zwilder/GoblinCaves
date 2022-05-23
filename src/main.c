@@ -4,6 +4,7 @@ int main(int argc, char* argv[]) {
 
     if(curses_setup()) {
         init_genrand(time(NULL));
+        srand(time(NULL));
         /* Start main loop */
         engine_init();
         engine_run();
