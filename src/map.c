@@ -22,7 +22,9 @@ Tile tileTable[NUM_TILES] =
     {{'+', BROWN, BLACK}            , {0,0}, (TF_BLK_MV | TF_BLK_LT | TF_CDOOR)},
     {{'/', BROWN, BLACK}            , {0,0}, (TF_ODOOR)},
     {{'*', BRIGHT_BLACK, BLACK}     , {0,0}, (TF_BLK_MV | TF_BLK_LT)},
-    {{'~', BRIGHT_CYAN, BLUE}       , {0,0}, (TF_BLK_MV)}
+    {{'~', BRIGHT_CYAN, BLUE}       , {0,0}, (TF_BLK_MV)},
+    {{'<', WHITE, BLACK}            , {0,0}, (TF_UP)},
+    {{'>', WHITE, BLACK}            , {0,0}, (TF_DN)}
 };
 
 void place_tile(Vec2i pos, int type) {
@@ -162,7 +164,7 @@ void place_corridor(Vec2i a, Vec2i b) {
 }
 
 void make_basic_dungeon(void) {
-    int x,y,w,h,i,j;
+    int x,y,w,h,i;
     Rect newRoom;
     bool intersects;
     int numRooms = 0;
@@ -206,7 +208,6 @@ void make_basic_dungeon(void) {
 
     for(i = 0; i < MAX_NUM_ROOMS; i++) {
         if(rooms[i].pos.x < 0) {
-            i--; /* i is now the number of the last room */
             break;
         }
         if(i > 0) {
@@ -221,6 +222,8 @@ void make_basic_dungeon(void) {
         place_doors(rooms[i]);
     }
 
+    place_tile(get_center(rooms[0]), TILE_DN);
+    place_tile(get_center(rooms[i]), TILE_UP);
     g_player->pos = get_center(rooms[i]); 
 }
 

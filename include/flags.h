@@ -12,7 +12,9 @@ typedef enum {
     TF_EXP             = 1 << 3,
     TF_BLK_LT          = 1 << 4,
     TF_ODOOR           = 1 << 5,
-    TF_CDOOR           = 1 << 6
+    TF_CDOOR           = 1 << 6,
+    TF_UP              = 1 << 7,
+    TF_DN              = 1 << 8
 } TileFlags;
 
 typedef enum {
@@ -30,6 +32,8 @@ typedef enum {
     TILE_ODOOR,
     TILE_ROCK,
     TILE_WATER,
+    TILE_UP,
+    TILE_DN,
     NUM_TILES
 } TileTypes;
 
