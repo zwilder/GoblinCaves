@@ -76,3 +76,11 @@ bool mt_bool() {
     int result = mt_rand(1,10);
     return (result <= 5);
 }
+
+bool mt_chance(int chance) {
+    /* Idea: I want a 1/3 chance of something happening, so I call
+     * mt_chance(33). It gets a random number between 1 and 100, and then
+     * returns true if the random number is less than the 33. */
+    int result = mt_rand(1,100);
+    return(chance <= result);
+}

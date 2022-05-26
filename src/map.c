@@ -53,7 +53,7 @@ void draw_dungeon(void) {
     Rect roomA, roomB;
     for(x = 0; x < MAP_WIDTH; x++) {
         for(y = 0; y < MAP_HEIGHT; y++) {
-            place_tile(make_vec(x,y), TILE_ROCK);
+            place_tile(make_vec(x,y), TILE_WALL);
         }
     }
     place_border();
@@ -153,15 +153,16 @@ void place_corridor(Vec2i a, Vec2i b) {
     if(mt_bool()) {
         place_htunnel(b.x, a.x, b.y);
         place_vtunnel(b.y, a.y, a.x);
-    } else {
+    } else if (mt_bool()) {
         place_vtunnel(b.y, a.y, b.x);
         place_htunnel(b.x, a.x, a.y);
-
+    } else {
+        place_orthogonal_tunnel(a,b);
     }
 }
 
 void make_basic_dungeon(void) {
-    int x,y,w,h,i;
+    int x,y,w,h,i,j;
     Rect newRoom;
     bool intersects;
     int numRooms = 0;
@@ -177,14 +178,12 @@ void make_basic_dungeon(void) {
         y = mt_rand(1, MAP_HEIGHT - MAX_ROOM_SIZE - 1);
         w = mt_rand(MIN_ROOM_SIZE, MAX_ROOM_SIZE);
         h = mt_rand(MIN_ROOM_SIZE, MAX_ROOM_SIZE);
-        /*
         while(x % 2 != 0) {
             x = mt_rand(1, MAP_WIDTH - 1);
         }
         while(y % 2 != 0) {
             y = mt_rand(1, MAP_HEIGHT - 1);
         }
-        */
         newRoom = make_rect(x,y,w,h);
         intersects = false;
         for(i = 0; i < MAX_NUM_ROOMS; i++) {
@@ -204,7 +203,6 @@ void make_basic_dungeon(void) {
         }
         attempts++;
     }
-    write_log("Final rooms at:\n");
 
     for(i = 0; i < MAX_NUM_ROOMS; i++) {
         if(rooms[i].pos.x < 0) {
@@ -214,10 +212,71 @@ void make_basic_dungeon(void) {
         if(i > 0) {
             place_corridor(get_center(rooms[i]), get_center(rooms[i-1]));
         }
-        log_rect(rooms[i]);
+    }
+    for(i = 0; i < MAX_NUM_ROOMS; i++) {
+        if(rooms[i].pos.x < 0) {
+            i--; /* i is now the number of the last room */
+            break;
+        }
+        place_doors(rooms[i]);
     }
 
     g_player->pos = get_center(rooms[i]); 
+}
+
+void place_doors(Rect room) {
+    int x,y;
+    Vec2i pos;
+    for(x = room.pos.x; x < room.pos.x + room.dim.x; x++) {
+        pos = make_vec(x, room.pos.y);
+        if(get_glyph_at(pos.x, pos.y) == '.') {
+            if(get_glyph_at(pos.x - 1, pos.y) == '#' &&
+                    get_glyph_at(pos.x + 1, pos.y) == '#') {
+                place_tile(pos, (mt_chance(20) ? TILE_CDOOR : TILE_ODOOR));
+            }
+        }
+        
+        pos = make_vec(x, room.pos.y + room.dim.y);
+        if(get_glyph_at(pos.x, pos.y) == '.') {
+            if(get_glyph_at(pos.x - 1, pos.y) == '#' &&
+                    get_glyph_at(pos.x + 1, pos.y) == '#') {
+                place_tile(pos, (mt_chance(20) ? TILE_CDOOR : TILE_ODOOR));
+            }
+        }
+    }
+    for(y = room.pos.y; y < room.pos.y + room.dim.y; y++) {
+        pos = make_vec(room.pos.x, y);
+        if(get_glyph_at(pos.x, pos.y) == '.') {
+            if(get_glyph_at(pos.x, pos.y - 1) == '#' &&
+                    get_glyph_at(pos.x, pos.y + 1) == '#') {
+                place_tile(pos, (mt_chance(20) ? TILE_CDOOR : TILE_ODOOR));
+            }
+        }
+        pos = make_vec(room.pos.x + room.dim.x, y);
+        if(get_glyph_at(pos.x, pos.y) == '.') {
+            if(get_glyph_at(pos.x, pos.y - 1) == '#' &&
+                    get_glyph_at(pos.x, pos.y + 1) == '#') {
+                place_tile(pos, (mt_chance(20) ? TILE_CDOOR : TILE_ODOOR));
+            }
+        }
+    }
+}
+
+int count_neighbors(Vec2i pos, char a) {
+    int x,y;
+    int count = 0;
+    for(x = pos.x - 1; x < pos.x + 1; x++) {
+        for(y = pos.y - 1; y < pos.y + 1; y++) {
+            if(get_glyph_at(x,y) == a) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+char get_glyph_at(int x, int y) {
+    return g_map[get_map_index(x,y)].glyph.ch;
 }
 
 void place_border(void) {

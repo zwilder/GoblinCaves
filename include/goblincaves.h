@@ -159,7 +159,8 @@ int toggle_flag(int mask, int flag);
 int remove_flag(int mask, int flag);
 int engage_flag(int mask, int flag);
 int mt_rand(int min, int max); 
-bool mt_bool(); 
+bool mt_bool(void); 
+bool mt_chance(int chance);
 
 /***************************
  * handle_events.c functions
@@ -212,6 +213,9 @@ void place_vtunnel(int y1, int y2, int x);
 void place_orthogonal_tunnel(Vec2i a, Vec2i b);
 void place_corridor(Vec2i a, Vec2i b); 
 void make_basic_dungeon(void);
+void place_doors(Rect room);
+int count_neighbors(Vec2i pos, char a);
+char get_glyph_at(int x, int y);
 void place_border(void);
 void destroy_map(void);
 
