@@ -13,6 +13,15 @@ int update(int events) {
         close_door(add_vec(get_direction("Close"), g_player->pos));
         events = remove_flag(events, EV_CLOSE);
     }
+    if(check_flag(events, EV_DN) || check_flag(events, EV_UP)) {
+        if(get_glyph_at(g_player->pos.x,g_player->pos.y) == '>') {
+            change_level(1);
+            events = remove_flag(events, EV_DN);
+        } else if(get_glyph_at(g_player->pos.x, g_player->pos.y) == '<') {
+            change_level(-1);
+            events = remove_flag(events, EV_UP);
+        }
+    }
     return events;
 }
 
@@ -60,4 +69,10 @@ void close_door(Vec2i pos) {
         g_map[mapIndex].glyph.ch = '+';
         update_fov();
     }
+}
+
+void change_level(int shift) {
+   /* Eventually this will change the current level up/down by shift */
+   draw_dungeon(); 
+   update_fov();
 }

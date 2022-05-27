@@ -8,5 +8,6 @@ int update(int events);
 void player_move(void);
 void open_door(Vec2i pos);
 void close_door(Vec2i pos);
+void change_level(int shift);
 
 #endif

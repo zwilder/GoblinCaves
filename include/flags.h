@@ -22,7 +22,9 @@ typedef enum {
     EV_QUIT            = 1 << 1,
     EV_MOVE            = 1 << 2,
     EV_OPEN            = 1 << 3,
-    EV_CLOSE           = 1 << 4
+    EV_CLOSE           = 1 << 4,
+    EV_DN              = 1 << 5,
+    EV_UP              = 1 << 6
 } EventFlags;
 
 typedef enum {
@@ -36,5 +38,10 @@ typedef enum {
     TILE_DN,
     NUM_TILES
 } TileTypes;
+
+bool check_flag(int mask, int flag);
+int toggle_flag(int mask, int flag);
+int remove_flag(int mask, int flag);
+int engage_flag(int mask, int flag);
 
 #endif

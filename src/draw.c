@@ -3,7 +3,6 @@
 /* Standard term dimensions, 80x24, minus guiHeight eventually*/
 const int SCREEN_WIDTH = 80;
 const int SCREEN_HEIGHT = 24; 
-Glyph* g_screen;
 
 Glyph* create_screen(void) {
     Glyph* newScreen = calloc(SCREEN_WIDTH * SCREEN_HEIGHT, sizeof(Glyph));

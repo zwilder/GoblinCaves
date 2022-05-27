@@ -215,9 +215,7 @@ void place_border(void) {
  * Dungeon creation
  ******************/
 void draw_dungeon(void) {
-    int x, y, i;
-    Vec2i a, b;
-    Rect roomA, roomB;
+    int x, y;
     for(x = 0; x < MAP_WIDTH; x++) {
         for(y = 0; y < MAP_HEIGHT; y++) {
             place_tile(make_vec(x,y), TILE_WALL);

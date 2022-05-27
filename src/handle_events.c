@@ -50,6 +50,12 @@ int handle_keyboard(int input) {
         case 'c':
             output = EV_CLOSE;
             break;
+        case '>':
+            output = EV_DN;
+            break;
+        case '<':
+            output = EV_UP;
+            break;
         case 'q':
             if(yn_prompt("Are you sure you want to quit?", BLACK, WHITE)) {
                 output = EV_QUIT; 
