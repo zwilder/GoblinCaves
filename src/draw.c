@@ -20,12 +20,9 @@ int get_screen_index(int x, int y) {
     return (x + (SCREEN_WIDTH * y));
 }
 
-void draw_screen(void) {
-    int x, y, index, screenIndex, mapIndex;
-    Vec2i camera, screenpos, mappos;
+Vec2i get_camera(void) {
+    Vec2i camera;
 
-    Glyph *screen = create_screen();
-    
     /* Get the camera */
     camera.x = g_player->pos.x - (SCREEN_WIDTH / 2);
     camera.y = g_player->pos.y - (SCREEN_HEIGHT / 2);
@@ -38,6 +35,7 @@ void draw_screen(void) {
     } else {
         camera.x = g_player->pos.x - (SCREEN_WIDTH / 2);
     }
+
     if(g_player->pos.y < (SCREEN_HEIGHT / 2)) {
         camera.y = 0;
     } else if (g_player->pos.y >= MAP_HEIGHT - (SCREEN_HEIGHT / 2)) {
@@ -46,6 +44,15 @@ void draw_screen(void) {
         camera.y = g_player->pos.y - (SCREEN_HEIGHT / 2);
     }
 
+    return camera;
+}
+void draw_screen(void) {
+    int x, y, index, screenIndex, mapIndex;
+    Vec2i screenpos, mappos;
+    Vec2i camera = get_camera();
+
+    Glyph *screen = create_screen();
+    
     /* draw the map (tiles) on the screen */
     for(x = 0; x < MAP_WIDTH; x++) {
         for(y = 0; y < MAP_HEIGHT; y++) {

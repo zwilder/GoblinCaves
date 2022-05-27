@@ -30,6 +30,9 @@ void calculate_fov(float x, float y) {
 
     for(i = 0; i < g_player->fovRadius; i++) {
         mapIndex = get_map_index((int)ox,(int)oy);
+        if(mapIndex > (MAP_WIDTH * MAP_HEIGHT - 1)){
+            break;
+        }
         g_map[mapIndex].flags |= TF_VIS;
         if(check_flag(g_map[mapIndex].flags, TF_BLK_LT)) {
             return;

@@ -22,9 +22,16 @@ Tile tileTable[NUM_TILES] =
     {{'+', BROWN, BLACK}            , {0,0}, (TF_BLK_MV | TF_BLK_LT | TF_CDOOR)},
     {{'/', BROWN, BLACK}            , {0,0}, (TF_ODOOR)},
     {{'*', BRIGHT_BLACK, BLACK}     , {0,0}, (TF_BLK_MV | TF_BLK_LT)},
-    {{'~', BRIGHT_CYAN, BLUE}       , {0,0}, (TF_BLK_MV)},
+    {{'~', BRIGHT_CYAN, BLUE}       , {0,0}, (TF_WATER)},
     {{'<', WHITE, BLACK}            , {0,0}, (TF_UP)},
-    {{'>', WHITE, BLACK}            , {0,0}, (TF_DN)}
+    {{'>', WHITE, BLACK}            , {0,0}, (TF_DN)},
+    {{'0', WHITE, BLACK}            , {0,0}, (TF_BLK_MV | TF_BLK_LT)},
+    {{'\"', GREEN, BLACK}           , {0,0}, (TF_NONE)},
+    {{'\'', BRIGHT_GREEN, BLACK}    , {0,0}, (TF_NONE)},
+    {{';', GREEN, BLACK}            , {0,0}, (TF_NONE)},
+    {{'T', GREEN, BLACK}            , {0,0}, (TF_BLK_MV | TF_BLK_LT)},
+    {{'_', BRIGHT_BLACK, BLACK}     , {0,0}, (TF_ALTAR)}
+
 };
 
 /**************************
@@ -58,6 +65,10 @@ int get_map_index(int x, int y) {
 
 char get_glyphch_at(int x, int y) {
     return g_map[get_map_index(x,y)].glyph.ch;
+}
+
+int get_glyphbg_at(int x, int y) {
+    return g_map[get_map_index(x,y)].glyph.bg;
 }
 
 Glyph get_glyph_at(int x, int y) {
@@ -114,6 +125,154 @@ void place_room(Rect room) {
             }
         }
     }
+
+    /* This would be cool if it rolled on a table to place features */
+    i = mt_rand(1,20);
+    switch(i){
+        case 1: place_pillars(room); break;
+        case 2: place_marsh(room); break;
+        case 3: place_altar(room); break;
+        case 4: 
+        case 5: 
+        case 6: 
+        case 7:
+        case 8:
+        case 9:
+        case 10: round_room(room); break;
+        default: break;
+    }
+}
+
+void place_marsh(Rect room) {
+    /*           1
+     * 01234567890
+     * ########### 0
+     * #.........# 1
+     * #."..~"'..# 2
+     * #...~~~.;.# 3
+     * #....~....# 4
+     * #.".......# 5
+     * ########### 6
+     *
+     */
+    int x,y,i;
+    Vec2i center = get_center(room);
+    for(x = room.pos.x + 1; x <= room.pos.x + room.dim.x - 1; x++){
+        for(y=room.pos.y + 1; y <= room.pos.y + room.dim.y - 1; y++) {
+            i = mt_rand(1,9);
+            switch(i){
+                case 1: place_tile(make_vec(x,y), TILE_PLANT); break;
+                case 2: place_tile(make_vec(x,y), TILE_GRASS); break;
+                case 3: place_tile(make_vec(x,y), TILE_SHRUB); break;
+                case 4: 
+                case 5: 
+                case 6: 
+                case 7: 
+                case 8: 
+                case 9: place_tile(make_vec(x,y), TILE_WATER); break;
+                default: break;
+            }
+        }
+    }
+    /* Run some automata */
+    i = 0;
+    while(i < 4) {
+        for(x = room.pos.x + 1; x <= room.pos.x + room.dim.x - 1; x++){
+            for(y=room.pos.y + 1; y <= room.pos.y + room.dim.y - 1; y++) {
+               if(count_neighbors(make_vec(x,y), '~') >= 4) {
+                    place_tile(make_vec(x,y), TILE_WATER);
+               } 
+            }
+        }
+        i++;
+    }
+}
+
+void place_altar(Rect room) {
+    /*           1
+     * 01234567890
+     * ########### 0
+     * #..~0.0~..# 1
+     * #..0...0..# 2
+     * #...._....# 3
+     * #..0...0..# 4
+     * #..~0.0~..# 5
+     * ########### 6
+     *
+     */
+    int x,y;
+    Vec2i center = get_center(room);
+    if(room.dim.x < 6) {
+        return;
+    }
+    if(room.dim.y < 6) {
+        return;
+    }
+
+    place_tile(center, TILE_ALTAR);
+    place_tile(make_vec(center.x - 2, center.y - 2), TILE_WATER);
+    place_tile(make_vec(center.x + 2, center.y - 2), TILE_WATER);
+    place_tile(make_vec(center.x - 2, center.y + 2), TILE_WATER);
+    place_tile(make_vec(center.x + 2, center.y + 2), TILE_WATER);
+
+    place_tile(make_vec(center.x - 2, center.y - 1), TILE_PILLAR);
+    place_tile(make_vec(center.x - 1, center.y - 2), TILE_PILLAR);
+    place_tile(make_vec(center.x + 1, center.y - 2), TILE_PILLAR);
+    place_tile(make_vec(center.x + 2, center.y - 1), TILE_PILLAR);
+    place_tile(make_vec(center.x - 2, center.y + 1), TILE_PILLAR);
+    place_tile(make_vec(center.x - 1, center.y + 2), TILE_PILLAR);
+    place_tile(make_vec(center.x + 2, center.y + 1), TILE_PILLAR);
+    place_tile(make_vec(center.x + 1, center.y + 2), TILE_PILLAR);
+}
+
+void place_pillars(Rect room) {
+    /*           1
+     * 01234567890
+     * ########### 0
+     * #.........# 1
+     * #.0.0.0.0.# 2
+     * #.........# 3
+     * #.0.0.0.0.# 4
+     * #.........# 5
+     * ########### 6
+     *
+     * x,y dimensions have to be odd
+     */
+    int x,y;
+    /*
+    x = room.dim.x + room.pos.x;
+    x = room.dim.y + room.pos.y;
+    if((x % 2) == 0) {
+
+        return;
+    }
+    if((y % 2) == 0) {
+        return;
+    }
+    */
+    /* Only even rows after 0 get pillars */
+    for(x = room.pos.x + 2; x <= room.pos.x + room.dim.x - 2; x += 2){
+        for(y=room.pos.y + 2; y <= room.pos.y + room.dim.y - 2; y += 2) {
+            place_tile(make_vec(x,y), TILE_PILLAR);
+        }
+    }
+}
+
+void round_room(Rect room) {
+    /* chance to round corners */
+    /*
+     * p.x,p.y               p.x+d.x,p.y
+     *
+     *
+     * p.x,p.y+d.y           p.x+d.x,p.y+d.y
+     */
+    place_tile(make_vec(room.pos.x + 1, room.pos.y + 1), TILE_WALL);
+    place_tile(make_vec(room.pos.x + 1,
+                room.pos.y + room.dim.y - 1), TILE_WALL);
+    place_tile(make_vec(room.pos.x + room.dim.x - 1,
+                room.pos.y + room.dim.y - 1), TILE_WALL);
+    place_tile(make_vec(room.pos.x + room.dim.x - 1,
+                    room.pos.y + 1), TILE_WALL);
 }
 
 void place_htunnel(int x1, int x2, int y) {
@@ -122,7 +281,9 @@ void place_htunnel(int x1, int x2, int y) {
     int max = (x1 > x2 ? x1 : x2);
     for(i = min; i <= max; ++i)
     {
-        place_tile(make_vec(i,y), TILE_FLOOR);
+        if(get_glyphch_at(i,y) == '#') {
+            place_tile(make_vec(i,y), TILE_FLOOR);
+        }
     }
 }
 
@@ -132,7 +293,9 @@ void place_vtunnel(int y1, int y2, int x) {
     int max = (y1 > y2 ? y1 : y2);
     for(i = min; i <= max; ++i)
     {
-        place_tile(make_vec(x,i), TILE_FLOOR);
+        if(get_glyphch_at(x,i) == '#') {
+            place_tile(make_vec(x,i), TILE_FLOOR);
+        }
     }
 }
 
@@ -163,7 +326,9 @@ void place_orthogonal_tunnel(Vec2i a, Vec2i b) {
             p.y += signy;
             iy++;
         }
-        place_tile(p,TILE_FLOOR);
+        if(get_glyphch_at(p.x,p.y) == '#') {
+            place_tile(p,TILE_FLOOR);
+        }
     }
 }
 
@@ -304,7 +469,9 @@ void make_basic_dungeon(void) {
     }
 
     place_tile(get_center(rooms[mt_rand(0,i-1)]), TILE_DN);
+    /*
     place_tile(get_center(rooms[i]), TILE_UP);
+    */
     g_player->pos = get_center(rooms[i]); 
 }
 

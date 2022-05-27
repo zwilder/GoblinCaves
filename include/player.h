@@ -6,6 +6,7 @@ typedef struct {
     Vec2i dpos;
     Glyph glyph;
     int fovRadius;
+    int dungeonLvl;
 } Player;
 
 /********************

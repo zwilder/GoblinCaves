@@ -41,6 +41,7 @@ void player_move(void) {
         /* Tile does not block movement */
         g_player->pos.y = g_player->dpos.y;
         g_player->pos.x = g_player->dpos.x;
+        g_player->glyph.bg = get_glyphbg_at(dpos.x,dpos.y);
         update_fov();
     }
 }
@@ -73,6 +74,6 @@ void close_door(Vec2i pos) {
 
 void change_level(int shift) {
    /* Eventually this will change the current level up/down by shift */
-   draw_dungeon(); 
-   update_fov();
+    draw_dungeon(); 
+    update_fov();
 }

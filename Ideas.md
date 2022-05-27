@@ -100,7 +100,7 @@ would have eventually arrived at yourself:
 enemy be cut in to two pieces, or have their corpse be obliterated in to just a
 "bloody mess" on the floor. You could develop this further if you wanted to
 attempt to implement limbs and potential decapitation. 
-- the fireball animations were a bit hit, if you can animate the result of
+- the fireball animations were a big hit, if you can animate the result of
   attacks to have a similar impact on the world (blood splatters, damaged
 flooring, etc) you provide the player with a greater sense of agency, even in
 ASCII art. 

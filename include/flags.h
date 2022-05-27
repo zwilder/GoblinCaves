@@ -14,7 +14,9 @@ typedef enum {
     TF_ODOOR           = 1 << 5,
     TF_CDOOR           = 1 << 6,
     TF_UP              = 1 << 7,
-    TF_DN              = 1 << 8
+    TF_DN              = 1 << 8,
+    TF_WATER           = 1 << 9,
+    TF_ALTAR           = 1 << 10
 } TileFlags;
 
 typedef enum {
@@ -26,18 +28,6 @@ typedef enum {
     EV_DN              = 1 << 5,
     EV_UP              = 1 << 6
 } EventFlags;
-
-typedef enum {
-    TILE_FLOOR = 0,
-    TILE_WALL,
-    TILE_CDOOR,
-    TILE_ODOOR,
-    TILE_ROCK,
-    TILE_WATER,
-    TILE_UP,
-    TILE_DN,
-    NUM_TILES
-} TileTypes;
 
 bool check_flag(int mask, int flag);
 int toggle_flag(int mask, int flag);
