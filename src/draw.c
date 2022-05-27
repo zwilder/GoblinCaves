@@ -63,12 +63,18 @@ void draw_screen(void) {
                  * segfaults without it */
                 break;
             }
-            if((g_map[mapIndex].flags & TF_VIS) == TF_VIS) {
-                g_map[mapIndex].flags |= TF_EXP;
-                screen[index] = g_map[mapIndex].glyph;
-            } else if ((g_map[mapIndex].flags & TF_EXP) == TF_EXP) {
-                screen[index].ch = g_map[mapIndex].glyph.ch;
-                screen[index].fg = BLUE;
+            if(is_visible(x,y)) {
+                mark_explored(x,y);
+                screen[index] = get_glyph_at(x,y);
+            } else if(is_explored(x,y)) {
+                screen[index] = get_glyph_at(x,y);
+                if(get_glyphch_at(x,y) == '#' ||
+                        get_glyphch_at(x,y) == '<' ||
+                        get_glyphch_at(x,y) == '>') {
+                    screen[index].fg = BLUE;
+                } else {
+                    screen[index].fg = BLACK;
+                }
                 screen[index].bg = BLACK;
             }
         }

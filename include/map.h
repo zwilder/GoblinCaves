@@ -21,7 +21,11 @@ void destroy_map(void);
  * Assistance functions
  **********************/
 int get_map_index(int x, int y);
-char get_glyph_at(int x, int y);
+char get_glyphch_at(int x, int y);
+Glyph get_glyph_at(int x, int y);
+bool is_visible(int x, int y);
+bool is_explored(int x, int y);
+void mark_explored(int x, int y);
 int count_neighbors(Vec2i pos, char a);
 
 /*******************

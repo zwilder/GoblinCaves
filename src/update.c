@@ -14,10 +14,10 @@ int update(int events) {
         events = remove_flag(events, EV_CLOSE);
     }
     if(check_flag(events, EV_DN) || check_flag(events, EV_UP)) {
-        if(get_glyph_at(g_player->pos.x,g_player->pos.y) == '>') {
+        if(get_glyphch_at(g_player->pos.x,g_player->pos.y) == '>') {
             change_level(1);
             events = remove_flag(events, EV_DN);
-        } else if(get_glyph_at(g_player->pos.x, g_player->pos.y) == '<') {
+        } else if(get_glyphch_at(g_player->pos.x, g_player->pos.y) == '<') {
             change_level(-1);
             events = remove_flag(events, EV_UP);
         }

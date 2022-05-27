@@ -18,6 +18,7 @@
 #include <vec2i.h>
 #include <rect.h>
 #include <flags.h>
+#include <tree.h>
 
 /***********************
  * Major data structures
@@ -41,12 +42,11 @@ Effect, Pickup. */
 #include <handle_events.h>
 #include <update.h>
 #include <draw.h>
+#include <fov.h>
 
 /**********
  * The rest
  **********/
-#include <tree.h>
-#include <fov.h>
 #include <log.h>
 
 #endif

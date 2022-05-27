@@ -56,8 +56,12 @@ int get_map_index(int x, int y) {
     return (x * MAP_HEIGHT + y);
 }
 
-char get_glyph_at(int x, int y) {
+char get_glyphch_at(int x, int y) {
     return g_map[get_map_index(x,y)].glyph.ch;
+}
+
+Glyph get_glyph_at(int x, int y) {
+    return g_map[get_map_index(x,y)].glyph;
 }
 
 int count_neighbors(Vec2i pos, char a) {
@@ -65,12 +69,25 @@ int count_neighbors(Vec2i pos, char a) {
     int count = 0;
     for(x = pos.x - 1; x < pos.x + 1; x++) {
         for(y = pos.y - 1; y < pos.y + 1; y++) {
-            if(get_glyph_at(x,y) == a) {
+            if(get_glyphch_at(x,y) == a) {
                 count++;
             }
         }
     }
     return count;
+}
+
+bool is_visible(int x, int y) {
+    return check_flag(g_map[get_map_index(x,y)].flags, TF_VIS);
+}
+
+bool is_explored(int x, int y) {
+    return check_flag(g_map[get_map_index(x,y)].flags, TF_EXP);
+}
+
+void mark_explored(int x, int y) {
+    g_map[get_map_index(x,y)].flags =
+        engage_flag(g_map[get_map_index(x,y)].flags, TF_EXP);
 }
 
 /*******************
@@ -163,25 +180,25 @@ void place_corridor(Vec2i a, Vec2i b) {
 }
 
 void place_hdoor(int x, int y) {
-    if(get_glyph_at(x,y) == '.' &&
-            get_glyph_at(x - 1, y) == '#' &&
-            get_glyph_at(x + 1, y) == '#' &&
-            get_glyph_at(x, y - 1) != '+' &&
-            get_glyph_at(x, y - 1) != '/' &&
-            get_glyph_at(x, y + 1) != '+' &&
-            get_glyph_at(x, y + 1) != '/') {
+    if(get_glyphch_at(x,y) == '.' &&
+            get_glyphch_at(x - 1, y) == '#' &&
+            get_glyphch_at(x + 1, y) == '#' &&
+            get_glyphch_at(x, y - 1) != '+' &&
+            get_glyphch_at(x, y - 1) != '/' &&
+            get_glyphch_at(x, y + 1) != '+' &&
+            get_glyphch_at(x, y + 1) != '/') {
         place_tile(make_vec(x,y), (mt_chance(20) ? TILE_CDOOR : TILE_ODOOR));
     }
 }
 
 void place_vdoor(int x, int y) {
-    if(get_glyph_at(x,y) == '.' &&
-            get_glyph_at(x, y - 1) == '#' &&
-            get_glyph_at(x, y + 1) == '#' &&
-            get_glyph_at(x - 1, y) != '+' &&
-            get_glyph_at(x - 1, y) != '/' &&
-            get_glyph_at(x + 1, y) != '+' &&
-            get_glyph_at(x + 1, y) != '/') {
+    if(get_glyphch_at(x,y) == '.' &&
+            get_glyphch_at(x, y - 1) == '#' &&
+            get_glyphch_at(x, y + 1) == '#' &&
+            get_glyphch_at(x - 1, y) != '+' &&
+            get_glyphch_at(x - 1, y) != '/' &&
+            get_glyphch_at(x + 1, y) != '+' &&
+            get_glyphch_at(x + 1, y) != '/') {
         place_tile(make_vec(x,y), (mt_chance(20) ? TILE_CDOOR : TILE_ODOOR));
     }
 }
