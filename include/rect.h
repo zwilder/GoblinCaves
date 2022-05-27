@@ -14,5 +14,4 @@ bool point_in_rect(Rect a, Vec2i b);
 bool rect_intersect(Rect a, Rect b);
 Vec2i get_center(Rect a);
 
-
 #endif

@@ -27,13 +27,9 @@ Tile tileTable[NUM_TILES] =
     {{'>', WHITE, BLACK}            , {0,0}, (TF_DN)}
 };
 
-void place_tile(Vec2i pos, int type) {
-    int index = get_map_index(pos.x,pos.y);
-    g_map[index] = tileTable[type];
-    g_map[index].pos.x = pos.x;
-    g_map[index].pos.y = pos.y;
-}
-
+/**************************
+ * Map creation/destruction
+ **************************/
 Tile* create_map(void) {
     int i, x, y;
 
@@ -45,43 +41,46 @@ Tile* create_map(void) {
     return newMap;
 }
 
+void destroy_map(void) {
+    int x,y;
+    if(NULL != g_map) {
+        log_map();
+        free(g_map);
+    }
+}
+
+/**********************
+ * Assistance functions
+ **********************/
 int get_map_index(int x, int y) {
     return (x * MAP_HEIGHT + y);
 }
-void draw_dungeon(void) {
-    /* Simple hardcoded two rooms, procedural generation t'later */
-    int x, y, i;
-    Vec2i a, b;
-    Rect roomA, roomB;
-    for(x = 0; x < MAP_WIDTH; x++) {
-        for(y = 0; y < MAP_HEIGHT; y++) {
-            place_tile(make_vec(x,y), TILE_WALL);
+
+char get_glyph_at(int x, int y) {
+    return g_map[get_map_index(x,y)].glyph.ch;
+}
+
+int count_neighbors(Vec2i pos, char a) {
+    int x,y;
+    int count = 0;
+    for(x = pos.x - 1; x < pos.x + 1; x++) {
+        for(y = pos.y - 1; y < pos.y + 1; y++) {
+            if(get_glyph_at(x,y) == a) {
+                count++;
+            }
         }
     }
-    place_border();
+    return count;
+}
 
-    /*
-    roomA.pos.x = 1;
-    roomA.pos.y = 1;
-    roomA.dim.x = 15;
-    roomA.dim.y = 15;
-    place_room(roomA);
-
-    roomB.pos.x = 42;
-    roomB.pos.y = 3;
-    roomB.dim.x = 17;
-    roomB.dim.y = 12;
-    place_room(roomB);
-
-    a = make_vec(15,mt_rand(2,14));
-    b = make_vec(43,mt_rand(4,11));
-    place_corridor(b,a);
-
-    g_player->pos = get_center(roomA);
-    write_log("Finished making dungeon!");
-    */
-
-    make_basic_dungeon();
+/*******************
+ * Feature placement
+ *******************/
+void place_tile(Vec2i pos, int type) {
+    int index = get_map_index(pos.x,pos.y);
+    g_map[index] = tileTable[type];
+    g_map[index].pos.x = pos.x;
+    g_map[index].pos.y = pos.y;
 }
 
 void place_room(Rect room) {
@@ -163,6 +162,72 @@ void place_corridor(Vec2i a, Vec2i b) {
     }
 }
 
+void place_hdoor(int x, int y) {
+    if(get_glyph_at(x,y) == '.' &&
+            get_glyph_at(x - 1, y) == '#' &&
+            get_glyph_at(x + 1, y) == '#' &&
+            get_glyph_at(x, y - 1) != '+' &&
+            get_glyph_at(x, y - 1) != '/' &&
+            get_glyph_at(x, y + 1) != '+' &&
+            get_glyph_at(x, y + 1) != '/') {
+        place_tile(make_vec(x,y), (mt_chance(20) ? TILE_CDOOR : TILE_ODOOR));
+    }
+}
+
+void place_vdoor(int x, int y) {
+    if(get_glyph_at(x,y) == '.' &&
+            get_glyph_at(x, y - 1) == '#' &&
+            get_glyph_at(x, y + 1) == '#' &&
+            get_glyph_at(x - 1, y) != '+' &&
+            get_glyph_at(x - 1, y) != '/' &&
+            get_glyph_at(x + 1, y) != '+' &&
+            get_glyph_at(x + 1, y) != '/') {
+        place_tile(make_vec(x,y), (mt_chance(20) ? TILE_CDOOR : TILE_ODOOR));
+    }
+}
+
+void place_doors(Rect room) {
+    int x,y;
+    Vec2i pos;
+    for(x = room.pos.x; x < room.pos.x + room.dim.x; x++) {
+        place_hdoor(x,room.pos.y);
+        place_hdoor(x, room.pos.y + room.dim.y);
+    }
+    for(y = room.pos.y; y < room.pos.y + room.dim.y; y++) {
+        place_vdoor(room.pos.x, y);
+        place_vdoor(room.pos.x + room.dim.x, y);
+    }
+}
+
+void place_border(void) {
+    int i, x, y;
+    for(x = 0; x < MAP_WIDTH; x++) {
+        place_tile(make_vec(x,0), TILE_ROCK);
+        place_tile(make_vec(x, MAP_HEIGHT - 1), TILE_ROCK);
+    }
+    for(y = 0; y < MAP_HEIGHT; y++) {
+        place_tile(make_vec(0,y), TILE_ROCK);
+        place_tile(make_vec(MAP_WIDTH - 1, y), TILE_ROCK);
+    }
+}
+
+/******************
+ * Dungeon creation
+ ******************/
+void draw_dungeon(void) {
+    int x, y, i;
+    Vec2i a, b;
+    Rect roomA, roomB;
+    for(x = 0; x < MAP_WIDTH; x++) {
+        for(y = 0; y < MAP_HEIGHT; y++) {
+            place_tile(make_vec(x,y), TILE_WALL);
+        }
+    }
+    place_border();
+
+    make_basic_dungeon();
+}
+
 void make_basic_dungeon(void) {
     int x,y,w,h,i;
     Rect newRoom;
@@ -228,76 +293,3 @@ void make_basic_dungeon(void) {
     g_player->pos = get_center(rooms[i]); 
 }
 
-void place_hdoor(int x, int y) {
-    if(get_glyph_at(x,y) == '.' &&
-            get_glyph_at(x - 1, y) == '#' &&
-            get_glyph_at(x + 1, y) == '#' &&
-            get_glyph_at(x, y - 1) != '+' &&
-            get_glyph_at(x, y - 1) != '/' &&
-            get_glyph_at(x, y + 1) != '+' &&
-            get_glyph_at(x, y + 1) != '/') {
-        place_tile(make_vec(x,y), (mt_chance(20) ? TILE_CDOOR : TILE_ODOOR));
-    }
-}
-
-void place_vdoor(int x, int y) {
-    if(get_glyph_at(x,y) == '.' &&
-            get_glyph_at(x, y - 1) == '#' &&
-            get_glyph_at(x, y + 1) == '#' &&
-            get_glyph_at(x - 1, y) != '+' &&
-            get_glyph_at(x - 1, y) != '/' &&
-            get_glyph_at(x + 1, y) != '+' &&
-            get_glyph_at(x + 1, y) != '/') {
-        place_tile(make_vec(x,y), (mt_chance(20) ? TILE_CDOOR : TILE_ODOOR));
-    }
-}
-
-void place_doors(Rect room) {
-    int x,y;
-    Vec2i pos;
-    for(x = room.pos.x; x < room.pos.x + room.dim.x; x++) {
-        place_hdoor(x,room.pos.y);
-        place_hdoor(x, room.pos.y + room.dim.y);
-    }
-    for(y = room.pos.y; y < room.pos.y + room.dim.y; y++) {
-        place_vdoor(room.pos.x, y);
-        place_vdoor(room.pos.x + room.dim.x, y);
-    }
-}
-
-int count_neighbors(Vec2i pos, char a) {
-    int x,y;
-    int count = 0;
-    for(x = pos.x - 1; x < pos.x + 1; x++) {
-        for(y = pos.y - 1; y < pos.y + 1; y++) {
-            if(get_glyph_at(x,y) == a) {
-                count++;
-            }
-        }
-    }
-    return count;
-}
-
-char get_glyph_at(int x, int y) {
-    return g_map[get_map_index(x,y)].glyph.ch;
-}
-
-void place_border(void) {
-    int i, x, y;
-    for(x = 0; x < MAP_WIDTH; x++) {
-        place_tile(make_vec(x,0), TILE_ROCK);
-        place_tile(make_vec(x, MAP_HEIGHT - 1), TILE_ROCK);
-    }
-    for(y = 0; y < MAP_HEIGHT; y++) {
-        place_tile(make_vec(0,y), TILE_ROCK);
-        place_tile(make_vec(MAP_WIDTH - 1, y), TILE_ROCK);
-    }
-}
-
-void destroy_map(void) {
-    int x,y;
-    if(NULL != g_map) {
-        log_map();
-        free(g_map);
-    }
-}
