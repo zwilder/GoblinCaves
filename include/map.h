@@ -7,6 +7,16 @@ typedef struct {
     TileFlags flags;
 } Tile;
 
+struct Map {
+    /* Note: Map is a double linked list */
+    Tile *tiles;
+    int lvl;
+    struct Map *prev;
+    struct Map *next;
+};
+
+typedef struct Map Map;
+
 typedef enum {
     TILE_FLOOR = 0,
     TILE_WALL,
@@ -30,6 +40,16 @@ typedef enum {
  * map.c functions
  *****************/
 
+/*
+ * map.h MIGHT eventually be chonky, and better split into
+ * the following files and related .c files
+ * dungeon.h - Dungeon building functions
+ *             (eg draw_dungeon(), make_basic_dungeon())
+ * features.h - feature placement functions
+ * map.h - map specific functions (eg get_map_index(), is_explored())
+ * glyph.h - glyph specific functions (eg get_glyph_at() and relatives)
+ */
+
 /**************************
  * Map creation/destruction
  **************************/
@@ -42,7 +62,13 @@ void destroy_map(void);
 int get_map_index(int x, int y);
 char get_glyphch_at(int x, int y);
 Glyph get_glyph_at(int x, int y);
+void set_glyphch_at(int x, int y, char ch);
 int get_glyphbg_at(int x, int y);
+int get_tflags_at(int x, int y);
+void set_tflags_at(int x, int y, int mask); 
+void remove_tflags_at(int x, int y, int flags);
+void engage_tflags_at(int x, int y, int flags);
+bool check_tflags_at(int x, int y, int flags);
 bool is_visible(int x, int y);
 bool is_explored(int x, int y);
 void mark_explored(int x, int y);

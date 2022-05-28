@@ -27,10 +27,10 @@ int update(int events) {
 
 void player_move(void) {
     Vec2i dpos = g_player->dpos;
-    int mapIndex = get_map_index(dpos.x,dpos.y);
-    int dposMask = g_map[mapIndex].flags;
     /* Will check for entities at location here */
     /* Check tile at location */
+    int dposMask = get_tflags_at(dpos.x,dpos.y);
+
     if(check_flag(dposMask, TF_BLK_MV)){
         /* Tile blocks movment, is it a door? */
         if(check_flag(dposMask, TF_CDOOR)) {
@@ -47,27 +47,25 @@ void player_move(void) {
 }
 
 void open_door(Vec2i pos) {
-    int mapIndex = get_map_index(pos.x,pos.y);
-    int mask = g_map[mapIndex].flags;
+    int mask = get_tflags_at(pos.x,pos.y);
     /*check to see if there is even a closed door at the location first */
     if(check_flag(mask, TF_CDOOR)) {
         mask = remove_flag(mask, TF_CDOOR | TF_BLK_MV | TF_BLK_LT);
         mask = engage_flag(mask, TF_ODOOR);
-        g_map[mapIndex].flags = mask;
-        g_map[mapIndex].glyph.ch = '/';
+        set_tflags_at(pos.x,pos.y, mask);
+        set_glyphch_at(pos.x,pos.y, '/');
         update_fov();
     }
 }
 
 void close_door(Vec2i pos) {
-    int mapIndex = get_map_index(pos.x,pos.y);
-    int mask = g_map[mapIndex].flags;
+    int mask = get_tflags_at(pos.x,pos.y);
     /*check to see if there is even an open door at the location first */
     if(check_flag(mask, TF_ODOOR)) {
         mask = remove_flag(mask, TF_ODOOR);
         mask = engage_flag(mask, TF_CDOOR | TF_BLK_MV | TF_BLK_LT);
-        g_map[mapIndex].flags = mask;
-        g_map[mapIndex].glyph.ch = '+';
+        set_tflags_at(pos.x,pos.y, mask);
+        set_glyphch_at(pos.x, pos.y, '+');
         update_fov();
     }
 }

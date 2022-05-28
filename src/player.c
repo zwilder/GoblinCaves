@@ -13,7 +13,6 @@ Player* create_player(Vec2i pos) {
     newPlayer->glyph.fg = BRIGHT_WHITE; 
     newPlayer->glyph.bg = BLACK;
     newPlayer->fovRadius = 6;
-    newPlayer->dungeonLvl = 1;
     
     return newPlayer;
 }

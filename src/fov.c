@@ -7,11 +7,13 @@
 
 void update_fov(void) {
     float x,y;
-    int i;
+    int i,j;
 
     /* Set all tiles to not visible */
-    for(i = 0; i < MAP_WIDTH * MAP_HEIGHT; i++) {
-        g_map[i].flags  &= ~TF_VIS;
+    for(i = 0; i < MAP_WIDTH; i++) {
+        for(j = 0; j < MAP_HEIGHT; j++) {
+            remove_tflags_at(i,j, TF_VIS);
+        }
     }
 
     for(i = 0; i < 360; i++){
@@ -33,8 +35,8 @@ void calculate_fov(float x, float y) {
         if(mapIndex > (MAP_WIDTH * MAP_HEIGHT - 1)){
             break;
         }
-        g_map[mapIndex].flags |= TF_VIS;
-        if(check_flag(g_map[mapIndex].flags, TF_BLK_LT)) {
+        engage_tflags_at((int)ox,(int)oy, TF_VIS);
+        if(check_tflags_at((int)ox,(int)oy, TF_BLK_LT)){
             return;
         }
         ox += x;

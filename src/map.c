@@ -75,6 +75,30 @@ Glyph get_glyph_at(int x, int y) {
     return g_map[get_map_index(x,y)].glyph;
 }
 
+void set_glyphch_at(int x, int y, char ch) {
+    g_map[get_map_index(x,y)].glyph.ch = ch;
+}
+
+int get_tflags_at(int x, int y) {
+    return g_map[get_map_index(x,y)].flags;
+}
+
+void remove_tflags_at(int x, int y, int flags) {
+    set_tflags_at(x,y, remove_flag(get_tflags_at(x,y), flags));
+}
+
+void engage_tflags_at(int x, int y, int flags) {
+    set_tflags_at(x,y, engage_flag(get_tflags_at(x,y), flags));
+}
+
+void set_tflags_at(int x, int y, int mask) {
+    g_map[get_map_index(x,y)].flags = mask;
+}
+
+bool check_tflags_at(int x, int y, int flags) {
+    return (check_flag(get_tflags_at(x,y), flags));
+}
+
 int count_neighbors(Vec2i pos, char a) {
     int x,y;
     int count = 0;
@@ -251,8 +275,8 @@ void place_pillars(Rect room) {
     }
     */
     /* Only even rows after 0 get pillars */
-    for(x = room.pos.x + 2; x <= room.pos.x + room.dim.x - 2; x += 2){
-        for(y=room.pos.y + 2; y <= room.pos.y + room.dim.y - 2; y += 2) {
+    for(x = room.pos.x + 2; x <= (room.pos.x + room.dim.x - 2); x += 2){
+        for(y=room.pos.y + 2; y <= (room.pos.y + room.dim.y - 2); y += 2) {
             place_tile(make_vec(x,y), TILE_PILLAR);
         }
     }
