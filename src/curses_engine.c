@@ -26,6 +26,7 @@ bool curses_setup(void) {
     noecho();
     curs_set(0);
     cbreak();
+    keypad(stdscr, true);
 
     if(has_colors()) {
         success = true;
@@ -89,7 +90,7 @@ bool yn_prompt(char* msg, Color fg, Color bg) {
     int msglength = strlen(msg);
     int i,j,x,y;
     int boxHeight = 1;
-    char input;
+    int input;
     x = (COLS / 2) - (msglength / 2);
     y = (LINES / 2);
     while(true) {

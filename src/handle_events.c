@@ -23,21 +23,25 @@ int handle_keyboard(int input) {
     int output = EV_NONE;
     Vec2i newPos = {g_player->pos.x, g_player->pos.y};
     switch(input) {
+        case KEY_UP:
         case 'k':
             /* up */
             newPos.y--;
             output = EV_MOVE;
             break;
+        case KEY_DOWN:
         case 'j':
             /* down */
             newPos.y++;
             output = EV_MOVE;
             break;
+        case KEY_LEFT:
         case 'h':
             /* left */
             newPos.x--;
             output = EV_MOVE;
             break;
+        case KEY_RIGHT:
         case 'l':
             /* right */
             newPos.x++;
