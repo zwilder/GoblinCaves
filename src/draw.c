@@ -75,9 +75,9 @@ void draw_screen(void) {
                 screen[index] = get_glyph_at(x,y);
             } else if(is_explored(x,y)) {
                 screen[index] = get_glyph_at(x,y);
-                if(get_glyphch_at(x,y) == '#' ||
-                        get_glyphch_at(x,y) == '<' ||
-                        get_glyphch_at(x,y) == '>') {
+                if(check_flag(get_tflags_at(x,y), TF_BLK_MV) ||
+                        check_flag(get_tflags_at(x,y), TF_UP) ||
+                        check_flag(get_tflags_at(x,y), TF_DN)) {
                     screen[index].fg = BLUE;
                 } else {
                     screen[index].fg = BLACK;

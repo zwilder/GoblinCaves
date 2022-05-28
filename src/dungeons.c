@@ -3,7 +3,7 @@
 /******************
  * Dungeon creation
  ******************/
-void draw_dungeon(void) {
+void create_dungeon(void) {
     int x, y;
     for(x = 0; x < MAP_WIDTH; x++) {
         for(y = 0; y < MAP_HEIGHT; y++) {
@@ -79,6 +79,7 @@ void make_basic_dungeon(void) {
     /*
     place_tile(get_center(rooms[i]), TILE_UP);
     */
+    place_tile(get_center(rooms[i]), TILE_FLOOR);
     g_player->pos = get_center(rooms[i]); 
 }
 

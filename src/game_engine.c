@@ -7,7 +7,7 @@ void engine_init(void) {
     Vec2i startPos = {1, 1};
     g_player = create_player(startPos);
     g_map = create_map();
-    draw_dungeon();
+    create_dungeon();
     update_fov();
     draw_screen();
 }

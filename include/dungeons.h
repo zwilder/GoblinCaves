@@ -4,7 +4,7 @@
 /******************
  * Dungeon creation
  ******************/
-void draw_dungeon(void);
+void create_dungeon(void);
 void make_basic_dungeon(void);
 
 #endif

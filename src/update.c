@@ -50,10 +50,7 @@ void open_door(Vec2i pos) {
     int mask = get_tflags_at(pos.x,pos.y);
     /*check to see if there is even a closed door at the location first */
     if(check_flag(mask, TF_CDOOR)) {
-        mask = remove_flag(mask, TF_CDOOR | TF_BLK_MV | TF_BLK_LT);
-        mask = engage_flag(mask, TF_ODOOR);
-        set_tflags_at(pos.x,pos.y, mask);
-        set_glyphch_at(pos.x,pos.y, '/');
+        place_tile(pos, TILE_ODOOR);
         update_fov();
     }
 }
@@ -62,16 +59,13 @@ void close_door(Vec2i pos) {
     int mask = get_tflags_at(pos.x,pos.y);
     /*check to see if there is even an open door at the location first */
     if(check_flag(mask, TF_ODOOR)) {
-        mask = remove_flag(mask, TF_ODOOR);
-        mask = engage_flag(mask, TF_CDOOR | TF_BLK_MV | TF_BLK_LT);
-        set_tflags_at(pos.x,pos.y, mask);
-        set_glyphch_at(pos.x, pos.y, '+');
+        place_tile(pos, TILE_CDOOR);
         update_fov();
     }
 }
 
 void change_level(int shift) {
    /* Eventually this will change the current level up/down by shift */
-    draw_dungeon(); 
+    create_dungeon(); 
     update_fov();
 }

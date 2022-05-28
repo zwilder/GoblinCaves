@@ -18,8 +18,8 @@ Tile tileTable[NUM_TILES] =
 {
     /* Glyph                        , Vec2i, TileFlags */
     {{'.', WHITE, BLACK}            , {0,0}, (TF_NONE)},
-    {{'#', WHITE, BLACK}            , {0,0}, (TF_BLK_MV | TF_BLK_LT)},
-    {{'+', BROWN, BLACK}            , {0,0}, (TF_BLK_MV | TF_BLK_LT | TF_CDOOR)},
+    {{'#', BROWN, BLACK}            , {0,0}, (TF_BLK_MV | TF_BLK_LT)},
+    {{'+', BLACK, BROWN}            , {0,0}, (TF_BLK_MV | TF_BLK_LT | TF_CDOOR)},
     {{'/', BROWN, BLACK}            , {0,0}, (TF_ODOOR)},
     {{'*', BRIGHT_BLACK, BLACK}     , {0,0}, (TF_BLK_MV | TF_BLK_LT)},
     {{'~', BRIGHT_CYAN, BLUE}       , {0,0}, (TF_WATER)},

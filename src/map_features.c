@@ -34,6 +34,21 @@ void place_room(Rect room) {
     }
 }
 
+void place_kitchen(Rect room) {
+    /*           1
+     * 01234567890
+     * ########### 0
+     * #oo.(&)nn.# 1
+     * #==.......# 2
+     * #oo.......# 3
+     * #.........# 4
+     * #.........# 5
+     * ########### 6
+     *
+     */
+}
+
+
 void place_marsh(Rect room) {
     /*           1
      * 01234567890
@@ -93,7 +108,7 @@ void place_altar(Rect room) {
      */
     int x,y;
     Vec2i center = get_center(room);
-    if(room.dim.x < 6) {
+    if(room.dim.x != 10) {
         return;
     }
     if(room.dim.y < 6) {
