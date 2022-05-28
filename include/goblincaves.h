@@ -47,6 +47,8 @@ Effect, Pickup. */
 /**********
  * The rest
  **********/
+#include <map_features.h>
+#include <dungeons.h>
 #include <log.h>
 
 #endif
