@@ -24,7 +24,7 @@ const int SCREEN_WIDTH = 80;
 const int SCREEN_HEIGHT = 24; 
 
 Glyph* create_screen(void) {
-    Glyph* newScreen = calloc(SCREEN_WIDTH * SCREEN_HEIGHT, sizeof(Glyph));
+    Glyph *newScreen = malloc(SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Glyph));
 
     for(int i = 0; i < (SCREEN_WIDTH * SCREEN_HEIGHT); i++) {
         newScreen[i].ch = ' ';
@@ -125,7 +125,9 @@ void draw_screen(void) {
             if(index > (SCREEN_WIDTH * SCREEN_HEIGHT - 1)) {
                 break;
             }
-            curses_draw(x,y, screen[index]);
+            if(screen[index].ch != ' ') {
+                curses_draw(x,y, screen[index]);
+            }
         }
     }
     free(screen);

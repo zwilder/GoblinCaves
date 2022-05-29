@@ -60,7 +60,7 @@ Tile* create_map(void) {
     int i, x, y;
 
     Tile tile = tileTable[TILE_FLOOR];
-    Tile* newMap = calloc(MAP_WIDTH * MAP_HEIGHT, sizeof(Tile));
+    Tile* newMap = malloc(MAP_WIDTH * MAP_HEIGHT * sizeof(Tile));
     for(i = 0; i < (MAP_WIDTH * MAP_HEIGHT); i++) {
         newMap[i] = tile;
     }

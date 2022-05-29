@@ -20,7 +20,7 @@
 #include <goblincaves.h>
 
 Player* create_player(Vec2i pos) {
-    Player* newPlayer = calloc(1, sizeof(Player));
+    Player* newPlayer = malloc(sizeof(Player));
 
     newPlayer->pos.y = pos.y;
     newPlayer->pos.x = pos.x;
