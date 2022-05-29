@@ -9,7 +9,7 @@ to have a "finished" game, although that would be a nice bonus.
 Requires make and ncurses, building only tested successfully on various flavors
 of linux.
 
-[![Run on Repl.it](https://repl.it/badge/github/zwilder/goblincaves)](https://repl.it/github/zwilder/goblincaves)
+[![Run on Repl.it](https://repl.it/badge/github/zwilder/goblincaves)](https://replit.com/@zwilder/goblincaves)
 ---
 
 Game commands:
