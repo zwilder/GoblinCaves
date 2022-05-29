@@ -1,2 +1,2 @@
-language = "c"
+language = "bash"
 run = "make fresh"
