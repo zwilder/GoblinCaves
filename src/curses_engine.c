@@ -127,10 +127,10 @@ void draw_menu(void) {
     int xoff = (COLS / 2) - (artWidth / 2);
     int yoff = (LINES / 2) - (artHeight / 2);
     erase();
-    setcolor(BRIGHT_BLACK,BLACK);
+    setcolor(BROWN,BLACK);
     mvprintw(yoff,xoff,"  __\\   /__\\|_____|   /_____\\  /\\/_________\\   /______");
     mvprintw(yoff + 1, xoff,"     \\ /          |  /       \\/             \\ /");
-    unsetcolor(BRIGHT_BLACK,BLACK);
+    unsetcolor(BROWN,BLACK);
     setcolor(BRIGHT_GREEN,BLACK);
     mvprintw(yoff + 2, xoff," _______  _______ |/_____   _       ________\\/");
     mvprintw(yoff + 3, xoff,"(  ____ \\(  ___  )(  ___ \\ ( \\      \\__   __/( (    /|");
@@ -148,10 +148,10 @@ void draw_menu(void) {
     mvprintw(yoff + 15, xoff,"    | (____/\\| )   ( |  \\   /  | (____/\\/\\____) |");
     mvprintw(yoff + 16, xoff,"    (_______/|/ /|  \\|   \\_/   (_______/\\_______) /\\");
     unsetcolor(BRIGHT_GREEN,BLACK);
-    setcolor(BRIGHT_BLACK,BLACK);
+    setcolor(BROWN,BLACK);
     mvprintw(yoff + 17, xoff,"    /\\         / |      /\\               /\\      /  \\");
     mvprintw(yoff + 18, xoff,"___/  \\___/ \\_/  |_____/  \\|\\______/\\___/  \\____/    \\");
-    unsetcolor(BRIGHT_BLACK,BLACK);
+    unsetcolor(BROWN,BLACK);
     setcolor(BRIGHT_WHITE,BLACK);
     mvprintw(yoff + 19, xoff,"[a] - New Adventure                   [c] - High Scores");
     mvprintw(yoff + 20, xoff,"[b] - Load Adventure                  [d] - Quit");
@@ -161,12 +161,12 @@ void draw_menu(void) {
     unsetcolor(WHITE,BLACK);
 
     /* Fix characters that should be bright black not green */
-    setcolor(BRIGHT_BLACK,BLACK);
+    setcolor(BROWN,BLACK);
     mvprintw(yoff + 2, xoff + 18, "|/");
     mvprintw(yoff + 2, xoff + 44, "\\/");
     mvprintw(yoff + 16, xoff + 16, "/|");
     mvprintw(yoff + 16, xoff + 50, "/\\");
-    unsetcolor(BRIGHT_BLACK,BLACK);
+    unsetcolor(BROWN,BLACK);
     refresh();
     getch();
 }

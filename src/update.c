@@ -32,11 +32,14 @@ int update(int events) {
         close_door(add_vec(get_direction("Close"), g_player->pos));
         events = remove_flag(events, EV_CLOSE);
     }
-    if(check_flag(events, EV_DN) || check_flag(events, EV_UP)) {
+    if(check_flag(events, EV_DN)) {
         if(get_glyphch_at(g_player->pos.x,g_player->pos.y) == '>') {
             change_level(1);
             events = remove_flag(events, EV_DN);
-        } else if(get_glyphch_at(g_player->pos.x, g_player->pos.y) == '<') {
+        } 
+    }
+    if(check_flag(events, EV_UP)) {
+        if(get_glyphch_at(g_player->pos.x, g_player->pos.y) == '<') {
             change_level(-1);
             events = remove_flag(events, EV_UP);
         }

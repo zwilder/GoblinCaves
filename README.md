@@ -1,5 +1,7 @@
 ## Project codename: "Goblin Caves"
 
+![Menu Splash](MenuSplash.png)
+
 A dungeon crawling roguelike project, written in good ol' C. 
 
 The goal of this project is to establish a codebase that I can play around in,
