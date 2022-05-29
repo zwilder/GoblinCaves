@@ -1,13 +1,17 @@
 CC = gcc
 
-CFLAGS = -lncurses -lm -I./include/ -g
+CFLAGS = -lncurses -lm -I./include/
+
+OFLAGS = -O2
+
+GFLAGS = -g
 
 SOURCES = ./src/*.c
 
 all: GoblinCaves 
 
 GoblinCaves: 
-	$(CC) $(SOURCES) $(CFLAGS) -o GoblinCaves 
+	$(CC) $(SOURCES) $(CFLAGS) $(GFLAGS) -o GoblinCaves 
 
 run:
 	./GoblinCaves
@@ -16,3 +20,6 @@ clean:
 	rm GoblinCaves
 
 fresh: clean GoblinCaves run
+
+optimized:
+	$(CC) $(SOURCES) $(CFLAGS) $(OFLAGS) -o GoblinCaves

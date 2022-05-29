@@ -25,4 +25,7 @@ y k u
 h-.-l   : Movement, vi keys
  /|\
 b j n
+
+  ↑
+← ↓ →   : Movement, arrow keys
 ```

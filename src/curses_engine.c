@@ -119,6 +119,58 @@ bool yn_prompt(char* msg, Color fg, Color bg) {
     }
 }
 
+void draw_menu(void) {
+    /* Temporary function, just to test out the menu before states are added */
+    /* Art is 54 chars wide */
+    int artWidth = 54;
+    int artHeight = 23;
+    int xoff = (COLS / 2) - (artWidth / 2);
+    int yoff = (LINES / 2) - (artHeight / 2);
+    erase();
+    setcolor(BRIGHT_BLACK,BLACK);
+    mvprintw(yoff,xoff,"  __\\   /__\\|_____|   /_____\\  /\\/_________\\   /______");
+    mvprintw(yoff + 1, xoff,"     \\ /          |  /       \\/             \\ /");
+    unsetcolor(BRIGHT_BLACK,BLACK);
+    setcolor(BRIGHT_GREEN,BLACK);
+    mvprintw(yoff + 2, xoff," _______  _______ |/_____   _       ________\\/");
+    mvprintw(yoff + 3, xoff,"(  ____ \\(  ___  )(  ___ \\ ( \\      \\__   __/( (    /|");
+    mvprintw(yoff + 4, xoff,"| (    \\/| (   ) || (   ) )| (         ) (   |  \\  ( |");
+    mvprintw(yoff + 5, xoff,"| |      | |   | || (__/ / | |         | |   |   \\ | |");
+    mvprintw(yoff + 6, xoff,"| | ____ | |   | ||  __ (  | |         | |   | (\\ \\) |");
+    mvprintw(yoff + 7, xoff,"| | \\_  )| |   | || (  \\ \\ | |         | |   | | \\   |");
+    mvprintw(yoff + 8, xoff,"| (___) || (___) || )___) )| (____/\\___) (___| )  \\  |");
+    mvprintw(yoff + 9, xoff,"(_______)(_______)|/ \\___/ (_______/\\_______/|/    )_)");
+    mvprintw(yoff + 10, xoff,"    (  ____ \\(  ___  )|\\     /|(  ____ \\(  ____ \\");
+    mvprintw(yoff + 11, xoff,"    | (    \\/| (   ) || )   ( || (    \\/| (    \\/");    
+    mvprintw(yoff + 12, xoff,"    | |      | (___) || |   | || (__    | (_____");
+    mvprintw(yoff + 13, xoff,"    | |      |  ___  |( (   ) )|  __)   (_____  )");
+    mvprintw(yoff + 14, xoff,"    | |      | (   ) | \\ \\_/ / | (            ) |");
+    mvprintw(yoff + 15, xoff,"    | (____/\\| )   ( |  \\   /  | (____/\\/\\____) |");
+    mvprintw(yoff + 16, xoff,"    (_______/|/ /|  \\|   \\_/   (_______/\\_______) /\\");
+    unsetcolor(BRIGHT_GREEN,BLACK);
+    setcolor(BRIGHT_BLACK,BLACK);
+    mvprintw(yoff + 17, xoff,"    /\\         / |      /\\               /\\      /  \\");
+    mvprintw(yoff + 18, xoff,"___/  \\___/ \\_/  |_____/  \\|\\______/\\___/  \\____/    \\");
+    unsetcolor(BRIGHT_BLACK,BLACK);
+    setcolor(BRIGHT_WHITE,BLACK);
+    mvprintw(yoff + 19, xoff,"[a] - New Adventure                   [c] - High Scores");
+    mvprintw(yoff + 20, xoff,"[b] - Load Adventure                  [d] - Quit");
+    unsetcolor(BRIGHT_WHITE,BLACK);
+    setcolor(WHITE,BLACK);
+    mvprintw(yoff + 22, xoff,"                -- ©Zach Wilder 2022 --");
+    unsetcolor(WHITE,BLACK);
+
+    /* Fix characters that should be bright black not green */
+    setcolor(BRIGHT_BLACK,BLACK);
+    mvprintw(yoff + 2, xoff + 18, "|/");
+    mvprintw(yoff + 2, xoff + 44, "\\/");
+    mvprintw(yoff + 16, xoff + 16, "/|");
+    mvprintw(yoff + 16, xoff + 50, "/\\");
+    unsetcolor(BRIGHT_BLACK,BLACK);
+    refresh();
+    getch();
+}
+
 void curses_close(void) {
     /* Stupid function for now, but there may be other cleanup added later */
     endwin();

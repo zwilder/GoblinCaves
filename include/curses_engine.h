@@ -29,6 +29,7 @@ void unsetcolor(int fg, int bg);
 void curses_draw(int x, int y, Glyph glyph);
 void msg_box(char* msg, Color fg, Color bg);
 bool yn_prompt(char* msg, Color fg, Color bg);
+void draw_menu(void);
 void curses_close(void);
 
 #endif

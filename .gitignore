@@ -4,6 +4,7 @@
 *.bak
 *.swp
 Scratch*
+scratch*
 a.out
 scratch.*
 map_dump.txt

@@ -44,8 +44,9 @@ void engine_run(void) {
         /* update */
         events = update(events);
         /* draw */
-        clear(); /* Curses call, will need to be fixed if I add graphics */
+        erase(); /* Curses call, will need to be fixed if I add graphics */
         draw_screen();
+        refresh();
     }
 }
 

@@ -79,6 +79,9 @@ int handle_keyboard(int input) {
         case '<':
             output = EV_UP;
             break;
+        case 'S':
+            draw_menu();
+            break;
         case 'q':
             if(yn_prompt("Are you sure you want to quit?", BLACK, WHITE)) {
                 output = EV_QUIT; 
