@@ -9,6 +9,7 @@ to have a "finished" game, although that would be a nice bonus.
 Requires make and ncurses, building only tested successfully on various flavors
 of linux.
 
+[![Run on Repl.it](https://repl.it/badge/github/zwilder/goblincaves)](https://repl.it/github/zwilder/goblincaves)
 ---
 
 Game commands:
@@ -16,6 +17,8 @@ Game commands:
 q : Quit
 o : Open
 c : Close
+< : Move up stairs
+> : move down stairs
 
 y k u
  \|/
