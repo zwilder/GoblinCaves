@@ -62,6 +62,7 @@ Effect, Pickup. */
 #include <update.h>
 #include <draw.h>
 #include <fov.h>
+#include <save_load.h>
 
 /**********
  * The rest

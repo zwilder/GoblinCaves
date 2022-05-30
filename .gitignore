@@ -3,6 +3,7 @@
 *.o
 *.bak
 *.swp
+*.bin
 Scratch*
 scratch*
 a.out

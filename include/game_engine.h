@@ -32,4 +32,7 @@ int mt_rand(int min, int max);
 bool mt_bool(void); 
 bool mt_chance(int chance);
 
+void kr_itoa(int n, char s[]);
+void kr_reverse(char s[]);
+
 #endif

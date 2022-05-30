@@ -45,8 +45,20 @@ typedef enum {
     EV_OPEN            = 1 << 3,
     EV_CLOSE           = 1 << 4,
     EV_DN              = 1 << 5,
-    EV_UP              = 1 << 6
+    EV_UP              = 1 << 6,
+    EV_SAVE            = 1 << 7,
+    EV_LOAD            = 1 << 8,
+    EV_CHST_MENU       = 1 << 9,
+    EV_CHST_LOAD       = 1 << 10,
+    EV_CHST_GAME       = 1 << 11,
+    EV_CHST_HELP       = 1 << 12
 } EventFlags;
+
+typedef enum {
+    ST_MENU =  0,
+    ST_GAME,
+    ST_HELP
+} StateFlags;
 
 bool check_flag(int mask, int flag);
 int toggle_flag(int mask, int flag);

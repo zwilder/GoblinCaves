@@ -65,6 +65,7 @@ typedef enum {
 Map* create_map(Tile *tilemap);
 void append_map(Map **headref, Tile *tilemap);
 Map* pop_map(Map **headref);
+Map* find_map(Map *headref, int lvl);
 void destroy_map(Map **map); 
 
 Tile* create_tilemap(void);

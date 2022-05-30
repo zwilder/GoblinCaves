@@ -31,6 +31,8 @@ void build_dungeon(void) {
     }
     place_border();
 
+    /* This could be an interesting place to check the current level being built
+     * and build in special levels */
     build_basic_dungeon();
 }
 

@@ -94,6 +94,17 @@ Map* pop_map(Map **headref) {
     return poppedLink;
 }
 
+Map* find_map(Map *headref, int lvl) {
+    Map *last = headref;
+    while(last != NULL) {
+        if(last->lvl == lvl) {
+            return last;
+        }
+        last = last->next;
+    }
+    return headref;
+}
+
 void destroy_map(Map **map) {
     Map *ref;
     while((*map) != NULL) {

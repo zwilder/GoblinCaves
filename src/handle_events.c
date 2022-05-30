@@ -79,9 +79,17 @@ int handle_keyboard(int input) {
         case '<':
             output = EV_UP;
             break;
+        case 'L':
+            /* Temporary, this should be on the main menu only */
+            if(yn_prompt("Load saved game?", BLACK, WHITE)) {
+                load_game();
+            }
+            break;
         case 'S':
-            /*Temporary, should be EV_CHST_MEN or something */
-            draw_menu();
+            if(yn_prompt("Save and quit?", BLACK, WHITE)) {
+                save_game();
+                output = EV_QUIT;
+            }
             break;
         case '?':
             /*Temporary, should be EV_CHST_HELP or something */

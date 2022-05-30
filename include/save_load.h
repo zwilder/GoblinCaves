@@ -17,32 +17,23 @@
 * You should have received a copy of the GNU General Public License
 * along with Goblin Caves.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <goblincaves.h>
+#ifndef SAVE_LOAD_H
+#define SAVE_LOAD_H
 
-Player* create_player(Vec2i pos) {
-    Player* newPlayer = malloc(sizeof(Player));
+/**************************
+ * Saving/Loading functions
+ * save_load.c
+ **************************/
+void save_tile(Tile tile, FILE *f);
+Tile load_tile(FILE *f);
 
-    newPlayer->pos.y = pos.y;
-    newPlayer->pos.x = pos.x;
+void save_map(Map **headref, FILE *f);
+Map* load_map(FILE *f);
 
-    newPlayer->dpos.y = pos.y;
-    newPlayer->dpos.x = pos.x;
+void save_player(Player *player, FILE *f);
+Player* load_player(FILE *f);
 
-    newPlayer->glyph.ch = '@';
-    newPlayer->glyph.fg = BRIGHT_WHITE; 
-    newPlayer->glyph.bg = BLACK;
-    newPlayer->fovRadius = 6;
-    
-    return newPlayer;
-}
+int save_game(void);
+int load_game(void);
 
-void destroy_player(void) {
-    if(NULL != g_player) {
-        free(g_player);
-    }
-}
-
-void set_player_pos(Vec2i pos) {
-    g_player->pos = pos;
-    g_player->glyph.bg = get_glyphbg_at(pos.x,pos.y);
-}
+#endif

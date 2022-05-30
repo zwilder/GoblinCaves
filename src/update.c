@@ -93,14 +93,14 @@ void change_level(int shift) {
         if(g_mapcur != NULL) {
             g_mapcur = g_mapcur->prev;
             g_tilemap = g_mapcur->tiles;
-            move_player(find_down_stairs());
+            set_player_pos(find_down_stairs());
         }
     } else if (shift == 1) {
         /* Going down */
         if(g_mapcur->next != NULL) {
             g_mapcur = g_mapcur->next;
             g_tilemap = g_mapcur->tiles;
-            move_player(find_up_stairs());
+            set_player_pos(find_up_stairs());
         } else {
             /* We're at the bottom, add a new map on the map list */
             append_map(&g_maphead, NULL);
