@@ -22,7 +22,7 @@
  * Feature placement
  *******************/
 void place_room(Rect room) {
-    int x, y, i;
+    int x, y;
     for(x = room.pos.x; x <= room.pos.x + room.dim.x; x++){
         for(y=room.pos.y; y <= room.pos.y + room.dim.y; y++) {
             if(room.pos.x == x 
@@ -35,9 +35,12 @@ void place_room(Rect room) {
             }
         }
     }
+}
 
-    /* This would be cool if it rolled on a table to place features */
-    i = mt_rand(1,20);
+void make_fancy_room(Rect room) {
+    /* This would be cool if it rolled on a table to place features, or selected
+     * a random room from a weighted list or something. */
+    int i = mt_rand(1,20);
     switch(i){
         case 1: place_pillars(room); break;
         case 2: place_marsh(room); break;
@@ -66,7 +69,6 @@ void place_kitchen(Rect room) {
      *
      */
 }
-
 
 void place_marsh(Rect room) {
     /*           1

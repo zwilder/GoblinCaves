@@ -24,6 +24,7 @@
  * Feature placement
  *******************/
 void place_room(Rect room);
+void make_fancy_room(Rect room);
 void place_altar(Rect room);
 void place_marsh(Rect room);
 void place_pillars(Rect Room);

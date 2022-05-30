@@ -82,6 +82,13 @@ void make_basic_dungeon(void) {
         if(rooms[i].pos.x < 0) {
             break;
         }
+        make_fancy_room(rooms[i]);
+    }
+
+    for(i = 0; i < MAX_NUM_ROOMS; i++) {
+        if(rooms[i].pos.x < 0) {
+            break;
+        }
         if(i > 0) {
             place_corridor(get_center(rooms[i]), get_center(rooms[i-1]));
         }
@@ -101,4 +108,3 @@ void make_basic_dungeon(void) {
     place_tile(get_center(rooms[i]), TILE_FLOOR);
     g_player->pos = get_center(rooms[i]); 
 }
-
