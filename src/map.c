@@ -19,6 +19,10 @@
 */
 #include <goblincaves.h>
 
+/* Map width/height are one less than screen width/height, which "disables" the
+ * map scrolling... at least until the UI is added then there really isnt any
+ * point in this.
+ */
 const int MAP_WIDTH = 79;
 const int MAP_HEIGHT = 23;
 const int MIN_ROOM_SIZE = 5;
@@ -26,12 +30,6 @@ const int MAX_ROOM_SIZE = 10;
 const int MIN_NUM_ROOMS = 8;
 const int MAX_NUM_ROOMS = 30;
 Tile* g_map;
-
-/* Playing with this idea for tiles - sure makes it easy to grab some presets
- * real quick. The tile table should only be used for dungeon creation, not for
- * modifying individual tiles (eg a door being opened would NOT have its
- * definition changed by referencing the table, it would just toggle the
- * (BLOCKS_MOVEMENT | BLOCKS_LIGHT) flags */
 
 Tile tileTable[NUM_TILES] = 
 {
@@ -56,22 +54,69 @@ Tile tileTable[NUM_TILES] =
 /**************************
  * Map creation/destruction
  **************************/
-Tile* create_map(void) {
+Map* create_map(Tile *tilemap) {
+    if(NULL == tilemap) {
+        tilemap = create_tilemap();
+    }
+    Map *newMap = malloc(sizeof(Map));
+    newMap->tiles = tilemap;
+    newMap->lvl = 0;
+    newMap->next = NULL;
+    newMap->prev = NULL;
+    return newMap;
+}
+
+void append_map(Map **headref, Tile *tilemap) {
+    Map *newMap = create_map(tilemap);
+    Map *last = *headref;
+
+    newMap->next = NULL;
+
+    if(*headref == NULL) {
+        newMap->prev = NULL;
+        *headref = newMap;
+        return;
+    }
+    while(last->next != NULL) {
+        last = last->next;
+    }
+
+    newMap->lvl = last->lvl + 1;
+    last->next = newMap;
+    newMap->prev = last;
+}
+
+Map* pop_map(Map **headref) {
+    Map *poppedLink = *headref;
+    *headref = (*headref)->next;
+    return poppedLink;
+}
+
+void destroy_map(Map **map) {
+    Map *ref;
+    while((*map) != NULL) {
+        ref = pop_map(map);
+        destroy_tilemap(ref->tiles);
+        free(ref);
+    }
+}
+
+Tile* create_tilemap(void) {
     int i, x, y;
 
     Tile tile = tileTable[TILE_FLOOR];
-    Tile* newMap = malloc(MAP_WIDTH * MAP_HEIGHT * sizeof(Tile));
+    Tile *newMap = malloc(MAP_WIDTH * MAP_HEIGHT * sizeof(Tile));
     for(i = 0; i < (MAP_WIDTH * MAP_HEIGHT); i++) {
         newMap[i] = tile;
     }
     return newMap;
 }
 
-void destroy_map(void) {
+void destroy_tilemap(Tile *tilemap) {
     int x,y;
-    if(NULL != g_map) {
-        log_map();
-        free(g_map);
+    if(NULL != tilemap) {
+        log_tilemap(tilemap);
+        free(tilemap);
     }
 }
 
@@ -123,8 +168,10 @@ int count_neighbors(Vec2i pos, char a) {
     int count = 0;
     for(x = pos.x - 1; x < pos.x + 1; x++) {
         for(y = pos.y - 1; y < pos.y + 1; y++) {
-            if(get_glyphch_at(x,y) == a) {
-                count++;
+            if(x != pos.x && y != pos.y){
+                if(get_glyphch_at(x,y) == a) {
+                    count++;
+                }
             }
         }
     }

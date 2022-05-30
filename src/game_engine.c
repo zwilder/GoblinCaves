@@ -25,7 +25,7 @@ void engine_init(void) {
     start_log();
     Vec2i startPos = {1, 1};
     g_player = create_player(startPos);
-    g_map = create_map();
+    g_map = create_tilemap();
     create_dungeon();
     update_fov();
     draw_screen();
@@ -61,7 +61,7 @@ int get_input(void) {
 
 void engine_close(void) {
     destroy_player();
-    destroy_map();
+    destroy_tilemap(g_map);
 }
 
 /* Random numbers from mt19937 generator */

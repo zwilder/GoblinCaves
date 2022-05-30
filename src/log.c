@@ -44,15 +44,15 @@ void write_log(char *msg) {
     fclose(fp);
 }
 
-void log_map(void) {
+void log_tilemap(Tile *tilemap) {
     FILE *fp;
     int x, y;
-    if(NULL != g_map) {
+    if(NULL != tilemap) {
         fp = fopen("log.txt", "a");
         fprintf(fp, "\nMap:\n");
         for(y=0; y < MAP_HEIGHT; y++){
             for(x = 0; x < MAP_WIDTH; x++){
-                fprintf(fp,"%c", g_map[get_map_index(x,y)].glyph.ch);
+                fprintf(fp,"%c", tilemap[get_map_index(x,y)].glyph.ch);
             }
             fprintf(fp, "\n");
         }

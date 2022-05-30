@@ -62,8 +62,13 @@ typedef enum {
 /**************************
  * Map creation/destruction
  **************************/
-Tile* create_map(void);
-void destroy_map(void);
+Map* create_map(Tile *tilemap);
+void append_map(Map **headref, Tile *tilemap);
+Map* pop_map(Map **headref);
+void destroy_map(Map **map); 
+
+Tile* create_tilemap(void);
+void destroy_tilemap(Tile *tilemap);
 
 /**********************
  * Assistance functions
