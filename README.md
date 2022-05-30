@@ -20,7 +20,8 @@ q : Quit
 o : Open
 c : Close
 < : Move up stairs
-> : move down stairs
+> : Move down stairs
+? : Open help menu
 
 y k u
  \|/

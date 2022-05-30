@@ -34,7 +34,7 @@ bool curses_setup(void) {
         init_colorpairs();
     } else {
         /* System does not support color, print error message */
-        mvprintw(20, 50, "Your system does not support color, unable to start game!");
+        mvprintw(LINES / 2, (COLS / 2) - 28, "Your system does not support color, unable to start game!");
         getch();
     }
     return success;
@@ -121,7 +121,6 @@ bool yn_prompt(char* msg, Color fg, Color bg) {
 
 void draw_menu(void) {
     /* Temporary function, just to test out the menu before states are added */
-    /* Art is 54 chars wide */
     int artWidth = 54;
     int artHeight = 23;
     int xoff = (COLS / 2) - (artWidth / 2);
@@ -160,13 +159,48 @@ void draw_menu(void) {
     mvprintw(yoff + 22, xoff,"                -- ©Zach Wilder 2022 --");
     unsetcolor(WHITE,BLACK);
 
-    /* Fix characters that should be bright black not green */
+    /* Fix characters that should be brown not bright green */
     setcolor(BROWN,BLACK);
     mvprintw(yoff + 2, xoff + 18, "|/");
     mvprintw(yoff + 2, xoff + 44, "\\/");
     mvprintw(yoff + 16, xoff + 16, "/|");
     mvprintw(yoff + 16, xoff + 50, "/\\");
     unsetcolor(BROWN,BLACK);
+    refresh();
+    getch();
+}
+
+void draw_help(void) {
+    /* Not thrilled with this, but it works for now */
+    int artWidth = 80;
+    int artHeight = 20;
+    int xoff = (COLS / 2) - (artWidth / 2);
+    int yoff = (LINES / 2) - (artHeight / 2);
+    erase();
+    setcolor(BLACK,WHITE);
+    mvprintw(yoff,xoff,"                                                                               ");
+    mvprintw(yoff + 1,xoff,"                                   - Help -                                    ");
+    mvprintw(yoff + 2,xoff,"                                                                               ");
+    unsetcolor(BLACK,WHITE);
+    setcolor(WHITE,BLACK);
+    mvprintw(yoff + 4,xoff,"q : Quit                        ? : Show help screen");
+    mvprintw(yoff + 5,xoff,"o : Open");
+    mvprintw(yoff + 6,xoff,"c : Close");
+    mvprintw(yoff + 7,xoff,"< : Move up stairs");
+    mvprintw(yoff + 8,xoff,"> : move down stairs");
+
+    mvprintw(yoff + 10,xoff,"y k u");
+    mvprintw(yoff + 11,xoff," \\|/");
+    mvprintw(yoff + 12,xoff,"h-.-l    : Movement, vi keys");
+    mvprintw(yoff + 13,xoff," /|\\");
+    mvprintw(yoff + 14,xoff,"b j n");
+
+    mvprintw(yoff + 16,xoff,"   ^");
+    mvprintw(yoff + 17,xoff,"<- v ->  : Movement, arrow keys");
+    unsetcolor(WHITE,BLACK);
+    setcolor(BLACK,WHITE);
+    mvprintw(yoff + 19,xoff,"                           - Press any key to exit -                            ");
+    unsetcolor(BLACK,WHITE);
     refresh();
     getch();
 }

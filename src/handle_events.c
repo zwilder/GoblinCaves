@@ -68,7 +68,7 @@ int handle_keyboard(int input) {
             output = EV_MOVE;
             break;
         case 'o':
-            output = EV_OPEN;
+            output = EV_OPEN; 
             break;
         case 'c':
             output = EV_CLOSE;
@@ -80,7 +80,12 @@ int handle_keyboard(int input) {
             output = EV_UP;
             break;
         case 'S':
+            /*Temporary, should be EV_CHST_MEN or something */
             draw_menu();
+            break;
+        case '?':
+            /*Temporary, should be EV_CHST_HELP or something */
+            draw_help();
             break;
         case 'q':
             if(yn_prompt("Are you sure you want to quit?", BLACK, WHITE)) {
