@@ -33,5 +33,6 @@ typedef struct {
 Player* create_player(Vec2i pos);
 void destroy_player(void);
 
+void move_player(Vec2i pos);
 
 #endif 

@@ -88,6 +88,28 @@ void close_door(Vec2i pos) {
 
 void change_level(int shift) {
    /* Eventually this will change the current level up/down by shift */
-    create_dungeon(); 
+    if(shift == -1) {
+        /* Going up */
+        if(g_mapcur != NULL) {
+            g_mapcur = g_mapcur->prev;
+            g_tilemap = g_mapcur->tiles;
+            move_player(find_down_stairs());
+        }
+    } else if (shift == 1) {
+        /* Going down */
+        if(g_mapcur->next != NULL) {
+            g_mapcur = g_mapcur->next;
+            g_tilemap = g_mapcur->tiles;
+            move_player(find_up_stairs());
+        } else {
+            /* We're at the bottom, add a new map on the map list */
+            append_map(&g_maphead, NULL);
+            g_mapcur = g_mapcur->next;
+            g_tilemap = g_mapcur->tiles;
+            build_dungeon();
+        }
+    } else {
+        /* Going somewhere? */
+    }
     update_fov();
 }

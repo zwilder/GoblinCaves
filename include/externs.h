@@ -20,8 +20,11 @@
 #ifndef EXTERNS_H
 #define EXTERNS_H
 
-extern Player* g_player;
-extern Tile* g_map;
+extern Player *g_player; /* Player reference */
+extern Map *g_maphead; /* Reference to map list head (level 0) */
+extern Map *g_mapcur; /* Reference to current map */
+extern Tile *g_tilemap; /* Reference to current tilemap */
+
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
 extern const int MAP_WIDTH;

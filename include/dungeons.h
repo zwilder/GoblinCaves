@@ -23,7 +23,7 @@
 /******************
  * Dungeon creation
  ******************/
-void create_dungeon(void);
-void make_basic_dungeon(void);
+void build_dungeon(void);
+void build_basic_dungeon(void);
 
 #endif

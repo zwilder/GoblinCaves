@@ -68,7 +68,7 @@ Map* pop_map(Map **headref);
 void destroy_map(Map **map); 
 
 Tile* create_tilemap(void);
-void destroy_tilemap(Tile *tilemap);
+void destroy_tilemap(Tile *tilemap, int lvl);
 
 /**********************
  * Assistance functions
@@ -88,5 +88,7 @@ bool is_explored(int x, int y);
 void mark_explored(int x, int y);
 int count_neighbors(Vec2i pos, char a);
 void place_tile(Vec2i pos, int type);
+Vec2i find_down_stairs(void);
+Vec2i find_up_stairs(void);
 
 #endif

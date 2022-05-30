@@ -22,7 +22,7 @@
 /******************
  * Dungeon creation
  ******************/
-void create_dungeon(void) {
+void build_dungeon(void) {
     int x, y;
     for(x = 0; x < MAP_WIDTH; x++) {
         for(y = 0; y < MAP_HEIGHT; y++) {
@@ -31,10 +31,10 @@ void create_dungeon(void) {
     }
     place_border();
 
-    make_basic_dungeon();
+    build_basic_dungeon();
 }
 
-void make_basic_dungeon(void) {
+void build_basic_dungeon(void) {
     int x,y,w,h,i;
     Rect newRoom;
     bool intersects;
@@ -102,9 +102,10 @@ void make_basic_dungeon(void) {
     }
 
     place_tile(get_center(rooms[mt_rand(0,i-1)]), TILE_DN);
-    /*
-    place_tile(get_center(rooms[i]), TILE_UP);
-    */
-    place_tile(get_center(rooms[i]), TILE_FLOOR);
+    if(g_mapcur->lvl != 0) {
+        place_tile(get_center(rooms[i]), TILE_UP);
+    } else {
+        place_tile(get_center(rooms[i]), TILE_FLOOR);
+    }
     g_player->pos = get_center(rooms[i]); 
 }

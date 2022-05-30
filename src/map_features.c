@@ -83,7 +83,6 @@ void place_marsh(Rect room) {
      *
      */
     int x,y,i;
-    Vec2i center = get_center(room);
     for(x = room.pos.x + 1; x <= room.pos.x + room.dim.x - 1; x++){
         for(y=room.pos.y + 1; y <= room.pos.y + room.dim.y - 1; y++) {
             i = mt_rand(1,9);
@@ -127,7 +126,6 @@ void place_altar(Rect room) {
      * ########### 6
      *
      */
-    int x,y;
     Vec2i center = get_center(room);
     if(room.dim.x != 10) {
         return;
@@ -297,7 +295,6 @@ void place_vdoor(int x, int y) {
 
 void place_doors(Rect room) {
     int x,y;
-    Vec2i pos;
     for(x = room.pos.x; x < room.pos.x + room.dim.x; x++) {
         place_hdoor(x,room.pos.y);
         place_hdoor(x, room.pos.y + room.dim.y);
@@ -309,7 +306,7 @@ void place_doors(Rect room) {
 }
 
 void place_border(void) {
-    int i, x, y;
+    int x, y;
     for(x = 0; x < MAP_WIDTH; x++) {
         place_tile(make_vec(x,0), TILE_ROCK);
         place_tile(make_vec(x, MAP_HEIGHT - 1), TILE_ROCK);

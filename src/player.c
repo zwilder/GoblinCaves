@@ -42,3 +42,7 @@ void destroy_player(void) {
     }
 }
 
+void move_player(Vec2i pos) {
+    g_player->pos = pos;
+    g_player->glyph.bg = get_glyphbg_at(pos.x,pos.y);
+}

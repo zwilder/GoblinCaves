@@ -4,7 +4,7 @@ CFLAGS = -lncurses -lm -I./include/
 
 OFLAGS = -O2
 
-GFLAGS = -g
+GFLAGS = -g -Wall
 
 SOURCES = ./src/*.c
 

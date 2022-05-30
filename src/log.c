@@ -44,12 +44,12 @@ void write_log(char *msg) {
     fclose(fp);
 }
 
-void log_tilemap(Tile *tilemap) {
+void log_tilemap(Tile *tilemap, int lvl) {
     FILE *fp;
     int x, y;
     if(NULL != tilemap) {
         fp = fopen("log.txt", "a");
-        fprintf(fp, "\nMap:\n");
+        fprintf(fp, "\nMap %d:\n", lvl);
         for(y=0; y < MAP_HEIGHT; y++){
             for(x = 0; x < MAP_WIDTH; x++){
                 fprintf(fp,"%c", tilemap[get_map_index(x,y)].glyph.ch);

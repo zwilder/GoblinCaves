@@ -58,6 +58,7 @@ short curs_color(int fg) {
         case 6: return (COLOR_YELLOW);  /* 110 */
         case 7: return (COLOR_WHITE);   /* 111 */
     }
+    return COLOR_BLACK; /* Shouldn't reach here, but black if do */
 }
 
 int colornum(int fg, int bg) {

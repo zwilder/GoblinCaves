@@ -66,7 +66,7 @@ Vec2i get_camera(void) {
     return camera;
 }
 void draw_screen(void) {
-    int x, y, index, screenIndex, mapIndex;
+    int x, y, index, mapIndex;
     Vec2i screenpos, mappos;
     Vec2i camera = get_camera();
 

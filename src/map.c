@@ -29,7 +29,9 @@ const int MIN_ROOM_SIZE = 5;
 const int MAX_ROOM_SIZE = 10;
 const int MIN_NUM_ROOMS = 8;
 const int MAX_NUM_ROOMS = 30;
-Tile* g_map;
+Map *g_maphead; /* Reference to map list head (level 0) */
+Map *g_mapcur; /* Reference to current map */
+Tile *g_tilemap; /* Reference to current tilemap */
 
 Tile tileTable[NUM_TILES] = 
 {
@@ -96,13 +98,13 @@ void destroy_map(Map **map) {
     Map *ref;
     while((*map) != NULL) {
         ref = pop_map(map);
-        destroy_tilemap(ref->tiles);
+        destroy_tilemap(ref->tiles, ref->lvl);
         free(ref);
     }
 }
 
 Tile* create_tilemap(void) {
-    int i, x, y;
+    int i;
 
     Tile tile = tileTable[TILE_FLOOR];
     Tile *newMap = malloc(MAP_WIDTH * MAP_HEIGHT * sizeof(Tile));
@@ -112,10 +114,9 @@ Tile* create_tilemap(void) {
     return newMap;
 }
 
-void destroy_tilemap(Tile *tilemap) {
-    int x,y;
+void destroy_tilemap(Tile *tilemap, int lvl) {
     if(NULL != tilemap) {
-        log_tilemap(tilemap);
+        log_tilemap(tilemap, lvl);
         free(tilemap);
     }
 }
@@ -128,23 +129,23 @@ int get_map_index(int x, int y) {
 }
 
 char get_glyphch_at(int x, int y) {
-    return g_map[get_map_index(x,y)].glyph.ch;
+    return g_tilemap[get_map_index(x,y)].glyph.ch;
 }
 
 int get_glyphbg_at(int x, int y) {
-    return g_map[get_map_index(x,y)].glyph.bg;
+    return g_tilemap[get_map_index(x,y)].glyph.bg;
 }
 
 Glyph get_glyph_at(int x, int y) {
-    return g_map[get_map_index(x,y)].glyph;
+    return g_tilemap[get_map_index(x,y)].glyph;
 }
 
 void set_glyphch_at(int x, int y, char ch) {
-    g_map[get_map_index(x,y)].glyph.ch = ch;
+    g_tilemap[get_map_index(x,y)].glyph.ch = ch;
 }
 
 int get_tflags_at(int x, int y) {
-    return g_map[get_map_index(x,y)].flags;
+    return g_tilemap[get_map_index(x,y)].flags;
 }
 
 void remove_tflags_at(int x, int y, int flags) {
@@ -156,7 +157,7 @@ void engage_tflags_at(int x, int y, int flags) {
 }
 
 void set_tflags_at(int x, int y, int mask) {
-    g_map[get_map_index(x,y)].flags = mask;
+    g_tilemap[get_map_index(x,y)].flags = mask;
 }
 
 bool check_tflags_at(int x, int y, int flags) {
@@ -179,22 +180,45 @@ int count_neighbors(Vec2i pos, char a) {
 }
 
 bool is_visible(int x, int y) {
-    return check_flag(g_map[get_map_index(x,y)].flags, TF_VIS);
+    return check_flag(g_tilemap[get_map_index(x,y)].flags, TF_VIS);
 }
 
 bool is_explored(int x, int y) {
-    return check_flag(g_map[get_map_index(x,y)].flags, TF_EXP);
+    return check_flag(g_tilemap[get_map_index(x,y)].flags, TF_EXP);
 }
 
 void mark_explored(int x, int y) {
-    g_map[get_map_index(x,y)].flags =
-        engage_flag(g_map[get_map_index(x,y)].flags, TF_EXP);
+    g_tilemap[get_map_index(x,y)].flags =
+        engage_flag(g_tilemap[get_map_index(x,y)].flags, TF_EXP);
 }
 
 void place_tile(Vec2i pos, int type) {
     int index = get_map_index(pos.x,pos.y);
-    g_map[index] = tileTable[type];
-    g_map[index].pos.x = pos.x;
-    g_map[index].pos.y = pos.y;
+    g_tilemap[index] = tileTable[type];
+    g_tilemap[index].pos.x = pos.x;
+    g_tilemap[index].pos.y = pos.y;
 }
 
+Vec2i find_down_stairs(void) {
+    int x,y;
+    for(x = 0; x < MAP_WIDTH; x++) {
+        for(y = 0; y < MAP_HEIGHT; y++) {
+            if(get_glyphch_at(x,y) == '>') {
+                return make_vec(x,y);
+            }
+        }
+    }
+    return make_vec(0,0);
+}
+
+Vec2i find_up_stairs(void) {
+    int x,y;
+    for(x = 0; x < MAP_WIDTH; x++) {
+        for(y = 0; y < MAP_HEIGHT; y++) {
+            if(get_glyphch_at(x,y) == '<') {
+                return make_vec(x,y);
+            }
+        }
+    }
+    return make_vec(0,0);
+}
