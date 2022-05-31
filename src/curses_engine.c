@@ -119,6 +119,30 @@ bool yn_prompt(char* msg, Color fg, Color bg) {
     }
 }
 
+void error_msg_box(char* msg, Color fg, Color bg) {
+    erase();
+    int msglength = strlen(msg);
+    int i,j,x,y;
+    int boxHeight = 1;
+    x = (COLS / 2) - (msglength / 2);
+    y = (LINES / 2);
+    setcolor(fg,bg);
+    for(i = -1; i <= msglength; i++) {
+        for(j = 0 - boxHeight; j <= boxHeight; j++) {
+            mvaddch(y + j, x + i, ' ');
+        }
+    }
+    mvprintw(y, x, msg);
+
+    x += (msglength/2);
+    y += (SCREEN_HEIGHT / 2);
+    unsetcolor(fg,bg);
+    setcolor(WHITE, BLACK);
+    mvprintw(y, x - 14, "- Press any key to continue -");
+    unsetcolor(WHITE, BLACK);
+    refresh();
+    getch();
+}
 void draw_menu(void) {
     /* Temporary function, just to test out the menu before states are added */
     int artWidth = 54;
@@ -197,10 +221,8 @@ void draw_help(void) {
 
     mvprintw(yoff + 16,xoff,"   ^");
     mvprintw(yoff + 17,xoff,"<- v ->  : Movement, arrow keys");
-    unsetcolor(WHITE,BLACK);
-    setcolor(BLACK,WHITE);
     mvprintw(yoff + 19,xoff,"                           - Press any key to exit -                            ");
-    unsetcolor(BLACK,WHITE);
+    unsetcolor(WHITE,BLACK);
     refresh();
     getch();
 }
