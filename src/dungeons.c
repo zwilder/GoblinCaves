@@ -42,12 +42,13 @@ void build_basic_dungeon(void) {
     bool intersects;
     int numRooms = 0;
     int attempts = 0;
+    int minattempts = 0;
     Rect rooms[MAX_NUM_ROOMS];
 
     for(i = 0; i < MAX_NUM_ROOMS; i++) {
         rooms[i] = make_rect(-5,-5,0,0);
     }
-    while(numRooms < MIN_NUM_ROOMS) {
+    while(numRooms < MIN_NUM_ROOMS && minattempts < 100) {
         while(numRooms < MAX_NUM_ROOMS && attempts < 500) {
             x = mt_rand(1, MAP_WIDTH - MAX_ROOM_SIZE - 1);
             y = mt_rand(1, MAP_HEIGHT - MAX_ROOM_SIZE - 1);
@@ -78,6 +79,7 @@ void build_basic_dungeon(void) {
             }
             attempts++;
         }
+        minattempts++;
     }
 
     for(i = 0; i < MAX_NUM_ROOMS; i++) {

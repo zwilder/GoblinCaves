@@ -4,6 +4,7 @@
 *.bak
 *.swp
 *.bin
+tags
 Scratch*
 scratch*
 a.out

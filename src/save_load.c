@@ -58,6 +58,7 @@ void save_map(Map **headref, FILE *f) {
         }
         last = last->next;
     }
+    write_log("Map saved successfully!");
 }
 
 Map* load_map(FILE *f) {
@@ -89,6 +90,7 @@ Map* load_map(FILE *f) {
         }
         i++;
     }
+    write_log("Map loaded successfully!");
 
     return head;
 }
