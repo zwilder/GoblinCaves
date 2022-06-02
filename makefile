@@ -10,7 +10,7 @@ SOURCES = ./src/*.c
 
 all: GoblinCaves 
 
-GoblinCaves: 
+GoblinCaves: ctags
 	$(CC) $(SOURCES) $(CFLAGS) $(GFLAGS) -o GoblinCaves 
 
 run:
@@ -21,5 +21,8 @@ clean:
 
 fresh: clean GoblinCaves run
 
-optimized:
+optimized: ctags
 	$(CC) $(SOURCES) $(CFLAGS) $(OFLAGS) -o GoblinCaves
+
+ctags: 
+	ctags -R *

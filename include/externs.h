@@ -24,9 +24,12 @@ extern Player *g_player; /* Player reference */
 extern Map *g_maphead; /* Reference to map list head (level 0) */
 extern Map *g_mapcur; /* Reference to current map */
 extern Tile *g_tilemap; /* Reference to current tilemap */
+extern StateFlags g_gamestate;
 
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
+extern const int GUI_HEIGHT;
+extern const int MSG_HEIGHT;
 extern const int MAP_WIDTH;
 extern const int MAP_HEIGHT;
 extern const int MIN_ROOM_SIZE;

@@ -20,18 +20,12 @@
 #include <goblincaves.h>
 
 Player* g_player;
+StateFlags g_gamestate;
 
 void engine_init(void) {
     start_log();
-    g_player = create_player(make_vec(1,1));
-
-    g_maphead = create_map(NULL);
-    g_mapcur = g_maphead;
-    g_tilemap = g_maphead->tiles;
-    build_dungeon();
-
-    update_fov();
-    draw_screen();
+    g_gamestate = ST_MENU;
+    engine_draw();
 }
 
 void engine_run(void) {
@@ -47,10 +41,26 @@ void engine_run(void) {
         /* update */
         events = update(events);
         /* draw */
-        erase(); /* Curses call, will need to be fixed if I add graphics */
-        draw_screen();
-        refresh();
+        engine_draw();
     }
+}
+
+void engine_draw(void) {
+    erase(); /* Curses call, will need to be fixed if I add graphics */
+    switch(g_gamestate) {
+        case ST_GAME:
+            /* draw_msgs() */
+            draw_screen();
+            draw_gui();
+            break;
+        case ST_MENU:
+            draw_menu();
+            break;
+        case ST_HELP:
+            draw_help();
+            break;
+    }
+    refresh();
 }
 
 int get_input(void) {
@@ -60,6 +70,22 @@ int get_input(void) {
      * then return the result */
     int result = getch();
     return result;
+}
+
+void new_game(void) {
+    if(g_player) {
+        destroy_player();
+    }
+    if(g_maphead) {
+        destroy_map(&g_maphead);
+    }
+    g_player = create_player(make_vec(1,1));
+    g_maphead = create_map(NULL);
+    g_mapcur = g_maphead;
+    g_tilemap = g_maphead->tiles;
+    build_dungeon();
+
+    update_fov();
 }
 
 void engine_close(void) {

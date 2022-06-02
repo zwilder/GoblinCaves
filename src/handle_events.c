@@ -21,6 +21,53 @@
 
 int handle_keyboard(int input) {
     int output = EV_NONE;
+    switch(g_gamestate) {
+        case ST_MENU:
+            output = handle_keyboard_menu(input);
+            break;
+        case ST_HELP:
+            output = handle_keyboard_help(input);
+            break;
+        case ST_GAME:
+            output = handle_keyboard_game(input);
+            break;
+        default: break;
+    }
+    return output;
+}
+
+int handle_keyboard_menu(int input) {
+    int output = EV_NONE; 
+    switch(input) {
+        case 'a':
+            output = EV_CHST_GAME;
+            new_game();
+            break;
+        case 'b':
+            output = EV_CHST_GAME;
+            load_game();
+            break;
+        case 'c':
+            /* High scores */
+            break;
+        case 'd':
+            output = EV_QUIT;
+            break;
+        default: break;
+    }
+    return output;
+}
+
+int handle_keyboard_help(int input) {
+    int output = EV_NONE; 
+    if(input != ERR) {
+        output = EV_CHST_GAME;
+    }
+    return output;
+}
+
+int handle_keyboard_game(int input) {
+    int output = EV_NONE;
     Vec2i newPos = {g_player->pos.x, g_player->pos.y};
     switch(input) {
         case KEY_UP:
@@ -78,12 +125,6 @@ int handle_keyboard(int input) {
             break;
         case '<':
             output = EV_UP;
-            break;
-        case 'L':
-            /* Temporary, this should be on the main menu only */
-            if(yn_prompt("Load saved game?", BLACK, WHITE)) {
-                load_game();
-            }
             break;
         case 'S':
             if(yn_prompt("Save and quit?", BLACK, WHITE)) {

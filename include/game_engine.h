@@ -26,7 +26,9 @@
 void engine_init(void);
 void engine_run(void);
 void engine_close(void);
+void engine_draw(void);
 int get_input(void);
+void new_game(void);
 
 int mt_rand(int min, int max); 
 bool mt_bool(void); 

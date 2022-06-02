@@ -24,6 +24,9 @@
  * handle_events.c functions
  ***************************/
 int handle_keyboard(int input);
+int handle_keyboard_menu(int input);
+int handle_keyboard_help(int input);
+int handle_keyboard_game(int input);
 Vec2i get_direction(char* action_str);
 
 #endif

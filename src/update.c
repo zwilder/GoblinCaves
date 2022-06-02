@@ -20,6 +20,18 @@
 #include <goblincaves.h>
 
 int update(int events) {
+    if(check_flag(events, EV_CHST_GAME)) {
+        g_gamestate = ST_GAME;
+        events = remove_flag(events, EV_CHST_GAME);
+    }
+    if(check_flag(events, EV_CHST_MENU)) {
+        g_gamestate = ST_MENU;
+        events = remove_flag(events, EV_CHST_MENU);
+    }
+    if(check_flag(events, EV_CHST_HELP)) {
+        g_gamestate = ST_HELP;
+        events = remove_flag(events, EV_CHST_HELP);
+    }
     if(check_flag(events, EV_MOVE)) {
         player_move();
         events = remove_flag(events, EV_MOVE);

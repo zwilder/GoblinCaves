@@ -24,6 +24,7 @@ bool curses_setup(void) {
 
     initscr();
     noecho();
+    /*nodelay(stdscr, true);*/
     curs_set(0);
     cbreak();
     keypad(stdscr, true);
@@ -56,16 +57,29 @@ void unsetcolor(int fg, int bg) {
     }
 }
 
-void curses_draw(int x, int y, Glyph glyph) {
+void curses_draw_main(int x, int y, Glyph glyph) {
     int xoffset = COLS / 2; /* terminal center x */
     int yoffset = LINES / 2; /* terminal center y */
 
     xoffset -= SCREEN_WIDTH / 2;
     yoffset -= SCREEN_HEIGHT / 2;
+    
+    yoffset -= GUI_HEIGHT; 
 
     setcolor(glyph.fg, glyph.bg);
     mvaddch(y + yoffset, x + xoffset, glyph.ch);
     unsetcolor(glyph.fg, glyph.bg);
+}
+void curses_draw_ui(int x, int y, char *msg) {
+    int xoffset = COLS / 2;
+    int yoffset = LINES / 2;
+    xoffset -= SCREEN_WIDTH / 2;
+    yoffset += SCREEN_HEIGHT / 2;
+    yoffset -= GUI_HEIGHT;
+
+    setcolor(WHITE, BLACK);
+    mvprintw(y + yoffset, x + xoffset, msg);
+    unsetcolor(WHITE, BLACK);
 }
 
 void msg_box(char* msg, Color fg, Color bg) {
@@ -144,12 +158,10 @@ void error_msg_box(char* msg, Color fg, Color bg) {
     getch();
 }
 void draw_menu(void) {
-    /* Temporary function, just to test out the menu before states are added */
     int artWidth = 54;
     int artHeight = 23;
     int xoff = (COLS / 2) - (artWidth / 2);
     int yoff = (LINES / 2) - (artHeight / 2);
-    erase();
     setcolor(BROWN,BLACK);
     mvprintw(yoff,xoff,"  __\\   /__\\|_____|   /_____\\  /\\/_________\\   /______");
     mvprintw(yoff + 1, xoff,"     \\ /          |  /       \\/             \\ /");
@@ -190,8 +202,6 @@ void draw_menu(void) {
     mvprintw(yoff + 16, xoff + 16, "/|");
     mvprintw(yoff + 16, xoff + 50, "/\\");
     unsetcolor(BROWN,BLACK);
-    refresh();
-    getch();
 }
 
 void draw_help(void) {

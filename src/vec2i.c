@@ -38,3 +38,7 @@ Vec2i subtract_vec(Vec2i a, Vec2i b) {
     result.y = a.y - b.y;
     return result;
 }
+
+bool eq_vec(Vec2i a, Vec2i b) {
+    return ((a.x == b.x) && (a.y == b.y));
+}

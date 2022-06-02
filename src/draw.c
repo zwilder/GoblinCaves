@@ -19,9 +19,12 @@
 */
 #include <goblincaves.h>
 
-/* Standard term dimensions, 80x24, minus guiHeight eventually*/
+/* SREEN HEIGHT + GUI_HEIGHT + MSG_HEIGHT should equal 24, game screen should
+ * fill standard term dimensions 80x24 */
 const int SCREEN_WIDTH = 80;
-const int SCREEN_HEIGHT = 24; 
+const int SCREEN_HEIGHT = 20; 
+const int GUI_HEIGHT = 2;
+const int MSG_HEIGHT = 2; 
 
 Glyph* create_screen(void) {
     Glyph *newScreen = malloc(SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Glyph));
@@ -111,12 +114,8 @@ void draw_screen(void) {
 
     /* draw the player on the screen */
     if(g_player) {
-        x = g_player->pos.x - camera.x;
-        y = g_player->pos.y - camera.y;
-        index = get_screen_index(x,y);
-        screen[index].ch = g_player->glyph.ch;
-        screen[index].fg = g_player->glyph.fg;
-        screen[index].bg = g_player->glyph.bg;
+        set_screen_glyph_at(screen, subtract_vec(g_player->pos, camera),
+                            g_player->glyph);
     }
 
     for(x = 0; x < SCREEN_WIDTH; x++) {
@@ -126,11 +125,35 @@ void draw_screen(void) {
                 break;
             }
             if(screen[index].ch != ' ') {
-                curses_draw(x,y, screen[index]);
+                curses_draw_main(x,y, screen[index]);
             }
         }
     }
     free(screen);
+}
+
+void draw_gui(void) {
+    /* 
+Player Name                                                             Depth:xx
+HP: xxx/xxx    stat                                      St:xx Dx:xx Pe:xx Vi:xx 
+                                                                               *
+     * curses_draw_ui(int x, int uirow, char *msg)
+     */
+    char snum[5];
+    char depth[12] = "Depth: -";
+    int lvl = (g_mapcur->lvl + 1) * 10;
+    /*curses_draw_ui(0, 0, g_player->name);*/
+    curses_draw_ui(0, 0, "Player name");
+    kr_itoa(lvl, snum);
+    strcat(depth, snum);
+    curses_draw_ui(SCREEN_WIDTH - strlen(depth),0, depth);
+    curses_draw_ui(0, 1, "HP: xxx/xxx    stat                                      St:xx Dx:xx Pe:xx Vi:xx");
+
+}
+
+void set_screen_glyph_at(Glyph *screen, Vec2i pos, Glyph glyph) {
+    int index = get_screen_index(pos.x,pos.y);
+    screen[index] = glyph;
 }
 
 void clear_screen(Glyph *screen) {
