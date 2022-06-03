@@ -237,6 +237,29 @@ void draw_help(void) {
     getch();
 }
 
+void draw_nwpl(void) {
+    int xoff = (COLS / 2);
+    int yoff = (LINES / 2);
+    char mesg[] = "What is your name, adventurer? ";
+    char str[32];
+    erase();
+    echo();
+    curs_set(1);
+    mvprintw(yoff, xoff - (strlen(mesg)/2), "%s", mesg);
+    mvprintw(yoff + 1, xoff - (strlen(mesg)/2), ">");
+    setcolor(BRIGHT_WHITE, BLACK);
+    getstr(str);
+    while(strlen(str) == 0) {
+        mvprintw(yoff + 1, xoff - (strlen(mesg)/2), ">");
+        getstr(str);
+    }
+    unsetcolor(BRIGHT_WHITE, BLACK);
+    refresh();
+    noecho();
+    curs_set(0);
+    strcpy(g_player->name, str);
+}
+
 void curses_close(void) {
     /* Stupid function for now, but there may be other cleanup added later */
     endwin();

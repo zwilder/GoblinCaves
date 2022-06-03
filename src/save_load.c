@@ -99,6 +99,9 @@ Map* load_map(FILE *f) {
  * Player save/load functions
  ****************************/
 void save_player(Player *player, FILE *f) {
+    int namesize = strlen(player->name) + 1; /* add 1 for null terminator */
+    fwrite(&namesize, sizeof(int), 1, f);
+    fwrite(&(player->name), sizeof(char), namesize, f);
     fwrite(&(player->pos), sizeof(Vec2i), 1, f);
     fwrite(&(player->dpos), sizeof(Vec2i), 1, f);
     fwrite(&(player->glyph), sizeof(Glyph), 1, f);
@@ -107,6 +110,9 @@ void save_player(Player *player, FILE *f) {
 
 Player* load_player(FILE *f) {
     Player *newPlayer = create_player(make_vec(0,0));
+    int namesize;
+    fread(&namesize, sizeof(int), 1, f);
+    fread(&(newPlayer->name), sizeof(char), namesize, f);
     fread(&(newPlayer->pos), sizeof(Vec2i), 1, f);
     fread(&(newPlayer->dpos), sizeof(Vec2i), 1, f);
     fread(&(newPlayer->glyph), sizeof(Glyph), 1, f);

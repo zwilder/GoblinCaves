@@ -51,13 +51,15 @@ typedef enum {
     EV_CHST_MENU       = 1 << 9,
     EV_CHST_LOAD       = 1 << 10,
     EV_CHST_GAME       = 1 << 11,
-    EV_CHST_HELP       = 1 << 12
+    EV_CHST_HELP       = 1 << 12,
+    EV_CHST_NWPL       = 1 << 13
 } EventFlags;
 
 typedef enum {
     ST_MENU =  0,
     ST_GAME,
-    ST_HELP
+    ST_HELP,
+    ST_NWPL
 } StateFlags;
 
 bool check_flag(int mask, int flag);

@@ -31,6 +31,9 @@ int handle_keyboard(int input) {
         case ST_GAME:
             output = handle_keyboard_game(input);
             break;
+        case ST_NWPL:
+            output = handle_keyboard_newpl(input);
+            break;
         default: break;
     }
     return output;
@@ -40,7 +43,7 @@ int handle_keyboard_menu(int input) {
     int output = EV_NONE; 
     switch(input) {
         case 'a':
-            output = EV_CHST_GAME;
+            output = EV_CHST_NWPL;
             new_game();
             break;
         case 'b':
@@ -58,6 +61,11 @@ int handle_keyboard_menu(int input) {
     return output;
 }
 
+int handle_keyboard_newpl(int input){
+    int output = EV_CHST_GAME;
+    
+    return output;
+}
 int handle_keyboard_help(int input) {
     int output = EV_NONE; 
     if(input != ERR) {

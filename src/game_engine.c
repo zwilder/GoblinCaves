@@ -59,6 +59,11 @@ void engine_draw(void) {
         case ST_HELP:
             draw_help();
             break;
+        case ST_NWPL:
+            draw_nwpl();
+            break;
+        default:
+            break;
     }
     refresh();
 }
@@ -68,7 +73,10 @@ int get_input(void) {
      * SO - this stupid wrapper function MAY eventually check to see which
      * engine is running, use that engine to get/interpret the keypress, and
      * then return the result */
-    int result = getch();
+    int result = 0;
+    if(g_gamestate != ST_NWPL) {
+        result = getch();
+    }
     return result;
 }
 

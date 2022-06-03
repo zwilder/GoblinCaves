@@ -142,8 +142,7 @@ HP: xxx/xxx    stat                                      St:xx Dx:xx Pe:xx Vi:xx
     char snum[5];
     char depth[12] = "Depth: -";
     int lvl = (g_mapcur->lvl + 1) * 10;
-    /*curses_draw_ui(0, 0, g_player->name);*/
-    curses_draw_ui(0, 0, "Player name");
+    curses_draw_ui(0, 0, g_player->name);
     kr_itoa(lvl, snum);
     strcat(depth, snum);
     curses_draw_ui(SCREEN_WIDTH - strlen(depth),0, depth);

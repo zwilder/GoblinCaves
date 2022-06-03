@@ -25,6 +25,7 @@ typedef struct {
     Vec2i dpos;
     Glyph glyph;
     int fovRadius;
+    char name[32];
 } Player;
 
 /********************

@@ -20,6 +20,10 @@
 #include <goblincaves.h>
 
 int update(int events) {
+    if(check_flag(events, EV_CHST_NWPL)) {
+        g_gamestate = ST_NWPL;
+        events = remove_flag(events, EV_CHST_NWPL);
+    }
     if(check_flag(events, EV_CHST_GAME)) {
         g_gamestate = ST_GAME;
         events = remove_flag(events, EV_CHST_GAME);
