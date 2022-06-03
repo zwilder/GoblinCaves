@@ -31,7 +31,13 @@ Player* create_player(Vec2i pos) {
     newPlayer->glyph.ch = '@';
     newPlayer->glyph.fg = BRIGHT_WHITE; 
     newPlayer->glyph.bg = BLACK;
-    newPlayer->fovRadius = 6;
+
+    newPlayer->str = mt_rand(5,10);
+    newPlayer->dex = mt_rand(5,10);
+    newPlayer->vit = mt_rand(5,10);
+    newPlayer->per = mt_rand(5,10);
+
+    newPlayer->curhp = get_max_hp(newPlayer);
     
     return newPlayer;
 }
@@ -45,4 +51,17 @@ void destroy_player(void) {
 void set_player_pos(Vec2i pos) {
     g_player->pos = pos;
     g_player->glyph.bg = get_glyphbg_at(pos.x,pos.y);
+}
+
+int get_fov(Player *player) {
+    /* Just returning the perception, for now.
+     * Might be useful to have this accept the perception/vitality as input then
+     * calculate the FOV to return... for monsters and stuff? */
+    return player->per;
+}
+
+int get_max_hp(Player *player) {
+    /* Again, just winging this for now. AND AGAIN, might be better to accept
+     * the vit/str inputs, then calculate and return the hp */
+    return (player->vit + player->str) * 5;
 }

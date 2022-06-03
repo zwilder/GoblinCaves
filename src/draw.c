@@ -141,12 +141,39 @@ HP: xxx/xxx    stat                                      St:xx Dx:xx Pe:xx Vi:xx
      */
     char snum[5];
     char depth[12] = "Depth: -";
+    char hpstr[12] = "HP: ";
+    char statstr[24] = "St:";
     int lvl = (g_mapcur->lvl + 1) * 10;
     curses_draw_ui(0, 0, g_player->name);
     kr_itoa(lvl, snum);
     strcat(depth, snum);
     curses_draw_ui(SCREEN_WIDTH - strlen(depth),0, depth);
+
+    /* Construct HP string */
+    kr_itoa(g_player->curhp, snum);
+    strcat(hpstr, snum);
+    strcat(hpstr, "/");
+    kr_itoa(get_max_hp(g_player), snum);
+    strcat(hpstr, snum);
+    curses_draw_ui(0,1, hpstr);
+
+    /* Construct stat string */
+    kr_itoa(g_player->str, snum);
+    strcat(statstr, snum);
+    strcat(statstr, " Dx:");
+    kr_itoa(g_player->dex, snum);
+    strcat(statstr, snum);
+    strcat(statstr, " Pe:");
+    kr_itoa(g_player->per, snum);
+    strcat(statstr, snum);
+    strcat(statstr, " Vi:");
+    kr_itoa(g_player->vit, snum);
+    strcat(statstr, snum);
+    curses_draw_ui(SCREEN_WIDTH - strlen(statstr),1,statstr);
+
+    /*
     curses_draw_ui(0, 1, "HP: xxx/xxx    stat                                      St:xx Dx:xx Pe:xx Vi:xx");
+    */
 
 }
 

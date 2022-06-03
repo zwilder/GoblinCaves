@@ -49,7 +49,7 @@ void calculate_fov(float x, float y) {
     ox = (float) g_player->pos.x + 0.5f;
     oy = (float) g_player->pos.y + 0.5f;
 
-    for(i = 0; i < g_player->fovRadius; i++) {
+    for(i = 0; i < get_fov(g_player); i++) {
         mapIndex = get_map_index((int)ox,(int)oy);
         if(mapIndex > (MAP_WIDTH * MAP_HEIGHT - 1)){
             break;

@@ -23,7 +23,7 @@
  * map scrolling... at least until the UI is added then there really isnt any
  * point in this.
  */
-const int MAP_WIDTH = 80;
+const int MAP_WIDTH = 79;
 const int MAP_HEIGHT = 24;
 const int MIN_ROOM_SIZE = 5;
 const int MAX_ROOM_SIZE = 10;

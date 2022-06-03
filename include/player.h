@@ -24,8 +24,20 @@ typedef struct {
     Vec2i pos;
     Vec2i dpos;
     Glyph glyph;
-    int fovRadius;
     char name[32];
+    /* Random assortment of stats, not sure how they will be used so this is
+     * just for fun. 
+     * Maybe: Damage done is weapon + str
+     *        Chance to hit is dex + str
+     *        HP is vit + str
+     *        FOV Radius is per + vit
+     *        Chance to be hit is dex + per
+     *        Str 3 Dex 2 Per 2 Vit 2 */
+    int str;
+    int dex;
+    int per;
+    int vit;
+    int curhp;
 } Player;
 
 /********************
@@ -33,6 +45,8 @@ typedef struct {
  ********************/
 Player* create_player(Vec2i pos);
 void destroy_player(void);
+int get_fov(Player *player);
+int get_max_hp(Player *player);
 
 void set_player_pos(Vec2i pos);
 

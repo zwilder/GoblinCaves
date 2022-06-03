@@ -249,11 +249,18 @@ void draw_nwpl(void) {
     mvprintw(yoff + 1, xoff - (strlen(mesg)/2), ">");
     setcolor(BRIGHT_WHITE, BLACK);
     getstr(str);
-    while(strlen(str) == 0) {
-        mvprintw(yoff + 1, xoff - (strlen(mesg)/2), ">");
-        getstr(str);
-    }
     unsetcolor(BRIGHT_WHITE, BLACK);
+    while(strlen(str) == 0) {
+        /* It would be cool if this whole statement was replaced with a call to
+         * a random name generator... */
+        setcolor(RED, BLACK);
+        mvprintw(yoff + 3, xoff - (strlen(mesg)/2), "[Try again]");
+        unsetcolor(RED, BLACK);
+        mvprintw(yoff + 1, xoff - (strlen(mesg)/2), ">");
+        setcolor(BRIGHT_WHITE, BLACK);
+        getstr(str);
+        unsetcolor(BRIGHT_WHITE, BLACK);
+    }
     refresh();
     noecho();
     curs_set(0);

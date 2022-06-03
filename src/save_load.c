@@ -105,7 +105,11 @@ void save_player(Player *player, FILE *f) {
     fwrite(&(player->pos), sizeof(Vec2i), 1, f);
     fwrite(&(player->dpos), sizeof(Vec2i), 1, f);
     fwrite(&(player->glyph), sizeof(Glyph), 1, f);
-    fwrite(&(player->fovRadius), sizeof(int), 1, f);
+    fwrite(&(player->str), sizeof(int), 1, f);
+    fwrite(&(player->dex), sizeof(int), 1, f);
+    fwrite(&(player->vit), sizeof(int), 1, f);
+    fwrite(&(player->per), sizeof(int), 1, f);
+    fwrite(&(player->curhp), sizeof(int), 1, f);
 }
 
 Player* load_player(FILE *f) {
@@ -116,7 +120,11 @@ Player* load_player(FILE *f) {
     fread(&(newPlayer->pos), sizeof(Vec2i), 1, f);
     fread(&(newPlayer->dpos), sizeof(Vec2i), 1, f);
     fread(&(newPlayer->glyph), sizeof(Glyph), 1, f);
-    fread(&(newPlayer->fovRadius), sizeof(int), 1, f);
+    fread(&(newPlayer->str), sizeof(int), 1, f);
+    fread(&(newPlayer->dex), sizeof(int), 1, f);
+    fread(&(newPlayer->vit), sizeof(int), 1, f);
+    fread(&(newPlayer->per), sizeof(int), 1, f);
+    fread(&(newPlayer->curhp), sizeof(int), 1, f);
     return newPlayer;
 }
 

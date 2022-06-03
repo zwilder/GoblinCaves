@@ -102,10 +102,25 @@ void engine_close(void) {
 }
 
 /* Random numbers from mt19937 generator */
+int mt_rand_lim(int limit) {
+    /* So, the random number functions below with the % operator will introduce
+     * skew. Like trying to split ten candies with 3 kids - and not being able
+     * to cut anything into smaller pieces. A single piece will be left over...
+     * This takes the candy, divides it by 3, and if the result is greater than
+     * 3 puts it back into the bucket. */
+    int divisor = RAND_MAX/(limit + 1);
+    int retval;
+    do {
+        retval = genrand_int32() / divisor;
+    } while (retval > limit);
+
+    return retval;
+}
 int mt_rand(int min, int max) {
-    return ((genrand_int32() % max) + min);
+    return (mt_rand_lim(max - min) + min);
+    /*return (genrand_int32() % (max - min + 1) + min);*/
     /*
-    return ((rand() % max) + min);
+    return ((rand() % (max - min + 1) + min);
     */
 }
 
@@ -122,6 +137,7 @@ bool mt_chance(int chance) {
     return(chance <= result);
 }
 
+/* integer to string functions from K&R C Book */
 void kr_itoa(int n, char s[]) {
     int i, sign;
 
