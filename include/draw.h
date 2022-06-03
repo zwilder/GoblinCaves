@@ -27,6 +27,7 @@ Glyph* create_screen(void);
 Vec2i get_camera(void);
 void draw_screen(void);
 void draw_gui(void);
+void draw_msg(void);
 void set_screen_glyph_at(Glyph *screen, Vec2i pos, Glyph glyph);
 void destroy_screen(Glyph *screen);
 void clear_screen(Glyph *screen);

@@ -20,7 +20,7 @@
 #include <goblincaves.h>
 
 Player* g_player;
-StateFlags g_gamestate;
+StateFlags g_gamestate = ST_MENU;
 
 void engine_init(void) {
     start_log();
@@ -49,7 +49,7 @@ void engine_draw(void) {
     erase(); /* Curses call, will need to be fixed if I add graphics */
     switch(g_gamestate) {
         case ST_GAME:
-            /* draw_msgs() */
+            draw_msg();
             draw_screen();
             draw_gui();
             break;
@@ -134,7 +134,7 @@ bool mt_chance(int chance) {
      * mt_chance(33). It gets a random number between 1 and 100, and then
      * returns true if the random number is less than the 33. */
     int result = mt_rand(1,100);
-    return(chance <= result);
+    return(result <= chance);
 }
 
 /* integer to string functions from K&R C Book */

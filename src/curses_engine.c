@@ -64,18 +64,33 @@ void curses_draw_main(int x, int y, Glyph glyph) {
     xoffset -= SCREEN_WIDTH / 2;
     yoffset -= SCREEN_HEIGHT / 2;
     
-    yoffset -= GUI_HEIGHT; 
+    /*yoffset -= GUI_HEIGHT;*/ 
 
     setcolor(glyph.fg, glyph.bg);
     mvaddch(y + yoffset, x + xoffset, glyph.ch);
     unsetcolor(glyph.fg, glyph.bg);
 }
+
 void curses_draw_ui(int x, int y, char *msg) {
     int xoffset = COLS / 2;
     int yoffset = LINES / 2;
     xoffset -= SCREEN_WIDTH / 2;
     yoffset += SCREEN_HEIGHT / 2;
+    /*
     yoffset -= GUI_HEIGHT;
+    */
+
+    setcolor(WHITE, BLACK);
+    mvprintw(y + yoffset, x + xoffset, msg);
+    unsetcolor(WHITE, BLACK);
+}
+
+void curses_draw_msg(int x, int y, char *msg) {
+    int xoffset = COLS / 2;
+    int yoffset = LINES / 2;
+    xoffset -= SCREEN_WIDTH / 2;
+    yoffset -= SCREEN_HEIGHT / 2;
+    yoffset -= MSG_HEIGHT;
 
     setcolor(WHITE, BLACK);
     mvprintw(y + yoffset, x + xoffset, msg);

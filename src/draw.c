@@ -177,6 +177,30 @@ HP: xxx/xxx    stat                                      St:xx Dx:xx Pe:xx Vi:xx
 
 }
 
+void draw_msg(void) {
+    /*
+     * Check g_msghead for msgs
+     * count messages
+     * while i < count
+     *  - Pop off top msg
+     *  - check length of top msg
+     *    - If length greater than SCREEN_WIDTH, split lines
+     *  - draw top msg on the first two lines of the screen
+     *  - i++
+     *  -if(i > 1) display [More - any key]
+     */
+    char *msg;
+    int i = 0;
+    int msgcount = count_msg(&g_msghead);
+    while(i < msgcount) {
+        msg = pop_msg(&g_msghead);
+        curses_draw_msg(0,i,msg);
+        free(msg); /* Messy? */
+        i++;
+    }
+
+}
+
 void set_screen_glyph_at(Glyph *screen, Vec2i pos, Glyph glyph) {
     int index = get_screen_index(pos.x,pos.y);
     screen[index] = glyph;

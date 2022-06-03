@@ -52,12 +52,27 @@ int update(int events) {
         if(get_glyphch_at(g_player->pos.x,g_player->pos.y) == '>') {
             change_level(1);
             events = remove_flag(events, EV_DN);
-        } 
+        } else {
+            if(mt_bool()){ 
+                push_msg(&g_msghead, "You stare at the ground.");
+            } else {
+                push_msg(&g_msghead, "You stumble.");
+            }
+        }
     }
     if(check_flag(events, EV_UP)) {
         if(get_glyphch_at(g_player->pos.x, g_player->pos.y) == '<') {
             change_level(-1);
             events = remove_flag(events, EV_UP);
+        } else {
+            if(mt_chance(10)) {
+                push_msg(&g_msghead, "You look up into the darkness... Hey a bat!");
+                /* Spawn bat at location lol */
+            } else if(mt_bool()) {
+                push_msg(&g_msghead, "You look up into the darkness.");
+            } else {
+                push_msg(&g_msghead, "You stumble.");
+            }
         }
     }
     return events;
@@ -88,8 +103,17 @@ void open_door(Vec2i pos) {
     int mask = get_tflags_at(pos.x,pos.y);
     /*check to see if there is even a closed door at the location first */
     if(check_flag(mask, TF_CDOOR)) {
+        if(mt_bool()) {
+            push_msg(&g_msghead, "You open the door.");
+        } else if (mt_bool()) {
+            push_msg(&g_msghead, "The door creaks open...");
+        } else {
+            push_msg(&g_msghead, "With some effort, you manage to open the door.");
+        }
         place_tile(pos, TILE_ODOOR);
         update_fov();
+    } else {
+        push_msg(&g_msghead, "What door?");
     }
 }
 
@@ -97,8 +121,17 @@ void close_door(Vec2i pos) {
     int mask = get_tflags_at(pos.x,pos.y);
     /*check to see if there is even an open door at the location first */
     if(check_flag(mask, TF_ODOOR)) {
+        if(mt_bool()) {
+            push_msg(&g_msghead, "You shut the door.");
+        } else if (mt_bool()) {
+            push_msg(&g_msghead, "The door creaks closed.");
+        } else {
+            push_msg(&g_msghead, "With some effort, the door closes.");
+        }
         place_tile(pos, TILE_CDOOR);
         update_fov();
+    } else {
+        push_msg(&g_msghead, "What door?");
     }
 }
 
@@ -110,6 +143,7 @@ void change_level(int shift) {
             g_mapcur = g_mapcur->prev;
             g_tilemap = g_mapcur->tiles;
             set_player_pos(find_down_stairs());
+            push_msg(&g_msghead, "You climb up towards the surface.");
         }
     } else if (shift == 1) {
         /* Going down */
@@ -124,6 +158,7 @@ void change_level(int shift) {
             g_tilemap = g_mapcur->tiles;
             build_dungeon();
         }
+        push_msg(&g_msghead, "You descend further into the caves.");
     } else {
         /* Going somewhere? */
     }

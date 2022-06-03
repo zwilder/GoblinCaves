@@ -38,6 +38,7 @@
 #include <rect.h>
 #include <flags.h>
 #include <tree.h>
+#include <msg.h>
 
 /***********************
  * Major data structures

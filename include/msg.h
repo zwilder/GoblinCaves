@@ -17,25 +17,20 @@
 * You should have received a copy of the GNU General Public License
 * along with Goblin Caves.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef EXTERNS_H
-#define EXTERNS_H
+#ifndef MSG_H
+#define MSG_H
 
-extern Player *g_player; /* Player reference player.c */
-extern Map *g_maphead; /* Reference to map list head (level 0) map.c */
-extern Map *g_mapcur; /* Reference to current map map.c */
-extern Tile *g_tilemap; /* Reference to current tilemap map.c */
-extern StateFlags g_gamestate; /* Simple int state flag game_engine.c */
-extern Msg *g_msghead; /* Reference to message list head, msg.c */
+struct Msg {
+    char *str;
+    struct Msg *next;
+};
 
-extern const int SCREEN_WIDTH;
-extern const int SCREEN_HEIGHT;
-extern const int GUI_HEIGHT;
-extern const int MSG_HEIGHT;
-extern const int MAP_WIDTH;
-extern const int MAP_HEIGHT;
-extern const int MIN_ROOM_SIZE;
-extern const int MAX_ROOM_SIZE;
-extern const int MIN_NUM_ROOMS;
-extern const int MAX_NUM_ROOMS;
+typedef struct Msg Msg;
+
+Msg* create_msg(char *str);
+char* pop_msg(Msg **head);
+void push_msg(Msg **head, char *str);
+int count_msg(Msg **head); 
+void destroy_msglist(Msg **head);
 
 #endif
