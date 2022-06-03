@@ -92,10 +92,8 @@ void player_move(void) {
         }
     } else {
         /* Tile does not block movement */
-        g_player->pos.y = g_player->dpos.y;
-        g_player->pos.x = g_player->dpos.x;
-        g_player->glyph.bg = get_glyphbg_at(dpos.x,dpos.y);
-        update_fov();
+        set_player_pos(g_player->dpos);
+        tile_flavor_msg(g_player->dpos);
     }
 }
 

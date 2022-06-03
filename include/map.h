@@ -91,5 +91,6 @@ int count_neighbors(Vec2i pos, char a);
 void place_tile(Vec2i pos, int type);
 Vec2i find_down_stairs(void);
 Vec2i find_up_stairs(void);
+void tile_flavor_msg(Vec2i pos);
 
 #endif

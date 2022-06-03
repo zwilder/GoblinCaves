@@ -51,8 +51,11 @@ void destroy_player(void) {
 void set_player_pos(Vec2i pos) {
     g_player->pos = pos;
     g_player->glyph.bg = get_glyphbg_at(pos.x,pos.y);
+    update_fov();
 }
 
+/* If I do change these to be more generic, they should go in their own file,
+ * "stats.c" or something. ORGANIZED. */
 int get_fov(Player *player) {
     /* Just returning the perception, for now.
      * Might be useful to have this accept the perception/vitality as input then

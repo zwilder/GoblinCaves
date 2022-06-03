@@ -233,3 +233,39 @@ Vec2i find_up_stairs(void) {
     }
     return make_vec(0,0);
 }
+
+void tile_flavor_msg(Vec2i pos) {
+    if(check_tflags_at(pos.x,pos.y, TF_WATER)) {
+        if(mt_chance(10)) {
+            push_msg(&g_msghead, "Water sloshes around your feet.");
+        } else if(mt_chance(10)) {
+            push_msg(&g_msghead, "*SQUISH*");
+        } else if(mt_chance(5)) {
+            push_msg(&g_msghead, "A small fish darts between your boots.");
+        }
+    }
+    if(check_tflags_at(pos.x,pos.y, TF_ALTAR)) {
+        if(mt_chance(10)) {
+            push_msg(&g_msghead, "Bones crunch under your feet.");
+        }
+        push_msg(&g_msghead, "You stand next to a crude, blood stained, altar.");
+    }
+    if(check_tflags_at(pos.x,pos.y, TF_UP)) {
+        push_msg(&g_msghead, 
+                "You see a primative staircase leading upward.");
+    }
+    if(check_tflags_at(pos.x,pos.y, TF_DN)) {
+        push_msg(&g_msghead, 
+                "You see a crude stair leading downward.");
+    }
+    if(check_tflags_at(pos.x,pos.y, TF_ODOOR)) {
+        if(mt_chance(10)) {
+            push_msg(&g_msghead, "This doorway is carved with obscene symbols.");
+        } else if(mt_chance(10)) {
+            push_msg(&g_msghead, "You notice claw marks on the door.");
+        } /*else {
+            push_msg(&g_msghead, 
+                    "You pass through a rough doorway.");
+        }*/
+    }
+}
