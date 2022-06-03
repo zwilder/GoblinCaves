@@ -100,9 +100,7 @@ Map* load_map(FILE *f) {
  ****************************/
 void save_player(Player *player, FILE *f) {
     int namesize = strlen(player->name) + 1; /* add 1 for null terminator */
-    fwrite(&namesize, sizeof(int), 1, f);
-    fwrite(&(player->name), sizeof(char), namesize, f);
-    fwrite(&(player->pos), sizeof(Vec2i), 1, f);
+    fwrite(&namesize, sizeof(int), 1, f); fwrite(&(player->name), sizeof(char), namesize, f); fwrite(&(player->pos), sizeof(Vec2i), 1, f);
     fwrite(&(player->dpos), sizeof(Vec2i), 1, f);
     fwrite(&(player->glyph), sizeof(Glyph), 1, f);
     fwrite(&(player->str), sizeof(int), 1, f);
@@ -162,7 +160,7 @@ int load_game(void) {
 
     if(f == NULL) {
         error_msg_box("No save data found!", BLACK, WHITE);
-        return EV_NONE;
+        return EV_CHST_MENU;
     }
 
     /* Clear g_maphead, g_player */

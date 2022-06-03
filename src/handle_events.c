@@ -47,8 +47,8 @@ int handle_keyboard_menu(int input) {
             new_game();
             break;
         case 'b':
-            output = EV_CHST_GAME;
-            load_game();
+            /*output = EV_CHST_GAME;*/
+            output = load_game();
             break;
         case 'c':
             /* High scores */
