@@ -20,6 +20,7 @@
 #include <goblincaves.h>
 
 Msg *g_msghead = NULL;
+Msg *g_msgloghead = NULL;
 
 Msg* create_msg(char *str){
     Msg *newmsg = malloc(sizeof(Msg));
@@ -58,6 +59,41 @@ int count_msg(Msg **head) {
         tmp = tmp->next;
     }
     return result;
+}
+
+void remove_last_msg(Msg **head) {
+    if(!(*head)) {
+        return;
+    }
+    if(!(*head)->next) {
+        free((*head)->str);
+        free(*head);
+        return;
+    }
+    
+    Msg *secondlast = *head;
+    while(secondlast->next->next) {
+        secondlast = secondlast->next;
+    }
+
+    free(secondlast->next->str);
+    free(secondlast->next);
+
+    secondlast->next = NULL;
+
+    return;
+}
+
+void cull_msg(Msg **head) {
+    int msgcount = count_msg(head);
+    int screenrows = SCREEN_HEIGHT + GUI_HEIGHT + MSG_HEIGHT - 3;
+    if(msgcount <= screenrows) {
+        return;
+    }
+    while(msgcount > screenrows) {
+        remove_last_msg(head);
+        msgcount = count_msg(head);
+    }
 }
 
 void destroy_msglist(Msg **head){

@@ -22,6 +22,8 @@ c : Close
 < : Move up stairs
 > : Move down stairs
 ? : Open help menu
+L : Show message log
+S : Save and quit
 
 y k u
  \|/

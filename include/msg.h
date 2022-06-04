@@ -31,6 +31,8 @@ Msg* create_msg(char *str);
 char* pop_msg(Msg **head);
 void push_msg(Msg **head, char *str);
 int count_msg(Msg **head); 
+void remove_last_msg(Msg **head);
+void cull_msg(Msg **head);
 void destroy_msglist(Msg **head);
 
 #endif

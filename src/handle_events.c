@@ -34,7 +34,18 @@ int handle_keyboard(int input) {
         case ST_NWPL:
             output = handle_keyboard_newpl(input);
             break;
+        case ST_LOG:
+            output = handle_keyboard_log(input);
+            break;
         default: break;
+    }
+    return output;
+}
+
+int handle_keyboard_log(int input) {
+    int output = EV_NONE;
+    if(input) {
+        output = EV_CHST_GAME;
     }
     return output;
 }
@@ -133,6 +144,9 @@ int handle_keyboard_game(int input) {
             break;
         case '<':
             output = EV_UP;
+            break;
+        case 'L':
+            output = EV_CHST_LOG;
             break;
         case 'S':
             if(yn_prompt("Save and quit?", BLACK, WHITE)) {

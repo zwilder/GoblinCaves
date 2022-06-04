@@ -36,6 +36,10 @@ int update(int events) {
         g_gamestate = ST_HELP;
         events = remove_flag(events, EV_CHST_HELP);
     }
+    if(check_flag(events, EV_CHST_LOG)) {
+        g_gamestate = ST_LOG;
+        events = remove_flag(events, EV_CHST_LOG);
+    }
     if(check_flag(events, EV_MOVE)) {
         player_move();
         events = remove_flag(events, EV_MOVE);

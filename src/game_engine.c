@@ -62,6 +62,9 @@ void engine_draw(void) {
         case ST_NWPL:
             draw_nwpl();
             break;
+        case ST_LOG:
+            draw_msg_log();
+            break;
         default:
             break;
     }
@@ -87,6 +90,8 @@ void new_game(void) {
     if(g_maphead) {
         destroy_map(&g_maphead);
     }
+    destroy_msglist(&g_msghead);
+    destroy_msglist(&g_msgloghead);
     g_player = create_player(make_vec(1,1));
     g_maphead = create_map(NULL);
     g_mapcur = g_maphead;
@@ -99,6 +104,8 @@ void new_game(void) {
 void engine_close(void) {
     destroy_player();
     destroy_map(&g_maphead);
+    destroy_msglist(&g_msghead);
+    destroy_msglist(&g_msgloghead);
 }
 
 /* Random numbers from mt19937 generator */

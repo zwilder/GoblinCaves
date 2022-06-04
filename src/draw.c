@@ -195,10 +195,29 @@ void draw_msg(void) {
     while(i < msgcount) {
         msg = pop_msg(&g_msghead);
         curses_draw_msg(0,i,msg);
+        push_msg(&g_msgloghead, msg);
         free(msg); /* Messy? */
         i++;
     }
 
+}
+
+void draw_msg_log(void) {
+    int msgcount;
+    int i = 0;
+    int contx = (SCREEN_WIDTH / 2) - (strlen("[Press any key to continue]")/2);
+    Msg *cur = g_msgloghead;
+    cull_msg(&g_msgloghead);
+    msgcount = count_msg(&g_msgloghead);
+    setcolor(BLACK, WHITE);
+    curses_draw_titlebar("Message Log", BLACK, WHITE);
+    unsetcolor(BLACK, WHITE);
+    while (i < msgcount) {
+        curses_draw_msg(0,i+1, cur->str);
+        i++;
+        cur = cur->next;
+    }
+    curses_draw_msg(contx, i+2, "[Press any key to continue]");
 }
 
 void set_screen_glyph_at(Glyph *screen, Vec2i pos, Glyph glyph) {

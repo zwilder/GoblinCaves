@@ -180,7 +180,7 @@ int count_neighbors(Vec2i pos, char a) {
     int count = 0;
     for(x = pos.x - 1; x < pos.x + 1; x++) {
         for(y = pos.y - 1; y < pos.y + 1; y++) {
-            if(x != pos.x && y != pos.y){
+            if(!eq_vec(make_vec(x,y), pos)) {
                 if(get_glyphch_at(x,y) == a) {
                     count++;
                 }
@@ -267,5 +267,14 @@ void tile_flavor_msg(Vec2i pos) {
             push_msg(&g_msghead, 
                     "You pass through a rough doorway.");
         }*/
+    }
+    if((count_neighbors(pos, '0') > 0)) {
+        if(mt_chance(10)) {
+            push_msg(&g_msghead, 
+                    "The tall pillars near you cast sinister shadows on the dungeon floor.");
+        } else if(mt_chance(5)) {
+            push_msg(&g_msghead, "Something darts around a pillar at the corner of your eye!");
+            /* Spawn goblin out of sight lol */
+        }
     }
 }

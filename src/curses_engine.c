@@ -92,9 +92,29 @@ void curses_draw_msg(int x, int y, char *msg) {
     yoffset -= SCREEN_HEIGHT / 2;
     yoffset -= MSG_HEIGHT;
 
+    /*
     setcolor(WHITE, BLACK);
+    */
     mvprintw(y + yoffset, x + xoffset, msg);
+    /*
     unsetcolor(WHITE, BLACK);
+    */
+}
+
+void curses_draw_titlebar(char *title, Color fg, Color bg) {
+    int xoffset = COLS / 2;
+    int x = xoffset - (SCREEN_WIDTH / 2);
+    int yoffset = LINES / 2;
+    xoffset -= strlen(title) / 2;
+    yoffset -= SCREEN_HEIGHT / 2;
+    yoffset -= MSG_HEIGHT;
+    
+    setcolor(fg,bg);
+    for(; x < ((SCREEN_WIDTH / 2) + (COLS / 2)); x++) {
+        mvaddch(yoffset,x, ' ');
+    }
+    mvprintw(yoffset,xoffset,title);
+    unsetcolor(fg,bg);
 }
 
 void msg_box(char* msg, Color fg, Color bg) {
@@ -233,7 +253,7 @@ void draw_help(void) {
     unsetcolor(BLACK,WHITE);
     setcolor(WHITE,BLACK);
     mvprintw(yoff + 4,xoff,"q : Quit                        ? : Show help screen");
-    mvprintw(yoff + 5,xoff,"o : Open");
+    mvprintw(yoff + 5,xoff,"o : Open                        L : Show message log");
     mvprintw(yoff + 6,xoff,"c : Close");
     mvprintw(yoff + 7,xoff,"< : Move up stairs");
     mvprintw(yoff + 8,xoff,"> : move down stairs");
