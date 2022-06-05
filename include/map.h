@@ -51,6 +51,7 @@ typedef enum {
     TILE_PLANT,
     TILE_TREE,
     TILE_ALTAR,
+    TILE_PIT,
     NUM_TILES
 } TileTypes;
 

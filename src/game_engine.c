@@ -19,7 +19,6 @@
 */
 #include <goblincaves.h>
 
-Player* g_player;
 StateFlags g_gamestate = ST_MENU;
 
 void engine_init(void) {

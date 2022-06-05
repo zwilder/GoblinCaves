@@ -20,7 +20,7 @@
 #ifndef EXTERNS_H
 #define EXTERNS_H
 
-extern Player *g_player; /* Player reference player.c */
+extern Monster *g_player; /* Player reference player.c */
 extern Map *g_maphead; /* Reference to map list head (level 0) map.c */
 extern Map *g_mapcur; /* Reference to current map map.c */
 extern Tile *g_tilemap; /* Reference to current tilemap map.c */

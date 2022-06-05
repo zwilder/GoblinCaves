@@ -68,6 +68,7 @@ void remove_last_msg(Msg **head) {
     if(!(*head)->next) {
         free((*head)->str);
         free(*head);
+        *head = NULL;
         return;
     }
     
@@ -104,4 +105,5 @@ void destroy_msglist(Msg **head){
     while(*head) {
         free(pop_msg(head));
     }
+    *head = NULL;
 }

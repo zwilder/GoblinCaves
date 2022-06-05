@@ -20,8 +20,9 @@ Loot in the caves is gold (increases score), health potions (increases
 health). Stretch goal would be a more robust inventory as described
 below. Again, KISS.
 
-Major Goal: Five data types - structured like Angband: Player, Enemy, Playing Field,
-Effects, Pickups.
+Major Goal: Five data types - structured like unAngband suggests: Player, Enemy,
+Playing Field, Effects, Pickups. UPDATE: Player-Enemy is going to be one type.
+The four major types for this game are Monster, Tile, Effects, Pickups
 
 Major Goal: Implement a time management system using a circular, double linked
 list.

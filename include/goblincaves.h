@@ -43,9 +43,9 @@
 /***********************
  * Major data structures
  ***********************/
-/* Major Goal: Five (major) data types - structured like: Player, Enemy, Tile,
-Effect, Pickup. */
-#include <player.h>
+/* Four major data types - Monster, Effects, Tiles, Pickups */
+#include <monster.h>
+#include <monsterlist.h>
 #include <map.h>
 
 /*********

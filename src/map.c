@@ -49,8 +49,8 @@ Tile tileTable[NUM_TILES] =
     {{'\'', BRIGHT_GREEN, BLACK}    , {0,0}, (TF_NONE)},
     {{';', GREEN, BLACK}            , {0,0}, (TF_NONE)},
     {{'T', GREEN, BLACK}            , {0,0}, (TF_BLK_MV | TF_BLK_LT)},
-    {{'_', BRIGHT_BLACK, BLACK}     , {0,0}, (TF_ALTAR)}
-
+    {{'_', BRIGHT_BLACK, BLACK}     , {0,0}, (TF_ALTAR)},
+    {{' ', BRIGHT_BLACK, BLACK}     , {0,0}, (TF_BLK_MV)}
 };
 
 /**************************
@@ -112,6 +112,7 @@ void destroy_map(Map **map) {
         destroy_tilemap(ref->tiles, ref->lvl);
         free(ref);
     }
+    *map = NULL;
 }
 
 Tile* create_tilemap(void) {
@@ -130,6 +131,7 @@ void destroy_tilemap(Tile *tilemap, int lvl) {
         log_tilemap(tilemap, lvl);
         free(tilemap);
     }
+    tilemap = NULL;
 }
 
 /**********************

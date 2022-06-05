@@ -79,7 +79,7 @@ int handle_keyboard_newpl(int input){
 }
 int handle_keyboard_help(int input) {
     int output = EV_NONE; 
-    if(input != ERR) {
+    if(input) {
         output = EV_CHST_GAME;
     }
     return output;
@@ -156,7 +156,7 @@ int handle_keyboard_game(int input) {
             break;
         case '?':
             /*Temporary, should be EV_CHST_HELP or something */
-            draw_help();
+            output = EV_CHST_HELP;
             break;
         case 'q':
             if(yn_prompt("Are you sure you want to quit?", BLACK, WHITE)) {

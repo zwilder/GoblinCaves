@@ -98,7 +98,7 @@ Map* load_map(FILE *f) {
 /****************************
  * Player save/load functions
  ****************************/
-void save_player(Player *player, FILE *f) {
+void save_player(Monster *player, FILE *f) {
     int namesize = strlen(player->name) + 1; /* add 1 for null terminator */
     fwrite(&namesize, sizeof(int), 1, f); fwrite(&(player->name), sizeof(char), namesize, f); fwrite(&(player->pos), sizeof(Vec2i), 1, f);
     fwrite(&(player->dpos), sizeof(Vec2i), 1, f);
@@ -108,10 +108,11 @@ void save_player(Player *player, FILE *f) {
     fwrite(&(player->vit), sizeof(int), 1, f);
     fwrite(&(player->per), sizeof(int), 1, f);
     fwrite(&(player->curhp), sizeof(int), 1, f);
+    fwrite(&(player->flags), sizeof(int), 1, f);
 }
 
-Player* load_player(FILE *f) {
-    Player *newPlayer = create_player(make_vec(0,0));
+Monster* load_player(FILE *f) {
+    Monster *newPlayer = create_player(make_vec(0,0));
     int namesize;
     fread(&namesize, sizeof(int), 1, f);
     fread(&(newPlayer->name), sizeof(char), namesize, f);
@@ -123,6 +124,7 @@ Player* load_player(FILE *f) {
     fread(&(newPlayer->vit), sizeof(int), 1, f);
     fread(&(newPlayer->per), sizeof(int), 1, f);
     fread(&(newPlayer->curhp), sizeof(int), 1, f);
+    fread(&(newPlayer->flags), sizeof(int), 1, f);
     return newPlayer;
 }
 

@@ -245,7 +245,6 @@ void draw_help(void) {
     int artHeight = 20;
     int xoff = (COLS / 2) - (artWidth / 2);
     int yoff = (LINES / 2) - (artHeight / 2);
-    erase();
     setcolor(BLACK,WHITE);
     mvprintw(yoff,xoff,"                                                                               ");
     mvprintw(yoff + 1,xoff,"                                   - Help -                                    ");
@@ -268,8 +267,6 @@ void draw_help(void) {
     mvprintw(yoff + 17,xoff,"<- v ->  : Movement, arrow keys");
     mvprintw(yoff + 19,xoff,"                           - Press any key to exit -                            ");
     unsetcolor(WHITE,BLACK);
-    refresh();
-    getch();
 }
 
 void draw_nwpl(void) {
