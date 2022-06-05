@@ -28,8 +28,8 @@ const int MSG_HEIGHT = 2;
 
 Glyph* create_screen(void) {
     Glyph *newScreen = malloc(SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Glyph));
-
-    for(int i = 0; i < (SCREEN_WIDTH * SCREEN_HEIGHT); i++) {
+    int i;
+    for(i = 0; i < (SCREEN_WIDTH * SCREEN_HEIGHT); i++) {
         newScreen[i].ch = ' ';
         newScreen[i].fg = WHITE;
         newScreen[i].bg = BLACK;

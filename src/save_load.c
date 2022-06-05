@@ -53,6 +53,8 @@ void save_map(Map **headref, FILE *f) {
     last = *headref;
     while(last != NULL) {
         fwrite(&(last->lvl), sizeof(int), 1, f);
+        //remove_mlist_player(&(last->monsters));
+        //cull_mlist(last->monsters);
         count = count_mlist(last->monsters);
         fwrite(&count, sizeof(int),1,f);
         for(i = 0; i < count; i++) {
@@ -88,6 +90,8 @@ Map* load_map(FILE *f) {
             monster = load_monster(f);
             if(check_flag(monster->flags, MF_PLAYER)){
                 write_log("Read player monster, skipping.");
+                free(monster);
+                monster = NULL;
             } else {
                 /*Monster read is not player, add to list*/
                 push_mlist(&(readmap->monsters), monster);
@@ -120,6 +124,9 @@ Map* load_map(FILE *f) {
  * Monster save/load functions
  ****************************/
 void save_monster(Monster *monster, FILE *f) {
+    if(!monster) {
+        return;
+    }
     int namesize = strlen(monster->name) + 1; /* add 1 for null terminator */
     fwrite(&namesize, sizeof(int), 1, f); fwrite(&(monster->name), sizeof(char), namesize, f); fwrite(&(monster->pos), sizeof(Vec2i), 1, f);
     fwrite(&(monster->dpos), sizeof(Vec2i), 1, f);
@@ -133,11 +140,13 @@ void save_monster(Monster *monster, FILE *f) {
 }
 
 Monster* load_monster(FILE *f) {
-    //Monster *monster = create_player(make_vec(0,0));
     Monster *monster = create_monster();
     int namesize;
+    char name[80] = "Loading: ";
     fread(&namesize, sizeof(int), 1, f);
     fread(&(monster->name), sizeof(char), namesize, f);
+    strcat(name, monster->name);
+    write_log(name);
     fread(&(monster->pos), sizeof(Vec2i), 1, f);
     fread(&(monster->dpos), sizeof(Vec2i), 1, f);
     fread(&(monster->glyph), sizeof(Glyph), 1, f);
@@ -206,6 +215,7 @@ int load_game(void) {
 
     /* set g_mapcur to curlvl */
     g_mapcur = find_map(g_maphead, curlvl);
+    push_mlist(&(g_mapcur->monsters), g_player);
 
     /* set g_tilemap */
     g_tilemap = g_mapcur->tiles;
@@ -215,6 +225,7 @@ int load_game(void) {
 
     /* Update FOV */
     update_fov();
+    write_log("Saved game loaded successfully!");
     return EV_CHST_GAME;
 }
 

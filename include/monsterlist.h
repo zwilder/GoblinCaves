@@ -42,10 +42,13 @@ MonsterList* add_mlist_back(MonsterList *head, Monster *data);
  * Utility
  *********/
 int count_mlist(MonsterList *head);
+void move_mlist_player(MonsterList **fromlist, MonsterList **tolist);
+void remove_mlist_player(MonsterList **head);
 /*
+Monster* pop_mlist(MonsterList *head, Monster *key);
+Monster* pop_mlist_player(MonsterList *head); 
 MonsterList* pop_mlist_front(MonsterList **head);
 Monster* pop_mlist_at(MonsterList *head, MonsterList *key);
-Monster* pop_mlist_player(MonsterList *head);
 */
 
 /*************

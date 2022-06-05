@@ -60,6 +60,73 @@ int count_mlist(MonsterList *head) {
     return result;
 }
 
+void move_mlist_player(MonsterList **fromlist, MonsterList **tolist) {
+    remove_mlist_player(fromlist);
+    push_mlist(tolist, g_player);
+}
+
+void remove_mlist_player(MonsterList **head) {
+    /* Delete the node, not the player */
+    MonsterList *tmp, *prev;
+    tmp = *head;
+    /* Head node has player */
+    if(tmp && (tmp->data == g_player)){
+        (*head)->next = tmp->next;
+        write_log("Player found in list, node removed.");
+        free(tmp);
+        tmp = NULL;
+        return;
+    }
+
+    /* Search for node with player */
+    while(tmp && (tmp->data != g_player)) {
+        prev = tmp;
+        tmp = tmp->next;
+    }
+
+    /* If player not in list */
+    if(!tmp) {
+        write_log("Player not found in list!");
+        return;
+    }
+    
+    /* Unlink node */
+    prev->next = tmp->next;
+    write_log("Player found in list, node removed.");
+    free(tmp);
+    tmp = NULL;
+}
+
+    /*
+Monster* pop_mlist_player(MonsterList *head) {
+    Monster *result = NULL;
+    MonsterList *cur, *prev;
+    if(!head) {
+        return result;
+    }
+    cur = head;
+    while(cur) {
+        if(check_flag(cur->data->flags,MF_PLAYER)){
+            result = cur->data;
+            break;
+        }
+        prev = cur;
+        cur = cur->next;
+    }
+    if(result){
+        if(cur->next) {
+            prev->next = cur->next;
+        } else {
+            prev->next = NULL;
+        }
+        if(cur) {
+            free(cur);
+            cur = NULL;
+        }
+    }
+    return result;
+}
+    */
 
 /*************
  * Destruction
