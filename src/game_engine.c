@@ -95,13 +95,16 @@ void new_game(void) {
     g_maphead = create_map(NULL);
     g_mapcur = g_maphead;
     g_tilemap = g_maphead->tiles;
+    push_mlist(&(g_mapcur->monsters), g_player);
+    /*
+    g_mapcur->monsters = add_mlist_front(g_mapcur->monsters, g_player);
+    */
     build_dungeon();
 
     update_fov();
 }
 
 void engine_close(void) {
-    destroy_player();
     destroy_map(&g_maphead);
     destroy_msglist(&g_msghead);
     destroy_msglist(&g_msgloghead);

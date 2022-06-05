@@ -29,6 +29,7 @@ typedef struct {
 struct Map {
     /* Note: Map is a double linked list */
     Tile *tiles;
+    MonsterList *monsters;
     int lvl;
     struct Map *prev;
     struct Map *next;

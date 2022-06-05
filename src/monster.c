@@ -36,6 +36,7 @@ typedef struct {
 Monster monsterTable[NUM_MON] =
 {
     /* pos  dpos  glyph                      name            str dex per vit, flags */
+    { {0,0},{0,0},{'%',RED,BLACK},         "Corpse"          ,0,0,0,0, MF_NONE},
     { {0,0},{0,0},{'g',GREEN,BLACK},       "Goblin"          ,2,3,2,2, MF_ALIVE},
     { {0,0},{0,0},{'g',BRIGHT_GREEN,BLACK},"Goblin Archer"   ,2,3,3,1, MF_ALIVE | MF_ARCHER },
     { {0,0},{0,0},{'B',BROWN,BLACK},       "Bat"             ,1,3,1,2, MF_ALIVE | MF_SKIRMISH }
@@ -47,6 +48,12 @@ Monster* create_monster_at(Vec2i pos, int type) {
     newMonster->pos.x = pos.x;
     newMonster->pos.y = pos.y;
     newMonster->curhp = get_max_hp(newMonster);
+    return newMonster;
+}
+
+Monster* create_monster(void) {
+    Monster *newMonster = malloc(sizeof(Monster));
+    *newMonster =monsterTable[M_EMPTY];
     return newMonster;
 }
 
@@ -76,6 +83,9 @@ Monster* create_player(Vec2i pos) {
 
     newPlayer->curhp = get_max_hp(newPlayer);
     newPlayer->flags = MF_ALIVE | MF_PLAYER;
+    if(check_flag(newPlayer->flags, MF_PLAYER)) {
+        write_log("Created new player!");
+    }
     
     return newPlayer;
 }

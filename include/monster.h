@@ -42,7 +42,8 @@ typedef struct {
 } Monster;
 
 typedef enum {
-    M_GOBLIN      = 0,
+    M_EMPTY       = 0,
+    M_GOBLIN,
     M_GARCHER,
     M_BAT,
     NUM_MON
@@ -62,6 +63,7 @@ typedef enum {
  * monster.c functions
  ********************/
 Monster* create_monster_at(Vec2i pos, int type);
+Monster* create_monster(void);
 void destroy_monster(Monster* monster);
 Monster* create_player(Vec2i pos);
 void destroy_player(void);

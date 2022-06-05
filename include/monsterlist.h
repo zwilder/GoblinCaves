@@ -31,24 +31,35 @@ typedef struct MonsterList MonsterList;
  * Creation 
  **********/
 MonsterList* create_mlist(Monster *data);
+void push_mlist(MonsterList **head, Monster *data); 
+/*
 MonsterList* add_mlist_empty(MonsterList *head, Monster *data);
 MonsterList* add_mlist_front(MonsterList *head, Monster *data);
 MonsterList* add_mlist_back(MonsterList *head, Monster *data);
+*/
 
 /*********
  * Utility
  *********/
 int count_mlist(MonsterList *head);
+/*
 MonsterList* pop_mlist_front(MonsterList **head);
 Monster* pop_mlist_at(MonsterList *head, MonsterList *key);
 Monster* pop_mlist_player(MonsterList *head);
+*/
 
 /*************
  * Destruction
  *************/
+void destroy_mlist_at(MonsterList *head, MonsterList *key); 
+void remove_mlist_by_flag(MonsterList *head, MonsterFlags flag);
+void cull_mlist(MonsterList *head);
+void destroy_mlist(MonsterList **head);
+/*
 void destroy_mlist_at(MonsterList *head, MonsterList *key);
 void destroy_mlist(MonsterList **head);
 void cull_mlist(MonsterList *head);
+*/
 
 
 #endif

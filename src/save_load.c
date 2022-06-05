@@ -53,6 +53,14 @@ void save_map(Map **headref, FILE *f) {
     last = *headref;
     while(last != NULL) {
         fwrite(&(last->lvl), sizeof(int), 1, f);
+        count = count_mlist(last->monsters);
+        fwrite(&count, sizeof(int),1,f);
+        for(i = 0; i < count; i++) {
+            /* It shouldn't matter if the player is saved twice, as long as we
+             * don't load the player twice! */
+            write_log("Saving monster!");
+            save_monster(last->monsters[i].data, f);
+        }
         for(i = 0; i < (MAP_WIDTH * MAP_HEIGHT); i++) {
             save_tile(last->tiles[i], f);
         }
@@ -66,7 +74,8 @@ Map* load_map(FILE *f) {
     Map* head = NULL;
     Map* readmap = NULL;
     Map* nextmap = NULL;
-    int count;
+    Monster *monster = NULL;
+    int count,mcount;
     int i = 0;
     int j = 0;
     fread(&count, sizeof(int),1,f);
@@ -74,6 +83,18 @@ Map* load_map(FILE *f) {
     while(i <= count) {
         readmap = create_map(NULL);
         fread(&(readmap->lvl), sizeof(int), 1, f);
+        fread(&mcount, sizeof(int),1,f);
+        for(j = 0; j < mcount; j++){
+            monster = load_monster(f);
+            if(check_flag(monster->flags, MF_PLAYER)){
+                write_log("Read player monster, skipping.");
+            } else {
+                /*Monster read is not player, add to list*/
+                push_mlist(&(readmap->monsters), monster);
+                //readmap->monsters = add_mlist_front(readmap->monsters, monster);
+                write_log("Read monster, added to monster list!");
+            }
+        }
         for(j = 0; j < (MAP_WIDTH * MAP_HEIGHT); j++) {
             readmap->tiles[j] = load_tile(f);
         }
@@ -96,36 +117,37 @@ Map* load_map(FILE *f) {
 }
 
 /****************************
- * Player save/load functions
+ * Monster save/load functions
  ****************************/
-void save_player(Monster *player, FILE *f) {
-    int namesize = strlen(player->name) + 1; /* add 1 for null terminator */
-    fwrite(&namesize, sizeof(int), 1, f); fwrite(&(player->name), sizeof(char), namesize, f); fwrite(&(player->pos), sizeof(Vec2i), 1, f);
-    fwrite(&(player->dpos), sizeof(Vec2i), 1, f);
-    fwrite(&(player->glyph), sizeof(Glyph), 1, f);
-    fwrite(&(player->str), sizeof(int), 1, f);
-    fwrite(&(player->dex), sizeof(int), 1, f);
-    fwrite(&(player->vit), sizeof(int), 1, f);
-    fwrite(&(player->per), sizeof(int), 1, f);
-    fwrite(&(player->curhp), sizeof(int), 1, f);
-    fwrite(&(player->flags), sizeof(int), 1, f);
+void save_monster(Monster *monster, FILE *f) {
+    int namesize = strlen(monster->name) + 1; /* add 1 for null terminator */
+    fwrite(&namesize, sizeof(int), 1, f); fwrite(&(monster->name), sizeof(char), namesize, f); fwrite(&(monster->pos), sizeof(Vec2i), 1, f);
+    fwrite(&(monster->dpos), sizeof(Vec2i), 1, f);
+    fwrite(&(monster->glyph), sizeof(Glyph), 1, f);
+    fwrite(&(monster->str), sizeof(int), 1, f);
+    fwrite(&(monster->dex), sizeof(int), 1, f);
+    fwrite(&(monster->vit), sizeof(int), 1, f);
+    fwrite(&(monster->per), sizeof(int), 1, f);
+    fwrite(&(monster->curhp), sizeof(int), 1, f);
+    fwrite(&(monster->flags), sizeof(int), 1, f);
 }
 
-Monster* load_player(FILE *f) {
-    Monster *newPlayer = create_player(make_vec(0,0));
+Monster* load_monster(FILE *f) {
+    //Monster *monster = create_player(make_vec(0,0));
+    Monster *monster = create_monster();
     int namesize;
     fread(&namesize, sizeof(int), 1, f);
-    fread(&(newPlayer->name), sizeof(char), namesize, f);
-    fread(&(newPlayer->pos), sizeof(Vec2i), 1, f);
-    fread(&(newPlayer->dpos), sizeof(Vec2i), 1, f);
-    fread(&(newPlayer->glyph), sizeof(Glyph), 1, f);
-    fread(&(newPlayer->str), sizeof(int), 1, f);
-    fread(&(newPlayer->dex), sizeof(int), 1, f);
-    fread(&(newPlayer->vit), sizeof(int), 1, f);
-    fread(&(newPlayer->per), sizeof(int), 1, f);
-    fread(&(newPlayer->curhp), sizeof(int), 1, f);
-    fread(&(newPlayer->flags), sizeof(int), 1, f);
-    return newPlayer;
+    fread(&(monster->name), sizeof(char), namesize, f);
+    fread(&(monster->pos), sizeof(Vec2i), 1, f);
+    fread(&(monster->dpos), sizeof(Vec2i), 1, f);
+    fread(&(monster->glyph), sizeof(Glyph), 1, f);
+    fread(&(monster->str), sizeof(int), 1, f);
+    fread(&(monster->dex), sizeof(int), 1, f);
+    fread(&(monster->vit), sizeof(int), 1, f);
+    fread(&(monster->per), sizeof(int), 1, f);
+    fread(&(monster->curhp), sizeof(int), 1, f);
+    fread(&(monster->flags), sizeof(int), 1, f);
+    return monster;
 }
 
 /********************************
@@ -139,14 +161,14 @@ int save_game(void) {
      * or something cool like that. */
     FILE *f = fopen("save_data.bin","wb+");
 
+    /* Write player */
+    save_monster(g_player, f);
+
     /* Write Map */
     save_map(&g_maphead, f);
 
     /* Write current level int */
     fwrite(&(g_mapcur->lvl), sizeof(int), 1, f);
-
-    /* Write player */
-    save_player(g_player, f);
 
     /* Close file */
     fclose(f);
@@ -173,14 +195,14 @@ int load_game(void) {
         destroy_player();
     }
 
+    /* read and set g_player */
+    g_player = load_monster(f);
+
     /* Read map list and set g_maphead */
     g_maphead = load_map(f);
 
     /* read current level int curlvl*/
     fread(&(curlvl), sizeof(int), 1, f);
-
-    /* read and set g_player */
-    g_player = load_player(f);
 
     /* set g_mapcur to curlvl */
     g_mapcur = find_map(g_maphead, curlvl);
