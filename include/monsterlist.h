@@ -56,7 +56,7 @@ Monster* pop_mlist_at(MonsterList *head, MonsterList *key);
  *************/
 void destroy_mlist_at(MonsterList *head, MonsterList *key); 
 void remove_mlist_by_flag(MonsterList *head, MonsterFlags flag);
-void cull_mlist(MonsterList *head);
+void cull_mlist(MonsterList **head);
 void destroy_mlist(MonsterList **head);
 /*
 void destroy_mlist_at(MonsterList *head, MonsterList *key);

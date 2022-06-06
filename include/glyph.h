@@ -29,4 +29,6 @@ typedef struct {
     Color bg;
 } Glyph;
 
+Glyph make_glyph(char ch, Color fg, Color bg);
+
 #endif

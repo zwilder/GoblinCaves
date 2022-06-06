@@ -43,7 +43,7 @@ Monster monsterTable[NUM_MON] =
 };
 
 Monster* create_monster_at(Vec2i pos, int type) {
-    Monster *newMonster = malloc(sizeof(Monster));
+    Monster *newMonster = calloc(1,sizeof(Monster));
     *newMonster = monsterTable[type];
     newMonster->pos.x = pos.x;
     newMonster->pos.y = pos.y;
@@ -52,8 +52,18 @@ Monster* create_monster_at(Vec2i pos, int type) {
 }
 
 Monster* create_monster(void) {
-    Monster *newMonster = malloc(sizeof(Monster));
-    *newMonster =monsterTable[M_EMPTY];
+    Monster *newMonster = calloc(1, sizeof(Monster));
+    //*newMonster =monsterTable[M_EMPTY];
+    newMonster->pos = make_vec(0,0);
+    newMonster->dpos = make_vec(0,0);
+    newMonster->glyph = make_glyph('%', RED, BLACK);
+    strcpy(newMonster->name, "Corpse");
+    newMonster->str = 0;
+    newMonster->dex = 0;
+    newMonster->per = 0;
+    newMonster->vit = 0;
+    newMonster->flags = MF_NONE;
+    newMonster->curhp = 0;
     return newMonster;
 }
 
@@ -64,7 +74,7 @@ void destroy_monster(Monster* monster) {
 }
 
 Monster* create_player(Vec2i pos) {
-    Monster* newPlayer = malloc(sizeof(Monster));
+    Monster* newPlayer = calloc(1, sizeof(Monster));
 
     newPlayer->pos.y = pos.y;
     newPlayer->pos.x = pos.x;
@@ -83,9 +93,11 @@ Monster* create_player(Vec2i pos) {
 
     newPlayer->curhp = get_max_hp(newPlayer);
     newPlayer->flags = MF_ALIVE | MF_PLAYER;
+    /*
     if(check_flag(newPlayer->flags, MF_PLAYER)) {
         write_log("Created new player!");
     }
+    */
     
     return newPlayer;
 }

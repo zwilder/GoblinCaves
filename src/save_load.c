@@ -53,18 +53,11 @@ void save_map(Map **headref, FILE *f) {
     last = *headref;
     while(last != NULL) {
         fwrite(&(last->lvl), sizeof(int), 1, f);
-        //remove_mlist_player(&(last->monsters));
-        //cull_mlist(last->monsters);
-        count = count_mlist(last->monsters);
-        fwrite(&count, sizeof(int),1,f);
-        for(i = 0; i < count; i++) {
-            /* It shouldn't matter if the player is saved twice, as long as we
-             * don't load the player twice! */
-            write_log("Saving monster!");
-            save_monster(last->monsters[i].data, f);
-        }
-        for(i = 0; i < (MAP_WIDTH * MAP_HEIGHT); i++) {
-            save_tile(last->tiles[i], f);
+        save_monsterlist(last->monsters, f);
+        if(last->tiles) {
+            for(i = 0; i < (MAP_WIDTH * MAP_HEIGHT); i++) {
+                save_tile(last->tiles[i], f);
+            }
         }
         last = last->next;
     }
@@ -76,8 +69,7 @@ Map* load_map(FILE *f) {
     Map* head = NULL;
     Map* readmap = NULL;
     Map* nextmap = NULL;
-    Monster *monster = NULL;
-    int count,mcount;
+    int count;
     int i = 0;
     int j = 0;
     fread(&count, sizeof(int),1,f);
@@ -85,20 +77,7 @@ Map* load_map(FILE *f) {
     while(i <= count) {
         readmap = create_map(NULL);
         fread(&(readmap->lvl), sizeof(int), 1, f);
-        fread(&mcount, sizeof(int),1,f);
-        for(j = 0; j < mcount; j++){
-            monster = load_monster(f);
-            if(check_flag(monster->flags, MF_PLAYER)){
-                write_log("Read player monster, skipping.");
-                free(monster);
-                monster = NULL;
-            } else {
-                /*Monster read is not player, add to list*/
-                push_mlist(&(readmap->monsters), monster);
-                //readmap->monsters = add_mlist_front(readmap->monsters, monster);
-                write_log("Read monster, added to monster list!");
-            }
-        }
+        readmap->monsters = load_monsterlist(f);
         for(j = 0; j < (MAP_WIDTH * MAP_HEIGHT); j++) {
             readmap->tiles[j] = load_tile(f);
         }
@@ -120,6 +99,36 @@ Map* load_map(FILE *f) {
     return head;
 }
 
+/*********************************
+ * MonsterList save/load functions 
+ *********************************/
+void save_monsterlist(MonsterList *head, FILE *f) {
+    int count, i;
+    remove_mlist_player(&head);
+    count = count_mlist(head);
+    fwrite(&count, sizeof(int),1,f);
+    for(i = 0; i < count; i++) {
+        if(head[i].data) {
+            write_log("Saving monster!");
+            save_monster(head[i].data, f);
+        }
+    }
+}
+
+MonsterList* load_monsterlist(FILE *f) {
+    MonsterList *head = NULL;
+    int count, i;
+    Monster *monster = NULL;
+    fread(&count, sizeof(int),1,f);
+    for(i = 0; i < count; i++) {
+        monster = load_monster(f);
+        push_mlist(&head, monster);
+        write_log("Read monster, added to list.");
+    }
+    cull_mlist(&head);
+    return head;
+}
+
 /****************************
  * Monster save/load functions
  ****************************/
@@ -127,6 +136,10 @@ void save_monster(Monster *monster, FILE *f) {
     if(!monster) {
         return;
     }
+    char name[80] = "Saving: ";
+    strcat(name, monster->name);
+    write_log(name);
+    log_vec(monster->pos);
     int namesize = strlen(monster->name) + 1; /* add 1 for null terminator */
     fwrite(&namesize, sizeof(int), 1, f); fwrite(&(monster->name), sizeof(char), namesize, f); fwrite(&(monster->pos), sizeof(Vec2i), 1, f);
     fwrite(&(monster->dpos), sizeof(Vec2i), 1, f);
@@ -148,6 +161,7 @@ Monster* load_monster(FILE *f) {
     strcat(name, monster->name);
     write_log(name);
     fread(&(monster->pos), sizeof(Vec2i), 1, f);
+    log_vec(monster->pos);
     fread(&(monster->dpos), sizeof(Vec2i), 1, f);
     fread(&(monster->glyph), sizeof(Glyph), 1, f);
     fread(&(monster->str), sizeof(int), 1, f);

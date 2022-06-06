@@ -99,13 +99,13 @@ void new_game(void) {
     /*
     g_mapcur->monsters = add_mlist_front(g_mapcur->monsters, g_player);
     */
-    build_dungeon();
+    //build_dungeon();
 
     update_fov();
 }
 
 void engine_close(void) {
-    destroy_map(&g_maphead);
+    /*destroy_map(&g_maphead);*/
     destroy_msglist(&g_msghead);
     destroy_msglist(&g_msgloghead);
 }

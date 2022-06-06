@@ -69,7 +69,8 @@ Vec2i get_camera(void) {
     return camera;
 }
 void draw_screen(void) {
-    int x, y, index, mapIndex;
+    int i,x, y, index, mapIndex;
+    MonsterList *monsters = g_mapcur->monsters;
     Vec2i screenpos, mappos;
     Vec2i camera = get_camera();
 
@@ -111,6 +112,20 @@ void draw_screen(void) {
     /* draw the pickups on the screen */
     
     /* draw the enemies on the screen */
+    /*
+    for(i = 0; i < count_mlist(monsters); i++) {
+        if(monsters[i].data) {
+            mappos.x = monsters[i].data->pos.x;
+            mappos.y = monsters[i].data->pos.y;
+            if(is_visible(mappos.x,mappos.y)) {
+                screenpos = subtract_vec(mappos, camera);
+                index = get_screen_index(screenpos.x,screenpos.y);
+                screen[index] = monsters[i].data->glyph;
+            }
+        }
+    }
+    */
+
 
     /* draw the player on the screen */
     if(g_player) {

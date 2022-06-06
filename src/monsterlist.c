@@ -24,7 +24,12 @@
  **********/
 MonsterList* create_mlist(Monster *data) {
     MonsterList *newnode = malloc(sizeof(MonsterList));
-    newnode->data = data;
+    if(data) {
+        newnode->data = data;
+    } else {
+        newnode->data = NULL;
+        write_log("Attempting to create a MonsterList with NULL data!");
+    }
     newnode->next = NULL;
     return newnode;
 }
@@ -48,10 +53,12 @@ int count_mlist(MonsterList *head) {
     if(!head) {
         return result;
     }
+    /*
     if(!head->next) {
         result++;
         return result;
     }
+    */
     MonsterList *tmp = head;
     while(tmp) {
         result++;
@@ -167,7 +174,42 @@ void remove_mlist_by_flag(MonsterList *head, MonsterFlags flag) {
     }
 }
 
-void cull_mlist(MonsterList *head) {
+void cull_mlist(MonsterList **head) {
+    /* Delete the monster, delete the node*/
+    MonsterList *tmp, *prev, *cur;
+    tmp = *head;
+    /* Head node has MF_NONE*/
+    if(tmp && (check_flag(tmp->data->flags,MF_NONE))){
+        (*head)->next = tmp->next;
+        write_log("MF_NONE found in head, node removed.");
+        if(tmp->data){
+            free(tmp->data);
+            tmp->data = NULL;
+        }
+        free(tmp);
+        tmp = NULL;
+    }
+
+    /* Search for node with MF_NONE*/
+    while(tmp) {
+        cur = tmp;
+        if(cur->data) {
+            if(check_flag(cur->data->flags, MF_NONE)) {
+                free(cur->data);
+                write_log("MF_NONE found in list, node removed.");
+                cur->data = NULL;
+                free(cur);
+                cur = NULL;
+            }
+            prev->next = tmp->next;
+            tmp = tmp->next;
+        } else {
+            prev = tmp;
+            tmp = tmp->next;
+        }
+    }
+
+    /*
     if(!head) {
         return;
     }
@@ -176,11 +218,15 @@ void cull_mlist(MonsterList *head) {
     while(tmp) {
         cur = tmp;
         if(!check_flag(cur->data->flags, MF_ALIVE)) {
+            if(cur->data) {
+                free(cur->data);
+            }
             free(cur);
             cur = NULL;
         }
         tmp = tmp->next;
     }
+    */
 }
 
 void destroy_mlist(MonsterList **head) {

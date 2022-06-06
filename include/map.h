@@ -94,5 +94,6 @@ void place_tile(Vec2i pos, int type);
 Vec2i find_down_stairs(void);
 Vec2i find_up_stairs(void);
 void tile_flavor_msg(Vec2i pos);
+bool in_bounds(int x, int y);
 
 #endif

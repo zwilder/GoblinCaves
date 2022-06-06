@@ -17,25 +17,12 @@
 * You should have received a copy of the GNU General Public License
 * along with Goblin Caves.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SAVE_LOAD_H
-#define SAVE_LOAD_H
 
-/**************************
- * Saving/Loading functions
- * save_load.c
- **************************/
-void save_tile(Tile tile, FILE *f);
-Tile load_tile(FILE *f);
-
-void save_map(Map **headref, FILE *f);
-Map* load_map(FILE *f);
-
-void save_monsterlist(MonsterList *head, FILE *f); 
-MonsterList* load_monsterlist(FILE *f); 
-void save_monster(Monster *player, FILE *f);
-Monster* load_monster(FILE *f);
-
-int save_game(void);
-int load_game(void);
-
-#endif
+#include <goblincaves.h>
+Glyph make_glyph(char ch, Color fg, Color bg) {
+    Glyph glyph;
+    glyph.ch = ch;
+    glyph.fg = fg;
+    glyph.bg = bg;
+    return glyph;
+}
