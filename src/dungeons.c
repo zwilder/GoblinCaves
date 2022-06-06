@@ -115,5 +115,5 @@ void build_basic_dungeon(void) {
 
     /* Big fat chonky statement - gonna have to write some functions to make
      * this easier - this is just a test */
-    push_mlist(&(g_mapcur->monsters), (create_monster_at(get_center(rooms[mt_rand(0,i-1)]), M_GOBLIN)));
+    //push_mlist(&(g_mapcur->monsters), (create_monster_at(get_center(rooms[mt_rand(0,i-1)]), M_GOBLIN)));
 }

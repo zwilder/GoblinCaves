@@ -53,12 +53,10 @@ int count_mlist(MonsterList *head) {
     if(!head) {
         return result;
     }
-    /*
-    if(!head->next) {
+    if(!(head->next)) {
         result++;
         return result;
     }
-    */
     MonsterList *tmp = head;
     while(tmp) {
         result++;
@@ -175,9 +173,14 @@ void remove_mlist_by_flag(MonsterList *head, MonsterFlags flag) {
 }
 
 void cull_mlist(MonsterList **head) {
+    if(!(*head)) {
+        return;
+    }
     /* Delete the monster, delete the node*/
     MonsterList *tmp, *prev, *cur;
     tmp = *head;
+    prev = *head;
+    cur = *head;
     /* Head node has MF_NONE*/
     if(tmp && (check_flag(tmp->data->flags,MF_NONE))){
         (*head)->next = tmp->next;

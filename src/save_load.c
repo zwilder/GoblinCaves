@@ -53,7 +53,7 @@ void save_map(Map **headref, FILE *f) {
     last = *headref;
     while(last != NULL) {
         fwrite(&(last->lvl), sizeof(int), 1, f);
-        save_monsterlist(last->monsters, f);
+        //save_monsterlist(last->monsters, f);
         if(last->tiles) {
             for(i = 0; i < (MAP_WIDTH * MAP_HEIGHT); i++) {
                 save_tile(last->tiles[i], f);
@@ -77,7 +77,7 @@ Map* load_map(FILE *f) {
     while(i <= count) {
         readmap = create_map(NULL);
         fread(&(readmap->lvl), sizeof(int), 1, f);
-        readmap->monsters = load_monsterlist(f);
+        //readmap->monsters = load_monsterlist(f);
         for(j = 0; j < (MAP_WIDTH * MAP_HEIGHT); j++) {
             readmap->tiles[j] = load_tile(f);
         }
@@ -104,7 +104,7 @@ Map* load_map(FILE *f) {
  *********************************/
 void save_monsterlist(MonsterList *head, FILE *f) {
     int count, i;
-    remove_mlist_player(&head);
+    //remove_mlist_player(&head);
     count = count_mlist(head);
     fwrite(&count, sizeof(int),1,f);
     for(i = 0; i < count; i++) {
@@ -125,7 +125,7 @@ MonsterList* load_monsterlist(FILE *f) {
         push_mlist(&head, monster);
         write_log("Read monster, added to list.");
     }
-    cull_mlist(&head);
+    //cull_mlist(&head);
     return head;
 }
 
@@ -203,7 +203,7 @@ int load_game(void) {
     /* Open file for reading, eventually there will be a string passed in to
      * load_game with the names of the characters in "$HOME/.goblincaves/"*/
     FILE *f = fopen("save_data.bin","rb+");
-    int curlvl;
+    int curlvl = 0;
 
     if(f == NULL) {
         error_msg_box("No save data found!", BLACK, WHITE);
@@ -229,7 +229,7 @@ int load_game(void) {
 
     /* set g_mapcur to curlvl */
     g_mapcur = find_map(g_maphead, curlvl);
-    push_mlist(&(g_mapcur->monsters), g_player);
+    //push_mlist(&(g_mapcur->monsters), g_player);
 
     /* set g_tilemap */
     g_tilemap = g_mapcur->tiles;
