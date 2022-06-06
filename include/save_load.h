@@ -30,8 +30,6 @@ Tile load_tile(FILE *f);
 void save_map(Map **headref, FILE *f);
 Map* load_map(FILE *f);
 
-void save_monsterlist(MonsterList *head, FILE *f); 
-MonsterList* load_monsterlist(FILE *f); 
 void save_monster(Monster *player, FILE *f);
 Monster* load_monster(FILE *f);
 

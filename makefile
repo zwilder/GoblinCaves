@@ -21,7 +21,7 @@ clean:
 
 fresh: clean GoblinCaves run
 
-optimized: ctags
+optimized:
 	$(CC) $(SOURCES) $(CFLAGS) $(OFLAGS) -o GoblinCaves
 
 ctags: 

@@ -142,7 +142,6 @@ void change_level(int shift) {
     if(shift == -1) {
         /* Going up */
         if(g_mapcur != NULL) {
-            move_mlist_player(&(g_mapcur->monsters), &(g_mapcur->prev->monsters));
             g_mapcur = g_mapcur->prev;
             g_tilemap = g_mapcur->tiles;
             set_player_pos(find_down_stairs());
@@ -151,14 +150,12 @@ void change_level(int shift) {
     } else if (shift == 1) {
         /* Going down */
         if(g_mapcur->next != NULL) {
-            move_mlist_player(&(g_mapcur->monsters), &(g_mapcur->next->monsters));
             g_mapcur = g_mapcur->next;
             g_tilemap = g_mapcur->tiles;
             set_player_pos(find_up_stairs());
         } else {
             /* We're at the bottom, add a new map on the map list */
             append_map(&g_maphead, NULL);
-            move_mlist_player(&(g_mapcur->monsters), &(g_mapcur->next->monsters));
             g_mapcur = g_mapcur->next;
             g_tilemap = g_mapcur->tiles;
             build_dungeon();

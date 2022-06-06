@@ -53,7 +53,6 @@ void save_map(Map **headref, FILE *f) {
     last = *headref;
     while(last != NULL) {
         fwrite(&(last->lvl), sizeof(int), 1, f);
-        //save_monsterlist(last->monsters, f);
         if(last->tiles) {
             for(i = 0; i < (MAP_WIDTH * MAP_HEIGHT); i++) {
                 save_tile(last->tiles[i], f);
@@ -77,7 +76,6 @@ Map* load_map(FILE *f) {
     while(i <= count) {
         readmap = create_map(NULL);
         fread(&(readmap->lvl), sizeof(int), 1, f);
-        //readmap->monsters = load_monsterlist(f);
         for(j = 0; j < (MAP_WIDTH * MAP_HEIGHT); j++) {
             readmap->tiles[j] = load_tile(f);
         }
@@ -102,33 +100,6 @@ Map* load_map(FILE *f) {
 /*********************************
  * MonsterList save/load functions 
  *********************************/
-void save_monsterlist(MonsterList *head, FILE *f) {
-    int count, i;
-    //remove_mlist_player(&head);
-    count = count_mlist(head);
-    fwrite(&count, sizeof(int),1,f);
-    for(i = 0; i < count; i++) {
-        if(head[i].data) {
-            write_log("Saving monster!");
-            save_monster(head[i].data, f);
-        }
-    }
-}
-
-MonsterList* load_monsterlist(FILE *f) {
-    MonsterList *head = NULL;
-    int count, i;
-    Monster *monster = NULL;
-    fread(&count, sizeof(int),1,f);
-    for(i = 0; i < count; i++) {
-        monster = load_monster(f);
-        push_mlist(&head, monster);
-        write_log("Read monster, added to list.");
-    }
-    //cull_mlist(&head);
-    return head;
-}
-
 /****************************
  * Monster save/load functions
  ****************************/
@@ -229,7 +200,6 @@ int load_game(void) {
 
     /* set g_mapcur to curlvl */
     g_mapcur = find_map(g_maphead, curlvl);
-    //push_mlist(&(g_mapcur->monsters), g_player);
 
     /* set g_tilemap */
     g_tilemap = g_mapcur->tiles;

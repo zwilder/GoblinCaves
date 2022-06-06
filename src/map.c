@@ -65,7 +65,6 @@ Map* create_map(Tile *tilemap) {
     newMap->lvl = 0;
     newMap->next = NULL;
     newMap->prev = NULL;
-    newMap->monsters = NULL;
     return newMap;
 }
 
@@ -112,9 +111,6 @@ void destroy_map(Map **map) {
         ref = pop_map(map);
         if(ref->tiles) {
             destroy_tilemap(ref->tiles, ref->lvl);
-        }
-        if(ref->monsters){
-            destroy_mlist(&(ref->monsters));
         }
         if(ref) {
             free(ref);
