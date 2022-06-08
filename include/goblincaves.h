@@ -45,6 +45,7 @@
  ***********************/
 /* Four major data types - Monster, Effects, Tiles, Pickups */
 #include <monster.h>
+#include <mlist.h>
 #include <map.h>
 
 /*********
