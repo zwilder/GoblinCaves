@@ -139,18 +139,11 @@ void close_door(Vec2i pos) {
 
 void change_level(int shift) {
    /* Eventually this will change the current level up/down by shift */
-    MList *from = NULL;
-    MList *to = NULL;
     if(shift == -1) {
         /* Going up */
         if(g_mapcur != NULL) {
-            from = g_mapcur->monsters;
-            to = g_mapcur->prev->monsters;
-
             g_mapcur = g_mapcur->prev;
-            g_mapcur->monsters = to;
-            transfer_mlist(&from, &to, g_player);
-            g_mlistcur = to;
+            g_player->locID = g_mapcur->lvl;
 
             g_tilemap = g_mapcur->tiles;
             set_player_pos(find_down_stairs());
@@ -159,26 +152,17 @@ void change_level(int shift) {
     } else if (shift == 1) {
         /* Going down */
         if(g_mapcur->next != NULL) {
-            from = g_mapcur->monsters;
-            to = g_mapcur->next->monsters;
-
             g_mapcur = g_mapcur->next;
-            g_mapcur->monsters = to;
-            transfer_mlist(&from, &to, g_player);
-            g_mlistcur = to;
+            g_player->locID = g_mapcur->lvl;
 
             g_tilemap = g_mapcur->tiles;
             set_player_pos(find_up_stairs());
         } else {
             /* We're at the bottom, add a new map on the map list */
             append_map(&g_maphead, NULL);
-            from = g_mapcur->monsters;
-            to = g_mapcur->next->monsters;
 
             g_mapcur = g_mapcur->next;
-            transfer_mlist(&from, &to, g_player);
-            g_mlistcur = to;
-            //g_mlistcur = g_mapcur->monsters;
+            g_player->locID = g_mapcur->lvl;
 
             g_tilemap = g_mapcur->tiles;
             build_dungeon();

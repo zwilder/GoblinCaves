@@ -93,16 +93,16 @@ void new_game(void) {
     destroy_msglist(&g_msgloghead);
     g_maphead = create_map(NULL);
     g_mapcur = g_maphead;
-    g_player = create_player(&(g_mapcur->monsters));
-    g_mlistcur = g_mapcur->monsters;
+    g_player = create_player(&(g_mlist));
     g_tilemap = g_maphead->tiles;
-    //build_dungeon();
+    build_dungeon();
 
     update_fov();
 }
 
 void engine_close(void) {
-    /*destroy_map(&g_maphead);*/
+    destroy_map(&g_maphead);
+    destroy_mlist(&g_mlist);
     destroy_msglist(&g_msghead);
     destroy_msglist(&g_msgloghead);
 }
@@ -122,12 +122,9 @@ int mt_rand_lim(int limit) {
 
     return retval;
 }
+
 int mt_rand(int min, int max) {
     return (mt_rand_lim(max - min) + min);
-    /*return (genrand_int32() % (max - min + 1) + min);*/
-    /*
-    return ((rand() % (max - min + 1) + min);
-    */
 }
 
 bool mt_bool() {

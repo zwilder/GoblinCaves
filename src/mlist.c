@@ -19,15 +19,26 @@
 */
 #include <goblincaves.h>
 
-MList *g_mlistcur = NULL;
+/*
+ * Latest idea: Have multiple MLists isn't cutting it. What if... I have one big
+ * MList? each monster can keep track of it's own identifier, and the identifier
+ * could be kept track of in the node. The identifier would be generated when
+ * the node is created (create_mlist) by using a simple:
+ *      static int idcounter = 0;
+ *      (MList creation/initialization stuff)
+ *      newnode->id = idcounter;
+ *      idcounter++;
+ * Monsters should also keep track of the level they are currently on.
+ */
+MList *g_mlist = NULL;
 
 MList* create_mlist(Monster *data) {
     if(!data) {
         return NULL;
     }
     MList *newnode = calloc(1, sizeof(MList));
-    write_log("Creating MList node!");
-    write_log(data->name);
+    //write_log("Creating MList node!");
+    //write_log(data->name);
 
     newnode->data = data;
     newnode->next = NULL;
@@ -51,6 +62,7 @@ void push_mlist(MList **head, Monster *data) {
 }
 
 void transfer_mlist(MList **from, MList **to, Monster *data) {
+    /* Function does not work */
     if(!(*from)) {
         return;
     }
@@ -75,7 +87,7 @@ void transfer_mlist(MList **from, MList **to, Monster *data) {
     }
     write_log("Found in from list!");
     /* Unlink node */
-    //destroy_mlist_node(from, cur);
+    destroy_mlist_node(from, cur);
     write_log("Node unlinked.");
 
     /* Put in to list */
@@ -107,7 +119,7 @@ void destroy_mlist_node(MList **head, MList *del) {
         del->prev->next = del->next;
     }
 
-    write_log("Destroy mlist node!");
+    //write_log("Destroy mlist node!");
     free(del);
 }
 
@@ -146,6 +158,9 @@ void destroy_mlist(MList **head) {
     while(*head) {
         tmp = *head;
         *head = (*head)->next;
+        if(tmp->data) {
+            destroy_monster(tmp->data);
+        }
         free(tmp);
     }
 }

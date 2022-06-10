@@ -63,7 +63,6 @@ Map* create_map(Tile *tilemap) {
     Map *newMap = malloc(sizeof(Map));
     newMap->tiles = tilemap;
     newMap->lvl = 0;
-    newMap->monsters = NULL;
     newMap->next = NULL;
     newMap->prev = NULL;
     return newMap;
@@ -112,9 +111,6 @@ void destroy_map(Map **map) {
         ref = pop_map(map);
         if(ref->tiles) {
             destroy_tilemap(ref->tiles, ref->lvl);
-        }
-        if(ref->monsters) {
-            destroy_mlist(&(ref->monsters));
         }
         if(ref) {
             free(ref);

@@ -35,11 +35,11 @@ typedef struct {
 */
 Monster monsterTable[NUM_MON] =
 {
-    /* pos  dpos  glyph                      name            str dex per vit, flags */
-    { {0,0},{0,0},{'%',RED,BLACK},         "Corpse"          ,0,0,0,0, MF_NONE},
-    { {0,0},{0,0},{'g',GREEN,BLACK},       "Goblin"          ,2,3,2,2, MF_ALIVE},
-    { {0,0},{0,0},{'g',BRIGHT_GREEN,BLACK},"Goblin Archer"   ,2,3,3,1, MF_ALIVE | MF_ARCHER },
-    { {0,0},{0,0},{'B',BROWN,BLACK},       "Bat"             ,1,3,1,2, MF_ALIVE | MF_SKIRMISH }
+    /* pos  dpos  glyph                      name            str dex per vit, flags, locID */
+    { {0,0},{0,0},{'%',RED,BLACK},         "Corpse"          ,0,0,0,0, MF_NONE,                     0},
+    { {0,0},{0,0},{'g',GREEN,BLACK},       "Goblin"          ,2,3,2,2, MF_ALIVE,                    0},
+    { {0,0},{0,0},{'g',BRIGHT_GREEN,BLACK},"Goblin Archer"   ,2,3,3,1, MF_ALIVE | MF_ARCHER,        0},
+    { {0,0},{0,0},{'B',BROWN,BLACK},       "Bat"             ,1,3,1,2, MF_ALIVE | MF_SKIRMISH,      0}
 };
 
 Monster* create_monster_at(Vec2i pos, int type) {
@@ -53,7 +53,8 @@ Monster* create_monster_at(Vec2i pos, int type) {
 
 Monster* create_monster(void) {
     Monster *newMonster = calloc(1, sizeof(Monster));
-    //*newMonster =monsterTable[M_EMPTY];
+    *newMonster = monsterTable[M_CORPSE];
+    /*
     newMonster->pos = make_vec(0,0);
     newMonster->dpos = make_vec(0,0);
     newMonster->glyph = make_glyph('%', RED, BLACK);
@@ -63,6 +64,8 @@ Monster* create_monster(void) {
     newMonster->per = 0;
     newMonster->vit = 0;
     newMonster->flags = MF_NONE;
+    */
+    newMonster->locID = -1;
     newMonster->curhp = 0;
     return newMonster;
 }
@@ -88,6 +91,7 @@ Monster* create_player(MList **head) {
 
     newPlayer->curhp = get_max_hp(newPlayer);
     newPlayer->flags = MF_ALIVE | MF_PLAYER;
+    newPlayer->locID = 0;
 
     push_mlist(head, newPlayer);
     

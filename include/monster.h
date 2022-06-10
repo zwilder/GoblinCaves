@@ -40,10 +40,11 @@ typedef struct {
     int vit;
     int curhp;
     int flags;
+    int locID;
 } Monster;
 
 typedef enum {
-    M_EMPTY       = 0,
+    M_CORPSE    = 0,
     M_GOBLIN,
     M_GARCHER,
     M_BAT,
