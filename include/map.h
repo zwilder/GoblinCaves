@@ -30,6 +30,7 @@ struct Map {
     /* Note: Map is a double linked list */
     Tile *tiles;
     int lvl;
+    MList *monsters;
     struct Map *prev;
     struct Map *next;
 };

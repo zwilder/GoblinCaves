@@ -54,8 +54,8 @@ int handle_keyboard_menu(int input) {
     int output = EV_NONE; 
     switch(input) {
         case 'a':
-            output = EV_CHST_NWPL;
             new_game();
+            output = EV_CHST_NWPL;
             break;
         case 'b':
             /*output = EV_CHST_GAME;*/

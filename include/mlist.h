@@ -35,5 +35,6 @@ Monster* find_mlist(MList *head, int flags);
 void sort_mlist(MList **head);
 int count_mlist(MList *head);
 void destroy_mlist(MList **head);
+void destroy_mlist_node(MList **head, MList *del);
 
 #endif

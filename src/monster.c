@@ -73,18 +73,13 @@ void destroy_monster(Monster* monster) {
     }
 }
 
-Monster* create_player(Vec2i pos) {
+Monster* create_player(MList **head) {
+    /* Player creation will eventually have it's own state */
     Monster* newPlayer = calloc(1, sizeof(Monster));
 
-    newPlayer->pos.y = pos.y;
-    newPlayer->pos.x = pos.x;
-
-    newPlayer->dpos.y = pos.y;
-    newPlayer->dpos.x = pos.x;
-
-    newPlayer->glyph.ch = '@';
-    newPlayer->glyph.fg = BRIGHT_WHITE; 
-    newPlayer->glyph.bg = BLACK;
+    newPlayer->pos = make_vec(0,0);
+    newPlayer->dpos = newPlayer->pos;
+    newPlayer->glyph = make_glyph('@', BRIGHT_WHITE, BLACK);
 
     newPlayer->str = mt_rand(5,10);
     newPlayer->dex = mt_rand(5,10);
@@ -93,11 +88,8 @@ Monster* create_player(Vec2i pos) {
 
     newPlayer->curhp = get_max_hp(newPlayer);
     newPlayer->flags = MF_ALIVE | MF_PLAYER;
-    /*
-    if(check_flag(newPlayer->flags, MF_PLAYER)) {
-        write_log("Created new player!");
-    }
-    */
+
+    push_mlist(head, newPlayer);
     
     return newPlayer;
 }

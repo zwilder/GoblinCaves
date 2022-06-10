@@ -33,6 +33,9 @@ Map* load_map(FILE *f);
 void save_monster(Monster *player, FILE *f);
 Monster* load_monster(FILE *f);
 
+void save_mlist(MList *head, FILE *f);
+MList* load_mlist(FILE *f);
+
 int save_game(void);
 int load_game(void);
 

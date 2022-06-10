@@ -20,7 +20,7 @@
 
 #include <goblincaves.h>
 Glyph make_glyph(char ch, Color fg, Color bg) {
-    Glyph glyph;
+    Glyph glyph = {};
     glyph.ch = ch;
     glyph.fg = fg;
     glyph.bg = bg;

@@ -20,6 +20,7 @@
 #ifndef MONSTER_H
 #define MONSTER_H
 
+typedef struct MList MList;
 /* Random assortment of stats, not sure how they will be used so this is
  * just for fun. 
  * Maybe: Damage done is weapon + str
@@ -65,7 +66,7 @@ typedef enum {
 Monster* create_monster_at(Vec2i pos, int type);
 Monster* create_monster(void);
 void destroy_monster(Monster* monster);
-Monster* create_player(Vec2i pos);
+Monster* create_player(MList **head);
 void destroy_player(void);
 int get_fov(Monster *monster);
 int get_max_hp(Monster *monster);

@@ -20,7 +20,7 @@
 #include <goblincaves.h>
 
 Vec2i make_vec(int x, int y) {
-    Vec2i result;
+    Vec2i result = {};
     result.x = x;
     result.y = y;
     return result;

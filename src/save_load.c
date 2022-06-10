@@ -43,6 +43,9 @@ void save_map(Map **headref, FILE *f) {
     /* Saves the ENTIRE map list, starting with head */
     int i;
     int count = 0;
+    char *lvlmsg = "Saving level: ";
+    char msg[80];
+    char num[5];
     Map *last = *headref;
     while(last->next != NULL) {
         count++;
@@ -53,11 +56,16 @@ void save_map(Map **headref, FILE *f) {
     last = *headref;
     while(last != NULL) {
         fwrite(&(last->lvl), sizeof(int), 1, f);
+        kr_itoa(last->lvl, num);
+        strcpy(msg, lvlmsg);
+        strcat(msg, num);
+        write_log(msg);
         if(last->tiles) {
             for(i = 0; i < (MAP_WIDTH * MAP_HEIGHT); i++) {
                 save_tile(last->tiles[i], f);
             }
         }
+        save_mlist(last->monsters, f);
         last = last->next;
     }
     write_log("Map saved successfully!");
@@ -71,14 +79,22 @@ Map* load_map(FILE *f) {
     int count;
     int i = 0;
     int j = 0;
+    char *lvlmsg = "Loading level: ";
+    char msg[80];
+    char num[5];
     fread(&count, sizeof(int),1,f);
 
     while(i <= count) {
         readmap = create_map(NULL);
         fread(&(readmap->lvl), sizeof(int), 1, f);
+        kr_itoa(readmap->lvl, num);
+        strcpy(msg, lvlmsg);
+        strcat(msg, num);
+        write_log(msg);
         for(j = 0; j < (MAP_WIDTH * MAP_HEIGHT); j++) {
             readmap->tiles[j] = load_tile(f);
         }
+        readmap->monsters = load_mlist(f);
         if(head == NULL) {
             head = readmap;
         } else if (nextmap == NULL) {
@@ -98,8 +114,52 @@ Map* load_map(FILE *f) {
 }
 
 /*********************************
- * MonsterList save/load functions 
+ * MList save/load functions 
  *********************************/
+void save_mlist(MList *head, FILE *f) {
+    int i = 0;
+    char *name = "Read ";
+    char *msg = " from mlist...";
+    char *countmsg = " monster(s) counted in mlist.";
+    char finalmsg[80];
+
+    int count = count_mlist(head);
+    kr_itoa(count, finalmsg);
+    strcat(finalmsg, countmsg);
+    write_log(finalmsg);
+    if(!count) {
+        return;
+    }
+    fwrite(&count, sizeof(int), 1, f);
+    for(i = 0; i < count; i++) {
+        if(head[i].data) {
+            strcpy(finalmsg, name);
+            strcat(finalmsg, head[i].data->name);
+            strcat(finalmsg, msg);
+            write_log(finalmsg);
+            save_monster(head[i].data, f);
+        }
+    }
+}
+
+MList* load_mlist(FILE *f) {
+    MList *readlist = NULL;
+    int count = 0;
+    int i = 0;
+    char *countmsg = " monster(s) counted in mlist.";
+    char finalmsg[80];
+    fread(&count, sizeof(int), 1,f);
+    kr_itoa(count, finalmsg);
+    strcat(finalmsg, countmsg);
+    write_log(finalmsg);
+    for(i = 0; i < count; i++) {
+        write_log("Loading monster from mlist...");
+        push_mlist(&readlist, load_monster(f));
+    }
+
+    return readlist;
+}
+
 /****************************
  * Monster save/load functions
  ****************************/
@@ -125,7 +185,7 @@ void save_monster(Monster *monster, FILE *f) {
 
 Monster* load_monster(FILE *f) {
     Monster *monster = create_monster();
-    int namesize;
+    int namesize = 0;
     char name[80] = "Loading: ";
     fread(&namesize, sizeof(int), 1, f);
     fread(&(monster->name), sizeof(char), namesize, f);
@@ -156,7 +216,7 @@ int save_game(void) {
     FILE *f = fopen("save_data.bin","wb+");
 
     /* Write player */
-    save_monster(g_player, f);
+    //save_monster(g_player, f);
 
     /* Write Map */
     save_map(&g_maphead, f);
@@ -166,6 +226,7 @@ int save_game(void) {
 
     /* Close file */
     fclose(f);
+    write_log("Game saved successfully!");
 
     return EV_CHST_MENU;
 }
@@ -190,7 +251,7 @@ int load_game(void) {
     }
 
     /* read and set g_player */
-    g_player = load_monster(f);
+    //g_player = load_monster(f);
 
     /* Read map list and set g_maphead */
     g_maphead = load_map(f);
@@ -200,6 +261,12 @@ int load_game(void) {
 
     /* set g_mapcur to curlvl */
     g_mapcur = find_map(g_maphead, curlvl);
+    g_mlistcur = g_mapcur->monsters;
+    g_player = find_mlist(g_mlistcur, MF_PLAYER);
+    if(!g_player) {
+        write_log("Unable to find player! Game loading failed.");
+        return EV_NONE;
+    }
 
     /* set g_tilemap */
     g_tilemap = g_mapcur->tiles;

@@ -19,11 +19,15 @@
 */
 #include <goblincaves.h>
 
+MList *g_mlistcur = NULL;
+
 MList* create_mlist(Monster *data) {
     if(!data) {
         return NULL;
     }
-    MList *newnode = malloc(sizeof(MList));
+    MList *newnode = calloc(1, sizeof(MList));
+    write_log("Creating MList node!");
+    write_log(data->name);
 
     newnode->data = data;
     newnode->next = NULL;
@@ -33,6 +37,7 @@ MList* create_mlist(Monster *data) {
 
 void push_mlist(MList **head, Monster *data) {
     if(!data) {
+        write_log("Failed push_mlist()!");
         return;
     }
     if(!(*head)) {
@@ -49,7 +54,13 @@ void transfer_mlist(MList **from, MList **to, Monster *data) {
     if(!(*from)) {
         return;
     }
-    MList *tmp = NULL;
+    if(!data) {
+        write_log("Attempted transfer of NULL monster!");
+        return;
+    }
+    char msg[80] = "Transferring: ";
+    strcat(msg, data->name);
+    write_log(msg);
     MList *cur = *from;
     /* Find monster in from list */
     while(cur) {
@@ -62,28 +73,42 @@ void transfer_mlist(MList **from, MList **to, Monster *data) {
         /* Didnt find monster in list */
         return;
     }
+    write_log("Found in from list!");
     /* Unlink node */
-    tmp = cur; 
-    if(cur->next) {
-        cur->next->prev = cur->prev;
-    }
-    if(tmp->prev) {
-        tmp->prev->next = tmp->next;
-    } else {
-        /* tmp is head node of from list, head node needs to move */
-        *from = tmp->next;
-    }
+    //destroy_mlist_node(from, cur);
+    write_log("Node unlinked.");
 
     /* Put in to list */
     if(!(*to)) {
-        *to = cur;
-        (*to)->next = NULL;
-        (*to)->prev = NULL;
+        write_log("To list empty, pushing node to To list.");
+        write_log(data->name);
+        push_mlist(to, data);
         return;
-    }
+    } 
+    push_mlist(to, data);
+    /*
     (*to)->prev = cur;
     cur->next = *to;
     *to = cur;
+    */
+}
+
+void destroy_mlist_node(MList **head, MList *del) {
+    if(!(*head) || !del) {
+        return;
+    }
+    if((*head) == del) {
+        *head = del->next;
+    }
+    if(del->next) {
+        del->next->prev = del->prev;
+    }
+    if(del->prev) {
+        del->prev->next = del->next;
+    }
+
+    write_log("Destroy mlist node!");
+    free(del);
 }
 
 Monster* find_mlist(MList *head, int flags) {

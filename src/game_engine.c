@@ -91,11 +91,12 @@ void new_game(void) {
     }
     destroy_msglist(&g_msghead);
     destroy_msglist(&g_msgloghead);
-    g_player = create_player(make_vec(1,1));
     g_maphead = create_map(NULL);
     g_mapcur = g_maphead;
+    g_player = create_player(&(g_mapcur->monsters));
+    g_mlistcur = g_mapcur->monsters;
     g_tilemap = g_maphead->tiles;
-    build_dungeon();
+    //build_dungeon();
 
     update_fov();
 }
