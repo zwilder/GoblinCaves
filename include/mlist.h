@@ -32,9 +32,11 @@ MList* create_mlist(Monster *data);
 void push_mlist(MList **head, Monster *data);
 void transfer_mlist(MList **from, MList **to, Monster *data);
 Monster* find_mlist(MList *head, int flags);
+Monster* monster_at_pos(MList *head, Vec2i pos, int locID);
 void sort_mlist(MList **head);
 int count_mlist(MList *head);
 void destroy_mlist(MList **head);
 void destroy_mlist_node(MList **head, MList *del);
+void destroy_mlist_monster(MList **head, Monster *target);
 
 #endif

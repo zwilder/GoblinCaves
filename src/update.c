@@ -72,6 +72,9 @@ int update(int events) {
             if(mt_chance(10)) {
                 push_msg(&g_msghead, "You look up into the darkness... Hey a bat!");
                 /* Spawn bat at location lol */
+                push_mlist(&g_mlist,
+                        create_monster_at(subtract_vec(g_player->dpos,
+                                make_vec(mt_rand(-1,1),mt_rand(-1,1))), M_BAT));
             } else if(mt_bool()) {
                 push_msg(&g_msghead, "You look up into the darkness.");
             } else {
@@ -84,9 +87,16 @@ int update(int events) {
 
 void player_move(void) {
     Vec2i dpos = g_player->dpos;
+    int dposMask = 0;
     /* Will check for entities at location here */
+    Monster *target = monster_at_pos(g_mlist, dpos, g_mapcur->lvl);
+    if(target) {
+        /* Attack target - temporary */
+        destroy_mlist_monster(&g_mlist, target);
+        return;
+    }
     /* Check tile at location */
-    int dposMask = get_tflags_at(dpos.x,dpos.y);
+    dposMask = get_tflags_at(dpos.x,dpos.y);
 
     if(check_flag(dposMask, TF_BLK_MV)){
         /* Tile blocks movment, is it a door? */

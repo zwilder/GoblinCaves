@@ -121,7 +121,24 @@ void destroy_mlist_node(MList **head, MList *del) {
     }
 
     //write_log("Destroy mlist node!");
+    if(del->data) {
+        destroy_monster(del->data);
+        del->data = NULL;
+    }
     free(del);
+}
+
+void destroy_mlist_monster(MList **head, Monster *target) {
+    MList *del = *head;
+    while(del) {
+        if(del->data == target) {
+            break;
+        }
+        del = del->next;
+    }
+    if(del) {
+        destroy_mlist_node(head, del);
+    }
 }
 
 Monster* find_mlist(MList *head, int flags) {
@@ -136,6 +153,22 @@ Monster* find_mlist(MList *head, int flags) {
         result = result->next;
     }
     return result->data;
+}
+
+Monster* monster_at_pos(MList *head, Vec2i pos, int locID) {
+    MList *cur = head;
+    while(cur) {
+        if(cur->data->locID == locID) {
+           if(eq_vec(cur->data->pos, pos)) {
+                  break;
+           }
+        }
+        cur = cur->next;
+    }
+    if(!cur) {
+        return NULL;
+    }
+    return cur->data;
 }
 
 void sort_mlist(MList **head) {

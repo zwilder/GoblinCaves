@@ -322,10 +322,11 @@ void place_monsters(Rect room) {
     int i = 0;
     while(i < num) {
         pos = random_point_in_rect(room);
-        //Monster *newMonster = create_goblin_at(pos);
-        Monster *newMonster = create_monster_at(pos, M_GOBLIN);
-        newMonster->locID = g_mapcur->lvl;
-        push_mlist(&g_mlist, newMonster);
+        if(!monster_at_pos(g_mlist, pos, g_mapcur->lvl)) {
+            Monster *newMonster = create_monster_at(pos, M_GOBLIN);
+            newMonster->locID = g_mapcur->lvl;
+            push_mlist(&g_mlist, newMonster);
+        }
         i++;
     }
 }

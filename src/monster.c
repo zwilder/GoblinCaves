@@ -50,7 +50,7 @@ Monster* create_monster_at(Vec2i pos, int type) {
     newMonster->pos.x = pos.x;
     newMonster->pos.y = pos.y;
     newMonster->curhp = get_max_hp(newMonster);
-    newMonster->locID = -1;
+    newMonster->locID = g_mapcur->lvl;
     return newMonster;
 }
 
