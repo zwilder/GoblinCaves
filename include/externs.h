@@ -29,15 +29,16 @@ extern Msg *g_msghead; /* Reference to message list head, msg.c */
 extern Msg *g_msgloghead; /* Reference to message log head, msg.c */
 extern MList *g_mlist; /* Reference to monster list mlist.c */
 
-extern const int SCREEN_WIDTH;
-extern const int SCREEN_HEIGHT;
-extern const int GUI_HEIGHT;
-extern const int MSG_HEIGHT;
-extern const int MAP_WIDTH;
-extern const int MAP_HEIGHT;
-extern const int MIN_ROOM_SIZE;
-extern const int MAX_ROOM_SIZE;
-extern const int MIN_NUM_ROOMS;
-extern const int MAX_NUM_ROOMS;
+extern const int SCREEN_WIDTH; /* draw.c */
+extern const int SCREEN_HEIGHT; /* draw.c */
+extern const int GUI_HEIGHT; /* draw.c */
+extern const int MSG_HEIGHT; /* draw.c */
+extern const int MAP_WIDTH; /* map.c */
+extern const int MAP_HEIGHT; /* map.c */
+extern const int MIN_ROOM_SIZE; /* map.c */
+extern const int MAX_ROOM_SIZE; /* map.c */
+extern const int MIN_NUM_ROOMS; /* map.c */
+extern const int MAX_NUM_ROOMS; /* map.c */
+extern const int MAX_MONSTERS; /* map.c */
 
 #endif

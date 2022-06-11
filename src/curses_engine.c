@@ -296,7 +296,8 @@ void draw_nwpl(void) {
     refresh();
     noecho();
     curs_set(0);
-    strcpy(g_player->name, str);
+    g_player->name = strdup(str);
+    //strcpy(g_player->name, str);
 }
 
 void curses_close(void) {

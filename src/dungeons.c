@@ -103,6 +103,7 @@ void build_basic_dungeon(void) {
             break;
         }
         place_doors(rooms[i]);
+        place_monsters(rooms[i]);
     }
 
     place_tile(get_center(rooms[mt_rand(0,i-1)]), TILE_DN);

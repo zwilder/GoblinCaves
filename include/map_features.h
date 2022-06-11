@@ -37,5 +37,6 @@ void place_hdoor(int x, int y);
 void place_vdoor(int x, int y);
 void place_doors(Rect room);
 void place_border(void);
+void place_monsters(Rect room);
 
 #endif

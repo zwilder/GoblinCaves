@@ -53,6 +53,7 @@ void push_mlist(MList **head, Monster *data) {
     }
     if(!(*head)) {
         *head = create_mlist(data);
+        write_log("Head empty, created MList.");
         return;
     }
     MList *newnode = create_mlist(data);

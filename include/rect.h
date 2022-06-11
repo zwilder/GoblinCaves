@@ -30,6 +30,7 @@ typedef struct {
  ******************/
 Rect make_rect(int x, int y, int width, int height); 
 bool point_in_rect(Rect a, Vec2i b);
+Vec2i random_point_in_rect(Rect a);
 bool rect_intersect(Rect a, Rect b);
 Vec2i get_center(Rect a);
 

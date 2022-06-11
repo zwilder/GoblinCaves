@@ -8,8 +8,7 @@
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
 * (at your option) any later version.
-* 
-* Goblin Caves is distributed in the hope that it will be useful,
+* * Goblin Caves is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
@@ -317,3 +316,16 @@ void place_border(void) {
     }
 }
 
+void place_monsters(Rect room) {
+    int num = mt_rand(0, MAX_MONSTERS);
+    Vec2i pos;
+    int i = 0;
+    while(i < num) {
+        pos = random_point_in_rect(room);
+        //Monster *newMonster = create_goblin_at(pos);
+        Monster *newMonster = create_monster_at(pos, M_GOBLIN);
+        newMonster->locID = g_mapcur->lvl;
+        push_mlist(&g_mlist, newMonster);
+        i++;
+    }
+}

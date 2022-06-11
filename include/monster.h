@@ -33,14 +33,14 @@ typedef struct {
     Vec2i pos;
     Vec2i dpos;
     Glyph glyph;
-    char name[32];
+    char *name;
     int str;
     int dex;
     int per;
     int vit;
-    int curhp;
     int flags;
     int locID;
+    int curhp;
 } Monster;
 
 typedef enum {
@@ -65,6 +65,7 @@ typedef enum {
  * monster.c functions
  ********************/
 Monster* create_monster_at(Vec2i pos, int type);
+Monster * create_goblin_at(Vec2i pos); 
 Monster* create_monster(void);
 void destroy_monster(Monster* monster);
 Monster* create_player(MList **head);

@@ -116,27 +116,30 @@ Map* load_map(FILE *f) {
  *********************************/
 void save_mlist(MList *head, FILE *f) {
     int i = 0;
+    MList *tmp = head;
+    
     char *name = "Read ";
     char *msg = " from mlist...";
     char *countmsg = " monster(s) counted in mlist.";
     char finalmsg[80];
 
     int count = count_mlist(head);
-    kr_itoa(count, finalmsg);
-    strcat(finalmsg, countmsg);
-    write_log(finalmsg);
     if(!count) {
         return;
     }
+    kr_itoa(count, finalmsg);
+    strcat(finalmsg, countmsg);
+    write_log(finalmsg);
     fwrite(&count, sizeof(int), 1, f);
-    for(i = 0; i < count; i++) {
-        if(head[i].data) {
+    while(tmp) {
+        if(tmp->data) {
             strcpy(finalmsg, name);
             strcat(finalmsg, head[i].data->name);
             strcat(finalmsg, msg);
             write_log(finalmsg);
-            save_monster(head[i].data, f);
+            save_monster(tmp->data, f);
         }
+        tmp = tmp->next;
     }
 }
 
@@ -173,9 +176,12 @@ void save_monster(Monster *monster, FILE *f) {
     strcat(name, msg);
     strcat(name,mnum);
     write_log(name);
-    log_vec(monster->pos);
+    
     int namesize = strlen(monster->name) + 1; /* add 1 for null terminator */
-    fwrite(&namesize, sizeof(int), 1, f); fwrite(&(monster->name), sizeof(char), namesize, f); fwrite(&(monster->pos), sizeof(Vec2i), 1, f);
+    fwrite(&namesize, sizeof(int), 1, f);
+    fwrite(monster->name, sizeof(char), namesize, f); 
+
+    fwrite(&(monster->pos), sizeof(Vec2i), 1, f);
     fwrite(&(monster->dpos), sizeof(Vec2i), 1, f);
     fwrite(&(monster->glyph), sizeof(Glyph), 1, f);
     fwrite(&(monster->str), sizeof(int), 1, f);
@@ -190,13 +196,16 @@ void save_monster(Monster *monster, FILE *f) {
 Monster* load_monster(FILE *f) {
     Monster *monster = create_monster();
     int namesize = 0;
-    char name[80] = "Loading: ";
+    char namemsg[80] = "Loading: ";
     fread(&namesize, sizeof(int), 1, f);
-    fread(&(monster->name), sizeof(char), namesize, f);
-    strcat(name, monster->name);
-    write_log(name);
+
+    monster->name = malloc(namesize * sizeof(char));
+    fread(monster->name, sizeof(char), namesize, f);
+
+    strcat(namemsg, monster->name);
+    write_log(namemsg);
+
     fread(&(monster->pos), sizeof(Vec2i), 1, f);
-    log_vec(monster->pos);
     fread(&(monster->dpos), sizeof(Vec2i), 1, f);
     fread(&(monster->glyph), sizeof(Glyph), 1, f);
     fread(&(monster->str), sizeof(int), 1, f);
@@ -223,6 +232,7 @@ int save_game(void) {
 
     /* Write monsters */
     save_mlist(g_mlist, f);
+    write_log("MList saved");
 
     /* Write Map */
     save_map(&g_maphead, f);

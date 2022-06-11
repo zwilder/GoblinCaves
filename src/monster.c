@@ -35,36 +35,57 @@ typedef struct {
 */
 Monster monsterTable[NUM_MON] =
 {
-    /* pos  dpos  glyph                      name            str dex per vit, flags, locID */
-    { {0,0},{0,0},{'%',RED,BLACK},         "Corpse"          ,0,0,0,0, MF_NONE,                     0},
-    { {0,0},{0,0},{'g',GREEN,BLACK},       "Goblin"          ,2,3,2,2, MF_ALIVE,                    0},
-    { {0,0},{0,0},{'g',BRIGHT_GREEN,BLACK},"Goblin Archer"   ,2,3,3,1, MF_ALIVE | MF_ARCHER,        0},
-    { {0,0},{0,0},{'B',BROWN,BLACK},       "Bat"             ,1,3,1,2, MF_ALIVE | MF_SKIRMISH,      0}
+    /* pos  dpos  glyph                      name            str dex per vit, flags,            locID,curHP */
+    { {0,0},{0,0},{'%',RED,BLACK},         "Corpse"          ,0,0,0,0, MF_NONE,                     0,0},
+    { {0,0},{0,0},{'g',GREEN,BLACK},       "Goblin"          ,2,3,2,2, MF_ALIVE,                    0,0},
+    { {0,0},{0,0},{'g',BRIGHT_GREEN,BLACK},"Goblin Archer"   ,2,3,3,1, MF_ALIVE | MF_ARCHER,        0,0},
+    { {0,0},{0,0},{'B',BROWN,BLACK},       "Bat"             ,1,3,1,2, MF_ALIVE | MF_SKIRMISH,      0,0}
 };
 
 Monster* create_monster_at(Vec2i pos, int type) {
     Monster *newMonster = calloc(1,sizeof(Monster));
     *newMonster = monsterTable[type];
+    newMonster->name = malloc((strlen(monsterTable[type].name) + 1) * sizeof(char));
+    strcpy(newMonster->name, monsterTable[type].name);
     newMonster->pos.x = pos.x;
     newMonster->pos.y = pos.y;
     newMonster->curhp = get_max_hp(newMonster);
+    newMonster->locID = -1;
     return newMonster;
 }
 
+Monster * create_goblin_at(Vec2i pos) {
+    Monster *goblin = malloc(sizeof(Monster));
+    goblin->pos = pos;
+    goblin->dpos = pos;
+    goblin->glyph = make_glyph('g',GREEN, BLACK);
+    //strcpy(goblin->name, "Goblin");
+    goblin->name = strdup("Goblin");
+    goblin->str = 2;
+    goblin->dex = 3;
+    goblin->per = 2;
+    goblin->vit = 2;
+    goblin->flags = MF_ALIVE;
+    goblin->locID = -1;
+    goblin->curhp = get_max_hp(goblin);
+    return goblin;
+}
+
 Monster* create_monster(void) {
-    Monster *newMonster = calloc(1, sizeof(Monster));
-    *newMonster = monsterTable[M_CORPSE];
+    Monster *newMonster = malloc(sizeof(Monster));
     /*
+    *newMonster = monsterTable[M_CORPSE];
+    */
     newMonster->pos = make_vec(0,0);
     newMonster->dpos = make_vec(0,0);
     newMonster->glyph = make_glyph('%', RED, BLACK);
-    strcpy(newMonster->name, "Corpse");
+    //strcpy(newMonster->name, "Corpse");
+    newMonster->name = NULL;
     newMonster->str = 0;
     newMonster->dex = 0;
     newMonster->per = 0;
     newMonster->vit = 0;
     newMonster->flags = MF_NONE;
-    */
     newMonster->locID = -1;
     newMonster->curhp = 0;
     return newMonster;
@@ -72,7 +93,10 @@ Monster* create_monster(void) {
 
 void destroy_monster(Monster* monster) {
     if(monster) {
+        free(monster->name);
+        monster->name = NULL;
         free(monster);
+        monster = NULL;
     }
 }
 

@@ -29,6 +29,7 @@ const int MIN_ROOM_SIZE = 5;
 const int MAX_ROOM_SIZE = 10;
 const int MIN_NUM_ROOMS = 8;
 const int MAX_NUM_ROOMS = 30;
+const int MAX_MONSTERS = 4;
 Map *g_maphead = NULL; /* Reference to map list head (level 0) */
 Map *g_mapcur = NULL; /* Reference to current map */
 Tile *g_tilemap = NULL; /* Reference to current tilemap */

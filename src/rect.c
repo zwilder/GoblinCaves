@@ -34,6 +34,13 @@ bool point_in_rect(Rect a, Vec2i b) {
     return (x && y);
 }
 
+Vec2i random_point_in_rect(Rect a) {
+    Vec2i result = make_vec(0,0);
+    result.x = mt_rand(a.pos.x + 1, a.pos.x + a.dim.x - 1);
+    result.y = mt_rand(a.pos.y + 1, a.pos.y + a.dim.y - 1);
+    return result;
+}
+
 bool rect_intersect(Rect a, Rect b) {
     /* https://silentmatt.com/rectangle-intersection/ */
     int ax1,ay1,ax2,ay2;

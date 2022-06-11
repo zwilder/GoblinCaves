@@ -93,6 +93,7 @@ void new_game(void) {
     destroy_msglist(&g_msgloghead);
     g_maphead = create_map(NULL);
     g_mapcur = g_maphead;
+    g_mlist = NULL;
     g_player = create_player(&(g_mlist));
     g_tilemap = g_maphead->tiles;
     build_dungeon();
