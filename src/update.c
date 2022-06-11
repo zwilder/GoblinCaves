@@ -92,7 +92,8 @@ void player_move(void) {
     Monster *target = monster_at_pos(g_mlist, dpos, g_mapcur->lvl);
     if(target) {
         /* Attack target - temporary */
-        destroy_mlist_monster(&g_mlist, target);
+        //destroy_mlist_monster(&g_mlist, target);
+        melee_combat(g_player, target);
         return;
     }
     /* Check tile at location */

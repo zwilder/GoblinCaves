@@ -41,6 +41,27 @@ char* pop_msg(Msg **head){
     return str;
 }
 
+char* pop_msg_back(Msg **head) {
+    char *str;
+    if(!(*head)) {
+        return NULL;
+    }
+    if(!(*head)->next) {
+        return pop_msg(head);
+    }
+    
+    Msg *secondlast = *head;
+    while(secondlast->next->next) {
+        secondlast = secondlast->next;
+    }
+    str = malloc(strlen(secondlast->next->str)+1);
+    strcpy(str, secondlast->next->str);
+    free(secondlast->next->str);
+    free(secondlast->next);
+    secondlast->next = NULL;
+    return str;
+}
+
 void push_msg(Msg **head, char *str){
     if(!(*head)) {
         *head = create_msg(str);

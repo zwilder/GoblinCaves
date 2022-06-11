@@ -54,23 +54,6 @@ Monster* create_monster_at(Vec2i pos, int type) {
     return newMonster;
 }
 
-Monster * create_goblin_at(Vec2i pos) {
-    Monster *goblin = malloc(sizeof(Monster));
-    goblin->pos = pos;
-    goblin->dpos = pos;
-    goblin->glyph = make_glyph('g',GREEN, BLACK);
-    //strcpy(goblin->name, "Goblin");
-    goblin->name = strdup("Goblin");
-    goblin->str = 2;
-    goblin->dex = 3;
-    goblin->per = 2;
-    goblin->vit = 2;
-    goblin->flags = MF_ALIVE;
-    goblin->locID = -1;
-    goblin->curhp = get_max_hp(goblin);
-    return goblin;
-}
-
 Monster* create_monster(void) {
     Monster *newMonster = malloc(sizeof(Monster));
     /*
@@ -147,4 +130,46 @@ int get_max_hp(Monster *monster) {
     /* Again, just winging this for now. AND AGAIN, might be better to accept
      * the vit/str inputs, then calculate and return the hp */
     return (monster->vit + monster->str) * 5;
+}
+
+void melee_combat(Monster *atk, Monster *def) {
+/* Random assortment of stats, not sure how they will be used so this is
+ * just for fun. 
+ * Maybe: Damage done is weapon + str
+ *        Chance to hit is dex + str
+ *        HP is vit + str
+ *        FOV Radius is per + vit
+ *        Chance to be hit is dex + per
+ *        Str 3 Dex 2 Per 2 Vit 2 */
+    char msg[80];
+    char msgend[80];
+    strcpy(msg, atk->name);
+    int chancetohit = mt_rand(0,atk->dex + atk->str);
+    int defense = mt_rand(0, def->dex + def->per);
+    int wpndmg = 10; //temporary
+    if(chancetohit > defense) {
+        strcat(msg, " tears into ");
+        strcpy(msgend, "!");
+        strcat(msg, def->name);
+        strcat(msg, msgend);
+        def->curhp -= mt_rand(atk->str, atk->str + wpndmg);
+        push_msg(&g_msghead, msg);
+        if(def->curhp <= 0) {
+            kill_monster(def);
+        }
+    } else {
+        strcat(msg, " swings at ");
+        strcpy(msgend, " and misses!"); 
+        strcat(msg, def->name);
+        strcat(msg, msgend);
+        push_msg(&g_msghead, msg);
+    }
+}
+
+void kill_monster(Monster *target) {
+    char msg[80];
+    strcpy(msg, target->name);
+    strcat(msg, " collapses in a bloody heap!");
+    push_msg(&g_msghead, msg);
+    destroy_mlist_monster(&g_mlist, target);
 }

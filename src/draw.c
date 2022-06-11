@@ -207,7 +207,7 @@ void draw_msg(void) {
     int i = 0;
     int msgcount = count_msg(&g_msghead);
     while(i < msgcount) {
-        msg = pop_msg(&g_msghead);
+        msg = pop_msg_back(&g_msghead);
         curses_draw_msg(0,i,msg);
         push_msg(&g_msgloghead, msg);
         free(msg); /* Messy? */

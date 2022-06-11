@@ -65,7 +65,6 @@ typedef enum {
  * monster.c functions
  ********************/
 Monster* create_monster_at(Vec2i pos, int type);
-Monster * create_goblin_at(Vec2i pos); 
 Monster* create_monster(void);
 void destroy_monster(Monster* monster);
 Monster* create_player(MList **head);
@@ -74,5 +73,8 @@ int get_fov(Monster *monster);
 int get_max_hp(Monster *monster);
 
 void set_player_pos(Vec2i pos);
+
+void melee_combat(Monster *atk, Monster *def);
+void kill_monster(Monster *target);
 
 #endif 

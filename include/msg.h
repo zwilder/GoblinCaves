@@ -29,6 +29,7 @@ typedef struct Msg Msg;
 
 Msg* create_msg(char *str);
 char* pop_msg(Msg **head);
+char* pop_msg_back(Msg **head);
 void push_msg(Msg **head, char *str);
 int count_msg(Msg **head); 
 void remove_last_msg(Msg **head);
