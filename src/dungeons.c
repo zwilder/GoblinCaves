@@ -103,15 +103,17 @@ void build_basic_dungeon(void) {
             break;
         }
         place_doors(rooms[i]);
-        place_monsters(rooms[i]);
+        if(i > 0) {
+            place_monsters(rooms[i]);
+        }
     }
 
-    place_tile(get_center(rooms[mt_rand(0,i-1)]), TILE_DN);
+    place_tile(get_center(rooms[mt_rand(1,i-1)]), TILE_DN);
     if(g_mapcur->lvl != 0) {
-        place_tile(get_center(rooms[i]), TILE_UP);
+        place_tile(get_center(rooms[0]), TILE_UP);
     } else {
-        place_tile(get_center(rooms[i]), TILE_FLOOR);
+        place_tile(get_center(rooms[0]), TILE_FLOOR);
     }
-    g_player->pos = get_center(rooms[i]); 
+    g_player->pos = get_center(rooms[0]); 
 
 }

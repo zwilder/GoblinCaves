@@ -87,6 +87,7 @@ void engage_tflags_at(int x, int y, int flags);
 bool check_tflags_at(int x, int y, int flags);
 bool is_visible(int x, int y);
 bool is_explored(int x, int y);
+bool is_blocked(int x, int y);
 void mark_explored(int x, int y);
 int count_neighbors(Vec2i pos, char a);
 void place_tile(Vec2i pos, int type);
