@@ -111,12 +111,23 @@ void draw_screen(void) {
     }
     /* draw the pickups on the screen */
     
-    /* draw the enemies on the screen */
+    /* draw the enemies on the screen, corpses first (they don't block movement) */
     tmp = g_mlist;
     while(tmp) {
         if(tmp->data->locID == g_mapcur->lvl) {
             mappos = tmp->data->pos;
-            if(is_visible(mappos.x,mappos.y)) {
+            if(is_visible(mappos.x,mappos.y) && !is_alive(tmp->data)) {
+                set_screen_glyph_at(screen, subtract_vec(mappos,camera),
+                        tmp->data->glyph);
+            }
+        }
+        tmp = tmp->next;
+    }
+    tmp = g_mlist;
+    while(tmp) {
+        if(tmp->data->locID == g_mapcur->lvl) {
+            mappos = tmp->data->pos;
+            if(is_visible(mappos.x,mappos.y) && is_alive(tmp->data)) {
                 set_screen_glyph_at(screen, subtract_vec(mappos,camera),
                         tmp->data->glyph);
             }
@@ -124,13 +135,11 @@ void draw_screen(void) {
         tmp = tmp->next;
     }
     
-    /* draw the player on the screen */
-    /*
+    /* draw the player on the screen, so the player is on top of everything else */
     if(g_player) {
         set_screen_glyph_at(screen, subtract_vec(g_player->pos, camera),
                             g_player->glyph);
     }
-    */
 
     for(x = 0; x < SCREEN_WIDTH; x++) {
         for(y = 0; y < SCREEN_HEIGHT; y++) {

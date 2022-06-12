@@ -93,8 +93,12 @@ void player_move(void) {
     if(target) {
         /* Attack target - temporary */
         //destroy_mlist_monster(&g_mlist, target);
-        melee_combat(g_player, target);
-        return;
+        if(check_flag(target->flags, MF_ALIVE)) {
+            melee_combat(g_player, target);
+            return;
+        } else {
+            push_msg(&g_msghead, "You step over some mangled remains.");
+        }
     }
     /* Check tile at location */
     dposMask = get_tflags_at(dpos.x,dpos.y);

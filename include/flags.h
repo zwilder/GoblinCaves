@@ -57,6 +57,21 @@ typedef enum {
 } EventFlags;
 
 typedef enum {
+    MF_NONE         = 1 << 0,
+    MF_PLAYER       = 1 << 1,
+    MF_ALIVE        = 1 << 2,
+    MF_RANGED       = 1 << 3,
+    MF_SKIRMISH     = 1 << 4,
+    MF_AFRAID       = 1 << 5,
+    MF_SLEEP        = 1 << 6,
+    MF_HAS_TURN     = 1 << 7,
+    MF_NECRO        = 1 << 8,
+    MF_SEENPLAYER   = 1 << 9,
+    MF_PACK         = 1 << 10,
+    MF_EXPLORING    = 1 << 11
+} MonsterFlags;
+
+typedef enum {
     ST_MENU =  0,
     ST_GAME,
     ST_HELP,

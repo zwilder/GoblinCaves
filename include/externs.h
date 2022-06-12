@@ -24,10 +24,11 @@ extern Monster *g_player; /* Player reference player.c */
 extern Map *g_maphead; /* Reference to map list head (level 0) map.c */
 extern Map *g_mapcur; /* Reference to current map map.c */
 extern Tile *g_tilemap; /* Reference to current tilemap map.c */
-extern StateFlags g_gamestate; /* Simple int state flag game_engine.c */
 extern Msg *g_msghead; /* Reference to message list head, msg.c */
 extern Msg *g_msgloghead; /* Reference to message log head, msg.c */
 extern MList *g_mlist; /* Reference to monster list mlist.c */
+
+extern StateFlags g_gamestate; /* Simple int state flag game_engine.c */
 
 extern const int SCREEN_WIDTH; /* draw.c */
 extern const int SCREEN_HEIGHT; /* draw.c */

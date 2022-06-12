@@ -35,11 +35,12 @@ typedef struct {
 */
 Monster monsterTable[NUM_MON] =
 {
-    /* pos  dpos  glyph                      name            str dex per vit, flags,            locID,curHP */
-    { {0,0},{0,0},{'%',RED,BLACK},         "Corpse"          ,0,0,0,0, MF_NONE,                     0,0},
-    { {0,0},{0,0},{'g',GREEN,BLACK},       "Goblin"          ,2,3,2,2, MF_ALIVE,                    0,0},
-    { {0,0},{0,0},{'g',BRIGHT_GREEN,BLACK},"Goblin Archer"   ,2,3,3,1, MF_ALIVE | MF_ARCHER,        0,0},
-    { {0,0},{0,0},{'B',BROWN,BLACK},       "Bat"             ,1,3,1,2, MF_ALIVE | MF_SKIRMISH,      0,0}
+    /* pos  dpos  glyph                        name            str dex per vit, flags,            locID,curHP */
+    { {0,0},{0,0},{'%',RED,BLACK},           "Corpse"          ,0,0,0,0, MF_NONE,                     0,0},
+    { {0,0},{0,0},{'g',GREEN,BLACK},         "Goblin"          ,2,3,2,2, MF_ALIVE,                    0,0},
+    { {0,0},{0,0},{'g',BRIGHT_GREEN,BLACK},  "Goblin Archer"   ,2,3,3,1, MF_ALIVE | MF_RANGED,        0,0},
+    { {0,0},{0,0},{'B',BROWN,BLACK},         "Bat"             ,1,3,1,2, MF_ALIVE | MF_SKIRMISH,      0,0},
+    { {0,0},{0,0},{'g',BRIGHT_MAGENTA,BLACK},"Goblin Priest"   ,2,3,4,3, MF_ALIVE | MF_NECRO,         0,0}
 };
 
 Monster* create_monster_at(Vec2i pos, int type) {
@@ -141,35 +142,77 @@ void melee_combat(Monster *atk, Monster *def) {
  *        FOV Radius is per + vit
  *        Chance to be hit is dex + per
  *        Str 3 Dex 2 Per 2 Vit 2 */
-    char msg[80];
-    char msgend[80];
-    strcpy(msg, atk->name);
+    char *msg = malloc(80 * sizeof(char));
     int chancetohit = mt_rand(0,atk->dex + atk->str);
     int defense = mt_rand(0, def->dex + def->per);
     int wpndmg = 10; //temporary
     if(chancetohit > defense) {
-        strcat(msg, " tears into ");
-        strcpy(msgend, "!");
-        strcat(msg, def->name);
-        strcat(msg, msgend);
+        if(check_flag(atk->flags, MF_PLAYER)) {
+            snprintf(msg,80,"You hit the %s.",def->name);
+        } else if(check_flag(def->flags, MF_PLAYER)) {
+            snprintf(msg,80,"The %s hits you!",atk->name);
+        } else {
+            snprintf(msg,80,"%s tears into %s!", atk->name, def->name);
+        }
         def->curhp -= mt_rand(atk->str, atk->str + wpndmg);
         push_msg(&g_msghead, msg);
         if(def->curhp <= 0) {
             kill_monster(def);
         }
     } else {
-        strcat(msg, " swings at ");
-        strcpy(msgend, " and misses!"); 
-        strcat(msg, def->name);
-        strcat(msg, msgend);
+        snprintf(msg,80,"%s swings at %s, and misses!", atk->name, def->name);
         push_msg(&g_msghead, msg);
     }
+    free(msg);
 }
 
 void kill_monster(Monster *target) {
+    /*
     char msg[80];
     strcpy(msg, target->name);
     strcat(msg, " collapses in a bloody heap!");
+    */
+    char *msg = malloc(80 * sizeof(char));
+    if(check_flag(target->flags, MF_PLAYER)) {
+        snprintf(msg,80,"Everything goes dark... you die.");
+    } else if (is_alive(target)) {
+        snprintf(msg, 80, "The %s collapses in a bloody heap!", target->name);
+    }
     push_msg(&g_msghead, msg);
+    //push_mlist(&g_mlist, create_monster_at(target->pos, M_CORPSE));
     destroy_mlist_monster(&g_mlist, target);
+    free(msg);
+}
+
+bool is_alive(Monster *target) {
+    return check_flag(target->flags, MF_ALIVE);
+}
+
+void take_turn(Monster *monster) {
+    if(!check_flag(monster->flags, MF_HAS_TURN)) {
+        return;
+    }
+    int dist = man_dist(g_player->pos, monster->pos);
+    char *msg = malloc(80 * sizeof(char));
+    if(check_flag(monster->flags, MF_SLEEP)) {
+        /* Monster is asleep, is player within sight? */
+        if(dist < get_fov(monster)) {
+            monster->flags = remove_flag(monster->flags, MF_SLEEP); 
+            monster->flags = engage_flag(monster->flags, MF_SEENPLAYER);
+            snprintf(msg,80,"The %s wakes up!",monster->name);
+            push_msg(&g_msghead, msg);
+        }
+    } else if(check_flag(monster->flags, MF_SEENPLAYER)) {
+        /* Monster has seen the player, if close enough to attack, attack.
+         * Otherwise move closer */
+        /* g(1,0) @(0,1) man dist = 2?
+         * sqrt((abs(x1-x2))^2+abs(y1-y2)^2) = sqrt(abs(1-0)^2+abs(0-1)^2) =
+         * sqrt(1 + 1) = 1.41 = 1?
+         * .g...
+         * @....
+         * .....
+         */
+    }
+    free(msg);
+    monster->flags = remove_flag(monster->flags, MF_HAS_TURN);
 }

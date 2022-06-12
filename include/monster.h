@@ -48,18 +48,9 @@ typedef enum {
     M_GOBLIN,
     M_GARCHER,
     M_BAT,
+    M_GPRIEST,
     NUM_MON
 } MonsterTypes;
-
-/* This will be properly moved to flags.h, once I get the monsters up and
- * rolling. Just throwing random things in to see how it tastes. */
-typedef enum {
-    MF_NONE         = 1 << 0,
-    MF_PLAYER       = 1 << 1,
-    MF_ALIVE        = 1 << 2,
-    MF_ARCHER       = 1 << 3,
-    MF_SKIRMISH     = 1 << 4
-} MonsterFlags;
 
 /********************
  * monster.c functions
@@ -76,5 +67,7 @@ void set_player_pos(Vec2i pos);
 
 void melee_combat(Monster *atk, Monster *def);
 void kill_monster(Monster *target);
+bool is_alive(Monster *target);
 
+void take_turn(Monster *monster); 
 #endif 
