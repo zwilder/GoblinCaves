@@ -20,6 +20,13 @@
 #ifndef VEC2I_H
 #define VEC2I_H
 
+/* Note to self: This file is totally reusable outside of this project, but the
+ * functions below do not handle negative x,y values. If negative values are
+ * needed, the functions that return [-1,-1] for a NULL Vec2i need to be
+ * changed.
+ *
+ * Idea: const Vec2i NULLVEC = {-INT_MAX,-INT_MAX}
+ */
 typedef struct Vec2iList Vec2iList;
 typedef struct Vec2iHTList Vec2iHTList;
 typedef struct Vec2iHT Vec2iHT;

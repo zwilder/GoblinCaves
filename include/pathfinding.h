@@ -23,5 +23,6 @@
 Vec2iList* bh_line(Vec2i start, Vec2i finish);
 void bh_line_add(Vec2iList **head, Vec2i pos); 
 
-Vec2iList* open_neighbors_at(Vec2i pos); 
+Vec2iList* open_neighbors_at(Vec2i pos, bool checkMonsters); 
+Vec2iHT* bfs_path(Vec2i start, Vec2i goal);
 #endif 
