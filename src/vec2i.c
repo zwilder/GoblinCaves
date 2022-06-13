@@ -19,6 +19,8 @@
 */
 #include <goblincaves.h>
 
+const Vec2i NULLVEC = {INT_MIN, INT_MIN};
+
 Vec2i make_vec(int x, int y) {
     Vec2i result = {};
     result.x = x;
@@ -43,6 +45,10 @@ bool eq_vec(Vec2i a, Vec2i b) {
     return ((a.x == b.x) && (a.y == b.y));
 }
 
+bool vec_null(Vec2i a) {
+    return (eq_vec(NULLVEC, a));
+}
+
 int man_dist(Vec2i a, Vec2i b) {
     return (abs(a.x - b.x) + abs(a.y - b.y));
 }
@@ -51,26 +57,26 @@ int man_dist(Vec2i a, Vec2i b) {
  * Vec2iList
  ***********/
 
-Vec2iList* create_vec2i_list(Vec2i pos) {
+Vec2iList* create_Vec2i_list(Vec2i pos) {
     Vec2iList *newnode = malloc(sizeof(Vec2iList));
     newnode->item = pos;
     newnode->next = NULL;
     return newnode;
 }
 
-void push_vec2i_list(Vec2iList **head, Vec2i pos) {
+void push_Vec2i_list(Vec2iList **head, Vec2i pos) {
     if(!(*head)) {
-        *head = create_vec2i_list(pos);
+        *head = create_Vec2i_list(pos);
         return;
     }
-    Vec2iList *newnode = create_vec2i_list(pos);
+    Vec2iList *newnode = create_Vec2i_list(pos);
     newnode->next = *head;
     *head = newnode;
 }
 
-Vec2i pop_vec2i_list(Vec2iList **head) {
+Vec2i pop_Vec2i_list(Vec2iList **head) {
     if(!(*head)) {
-        return (make_vec(-1,-1));
+        return (NULLVEC);
     }
     Vec2iList *tmp = *head;
     *head = (*head)->next;
@@ -79,14 +85,14 @@ Vec2i pop_vec2i_list(Vec2iList **head) {
     return result;
 }
 
-int count_vec2i_list(Vec2iList *head) {
+int count_Vec2i_list(Vec2iList *head) {
     if(!head) {
         return 0;
     }
-    return (count_vec2i_list(head->next) + 1);
+    return (count_Vec2i_list(head->next) + 1);
 }
 
-void destroy_vec2i_list(Vec2iList **head) {
+void destroy_Vec2i_list(Vec2iList **head) {
     if(!(*head)) {
         return;
     }
@@ -98,7 +104,7 @@ void destroy_vec2i_list(Vec2iList **head) {
     }
 }
 
-bool vec2i_list_contains(Vec2iList *head, Vec2i pos) {
+bool Vec2i_list_contains(Vec2iList *head, Vec2i pos) {
     bool result = false;
     Vec2iList *tmp = head;
     while(tmp) {
@@ -112,9 +118,67 @@ bool vec2i_list_contains(Vec2iList *head, Vec2i pos) {
 }
 
 /*********
+ * Vec2iPQ
+ *********/
+Vec2iPQ* create_Vec2iPQ(Vec2i item, int p) {
+    Vec2iPQ *newnode = malloc(sizeof(Vec2iPQ));
+    newnode->item = item;
+    newnode->p = p;
+    newnode->next = NULL;
+    return newnode;
+}
+
+Vec2i peek_Vec2iPQ(Vec2iPQ **head) {
+    return((*head)->item);
+}
+
+Vec2i pop_Vec2iPQ(Vec2iPQ **head) {
+    if(!(*head)) {
+        return NULLVEC;
+    }
+    Vec2iPQ *tmp = *head;
+    Vec2i result = tmp->item;
+    *head = (*head)->next;
+    free(tmp);
+    return result;
+}
+
+void push_Vec2iPQ(Vec2iPQ **head, Vec2i item, int p) {
+    if(!(*head)) {
+        *head = create_Vec2iPQ(item, p);
+        return;
+    }
+    Vec2iPQ *start = *head;
+    Vec2iPQ *newnode = create_Vec2iPQ(item, p);
+
+    if((*head)->p > p) {
+        newnode->next = *head;
+        *head = newnode;
+    } else {
+        while(start->next && (start->next->p < p)) {
+            start = start->next;
+        }
+        newnode->next = start->next;
+        start->next = newnode;
+    }
+}
+
+void destroy_Vec2iPQ(Vec2iPQ **head) {
+    if(!(*head)) {
+        return;
+    }
+    Vec2iPQ *tmp = NULL;
+    while(*head) {
+        tmp = *head;
+        *head = (*head)->next;
+        free(tmp);
+    }
+}
+
+/*********
  * Vec2iHT
  *********/
-unsigned long vec2i_hash(Vec2i key, int size) {
+unsigned long Vec2i_hash(Vec2i key, int size) {
     return(((key.y << 16) ^ key.x) % size);
 }
 
@@ -173,7 +237,7 @@ void handle_Vec2iHT_collision(Vec2iHT *table,
 
 void insert_Vec2iHT(Vec2iHT *table, Vec2i key, Vec2i value) {
     Vec2iHTItem *item = create_Vec2iHTItem(key,value);
-    int index = vec2i_hash(key,table->size);
+    int index = Vec2i_hash(key,table->size);
     Vec2iHTItem *cur = table->items[index];
 
     if(!cur) {
@@ -197,7 +261,7 @@ void insert_Vec2iHT(Vec2iHT *table, Vec2i key, Vec2i value) {
 }
 
 Vec2i search_Vec2iHT(Vec2iHT *table, Vec2i key) {
-    int index = vec2i_hash(key, table->size);
+    int index = Vec2i_hash(key, table->size);
     Vec2iHTItem *item = table->items[index];
     Vec2iHTList *head = table->ofbuckets[index];
     while(item) {
@@ -205,12 +269,12 @@ Vec2i search_Vec2iHT(Vec2iHT *table, Vec2i key) {
             return item->value;
         }
         if(!head) {
-            return make_vec(-1,-1);
+            return NULLVEC;
         }
         item = head->item;
         head = head->next;
     }
-    return make_vec(-1,-1);
+    return NULLVEC;
 }
 
 Vec2iHTList** create_Vec2iHT_ofbuckets(Vec2iHT *table) {
@@ -232,7 +296,7 @@ void destroy_Vec2iHT_ofbuckets(Vec2iHT *table) {
 }
 
 void delete_Vec2iHT(Vec2iHT *table, Vec2i key) {
-    int index = vec2i_hash(key, table->size);
+    int index = Vec2i_hash(key, table->size);
     Vec2iHTItem *item = table->items[index];
     Vec2iHTList *head = table->ofbuckets[index];
     Vec2iHTList *node = NULL;
