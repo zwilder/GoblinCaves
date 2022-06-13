@@ -47,9 +47,13 @@ int man_dist(Vec2i a, Vec2i b) {
     return (abs(a.x - b.x) + abs(a.y - b.y));
 }
 
+/***********
+ * Vec2iList
+ ***********/
+
 Vec2iList* create_vec2i_list(Vec2i pos) {
     Vec2iList *newnode = malloc(sizeof(Vec2iList));
-    newnode->pos = pos;
+    newnode->item = pos;
     newnode->next = NULL;
     return newnode;
 }
@@ -70,7 +74,7 @@ Vec2i pop_vec2i_list(Vec2iList **head) {
     }
     Vec2iList *tmp = *head;
     *head = (*head)->next;
-    Vec2i result = tmp->pos;
+    Vec2i result = tmp->item;
     free(tmp);
     return result;
 }
@@ -94,126 +98,250 @@ void destroy_vec2i_list(Vec2iList **head) {
     }
 }
 
-Vec2iList* bh_line(Vec2i start, Vec2i finish) {
-    Vec2iList *results = NULL;
-    int e,j,i;
-    int dX = abs(start.x - finish.x);
-    int dY = abs(start.y - finish.y);
-
-    if(dX >= dY)
-    {
-        e = dY - dX; // [e]rror
-        j = start.y;
-
-        if(start.x < finish.x)
-        {
-            // Octants 1,2
-            for(i = start.x; i <= finish.x; ++i)
-            {
-                bh_line_add(&results, make_vec(i,j));
-                if((e >= 0) && (finish.y >= start.y))
-                {
-                    // 1
-                    j += 1;
-                    e -= dX;
-                }
-                else if((e >= 0) && (finish.y < start.y))
-                {
-                    // 2
-                    j -= 1;
-                    e -= dX;
-                }
-                e += dY;
-            }
-        }
-        else if(start.x > finish.x)
-        {
-            // Octants 5,6
-            for(i = start.x; i >= finish.x; --i)
-            {
-                bh_line_add(&results, make_vec(i, j));
-                if((e >= 0) && (finish.y >= start.y))
-                {
-                    // 6
-                    j += 1;
-                    e -= dX;
-                }
-                else if((e >= 0) && (finish.y < start.y))
-                {
-                    // 5
-                    j -= 1;
-                    e -= dX;
-                }
-                e += dY;
-            }
-        }
-    }
-    else if (dX < dY)
-    {
-        e = dX - dY; // [e]rror
-        i = start.x;
-        if(start.y < finish.y)
-        {
-            // Octants 7,8
-            for(j = start.y; j <= finish.y; ++j)
-            {
-                bh_line_add(&results, make_vec(i,j));
-                if((e >= 0) && (finish.x >= start.x))
-                {
-                    // 8
-                    i += 1;
-                    e -= dY;
-                }
-                else if((e >= 0) && (finish.x < start.x))
-                {
-                    // 7
-                    i -= 1;
-                    e -= dY;
-                }
-                e += dX;
-            }
-        }
-        else if(start.y > finish.y)
-        {
-            // Octants 3,4
-            for(j = start.y; j >= finish.y; --j)
-            {
-                bh_line_add(&results, make_vec(i,j));
-                if((e >= 0) && (finish.x >= start.x))
-                {
-                    // 3
-                    i += 1;
-                    e -= dY;
-                }
-                else if((e >= 0) && (finish.x < start.x))
-                {
-                    // 4
-                    i -= 1;
-                    e -= dY;
-                }
-                e += dX;
-            }
-        }
-    }
-
-    return results;
-}
-
-void bh_line_add(Vec2iList **head, Vec2i pos) {
-    if(!vec2i_list_contains(*head, pos)) {
-        push_vec2i_list(head, pos);
-    }
-}
-
 bool vec2i_list_contains(Vec2iList *head, Vec2i pos) {
     bool result = false;
     Vec2iList *tmp = head;
     while(tmp) {
-        if(eq_vec(tmp->pos, pos)) {
+        if(eq_vec(tmp->item, pos)) {
             result = true;
             break;
         }
         tmp = tmp->next;
     }
     return result;
+}
+
+/*********
+ * Vec2iHT
+ *********/
+unsigned long vec2i_hash(Vec2i key, int size) {
+    return(((key.y << 16) ^ key.x) % size);
+}
+
+Vec2iHTItem* create_Vec2iHTItem(Vec2i key, Vec2i value) {
+    Vec2iHTItem *item = malloc(sizeof(Vec2iHTItem));
+    item->key = key;
+    item->value = value;
+    return item;
+}
+
+Vec2iHT* create_Vec2iHT(int size) {
+    int i = 0;
+    Vec2iHT *table = malloc(sizeof(Vec2iHT));
+    table->size = size;
+    table->count = 0;
+    table->items = calloc(table->size, sizeof(Vec2iHTItem));
+    for(i = 0; i < table->size; i++) {
+        table->items[i] = NULL;
+    }
+    table->ofbuckets = create_Vec2iHT_ofbuckets(table);
+    return table;
+}
+
+void destroy_Vec2iHTItem(Vec2iHTItem *item) {
+    if(!item) {
+        return;
+    }
+    free(item);
+}
+
+void destroy_Vec2iHT(Vec2iHT *table) {
+    int i = 0;
+    Vec2iHTItem *item = NULL;
+    for(i = 0; i < table->size; i++) {
+        item = table->items[i];
+        if(item) {
+            destroy_Vec2iHTItem(item);
+        }
+    }
+    destroy_Vec2iHT_ofbuckets(table);
+    free(table->items);
+    free(table);
+}
+
+void handle_Vec2iHT_collision(Vec2iHT *table, 
+        unsigned long index, Vec2iHTItem *item) {
+    Vec2iHTList *head = table->ofbuckets[index];
+    if(!head) {
+        /* Create the list */
+        head = create_Vec2iHTList(item);
+        table->ofbuckets[index] = head;
+    } else {
+        table->ofbuckets[index] = insert_Vec2iHTList(head, item);
+    }
+}
+
+void insert_Vec2iHT(Vec2iHT *table, Vec2i key, Vec2i value) {
+    Vec2iHTItem *item = create_Vec2iHTItem(key,value);
+    int index = vec2i_hash(key,table->size);
+    Vec2iHTItem *cur = table->items[index];
+
+    if(!cur) {
+        /* Key does not exist */
+        if(table->count == table->size) {
+            /* Hash table full */
+            destroy_Vec2iHTItem(item);
+            return;
+        }
+        table->items[index] = item;
+        table->count += 1;
+    } else {
+        /* Key exists */
+        if(eq_vec(cur->key, key)) {
+            /* Same key, update value */
+            table->items[index]->value = value;
+        } else {
+            handle_Vec2iHT_collision(table, index, item);
+        }
+    }
+}
+
+Vec2i search_Vec2iHT(Vec2iHT *table, Vec2i key) {
+    int index = vec2i_hash(key, table->size);
+    Vec2iHTItem *item = table->items[index];
+    Vec2iHTList *head = table->ofbuckets[index];
+    while(item) {
+        if(eq_vec(item->key, key)) {
+            return item->value;
+        }
+        if(!head) {
+            return make_vec(-1,-1);
+        }
+        item = head->item;
+        head = head->next;
+    }
+    return make_vec(-1,-1);
+}
+
+Vec2iHTList** create_Vec2iHT_ofbuckets(Vec2iHT *table) {
+    Vec2iHTList **buckets = calloc(table->size, sizeof(Vec2iHTList*));
+    int i;
+    for(i = 0; i < table->size; i++) {
+        buckets[i] = NULL;
+    }
+    return buckets;
+}
+
+void destroy_Vec2iHT_ofbuckets(Vec2iHT *table) {
+    Vec2iHTList **buckets = table->ofbuckets;
+    int i;
+    for(i = 0; i < table->size; i++) {
+        destroy_Vec2iHTList(buckets[i]);
+    }
+    free(buckets);
+}
+
+void delete_Vec2iHT(Vec2iHT *table, Vec2i key) {
+    int index = vec2i_hash(key, table->size);
+    Vec2iHTItem *item = table->items[index];
+    Vec2iHTList *head = table->ofbuckets[index];
+    Vec2iHTList *node = NULL;
+    Vec2iHTList *cur = NULL;
+    Vec2iHTList *prev = NULL;
+
+    if(!item) {
+        /*Item doesn't exist */
+        return;
+    }
+    if(!head && eq_vec(item->key, key)) {
+        /* No collision chain, remove item set table index to NULL */
+        table->items[index] = NULL;
+        destroy_Vec2iHTItem(item);
+        table->count--;
+        return;
+    } else if (head) {
+        /* Collision chain exists */
+        if(eq_vec(item->key, key)) {
+            /* Remove this item and set head of list as the new item */
+            destroy_Vec2iHTItem(item);
+            node = head;
+            head = head->next;
+            node->next = NULL;
+            table->items[index] = create_Vec2iHTItem(node->item->key, 
+                    node->item->value);
+            destroy_Vec2iHTList(node);
+            table->ofbuckets[index] = head;
+            return;
+        }
+        cur = head;
+        prev = NULL;
+        while(cur) {
+            if(eq_vec(cur->item->key, key)) {
+                if(!prev) {
+                    /* First element of chain, remove chain */
+                    destroy_Vec2iHTList(head);
+                    table->ofbuckets[index] = NULL;
+                    return;
+                } else {
+                    /* Somewhere else in chain */
+                    prev->next = cur->next;
+                    cur->next = NULL;
+                    destroy_Vec2iHTList(cur);
+                    table->ofbuckets[index] = head;
+                    return;
+                }
+            }
+            cur = cur->next;
+            prev = cur;
+        }
+    }
+}
+
+/*************
+ * Vec2iHTList
+ *************/
+Vec2iHTList* create_Vec2iHTList(Vec2iHTItem *item) {
+    Vec2iHTList *list = malloc(sizeof(Vec2iHTList));
+    if(!list) {
+        return NULL;
+    }
+    list->item = item;
+    list->next = NULL;
+    return list;
+}
+
+Vec2iHTList* insert_Vec2iHTList(Vec2iHTList *headref, Vec2iHTItem *item) {
+    Vec2iHTList *newnode = create_Vec2iHTList(item);
+    Vec2iHTList *tmp = NULL;
+    if(!headref) {
+        headref = newnode;
+        return headref;
+    }else if (!headref->next) {
+        headref->next = newnode;
+        return headref;
+    }
+    tmp = headref;
+    while(tmp->next->next) {
+        /* Gets last node */
+        tmp = tmp->next;
+    }
+    tmp->next = newnode;
+    return headref;
+}
+
+Vec2iHTItem* pop_Vec2iHTList(Vec2iHTList **headref) {
+    if(!(*headref)) {
+        return NULL;
+    }
+    if(!(*headref)->next) {
+        return NULL;
+    }
+    Vec2iHTList *node = (*headref)->next;
+    Vec2iHTList *tmp = *headref;
+    Vec2iHTItem *item = NULL;
+    tmp->next = NULL;
+    *headref = node;
+    free(tmp->item);
+    free(tmp);
+    return item;
+}
+
+void destroy_Vec2iHTList(Vec2iHTList *headref) {
+    Vec2iHTList *tmp = headref;
+    while(headref) {
+        tmp = headref;
+        headref = headref->next;
+        free(tmp->item);
+        free(tmp);
+    }
 }

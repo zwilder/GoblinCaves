@@ -71,5 +71,6 @@
 #include <map_features.h>
 #include <dungeons.h>
 #include <log.h>
+#include <pathfinding.h>
 
 #endif

@@ -20,6 +20,10 @@
 #ifndef MLIST_H
 #define MLIST_H
 
+/*
+ * This could (should?) probably be modified to be a skip list, where the skip
+ * pointer would point to the next locID (lvl)
+ */
 struct MList {
     Monster *data;
     struct MList *next;

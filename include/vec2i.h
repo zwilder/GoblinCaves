@@ -20,34 +20,78 @@
 #ifndef VEC2I_H
 #define VEC2I_H
 
+typedef struct Vec2iList Vec2iList;
+typedef struct Vec2iHTList Vec2iHTList;
+typedef struct Vec2iHT Vec2iHT;
+
 typedef struct {
     int x;
     int y;
 } Vec2i;
 
 struct Vec2iList {
-    Vec2i pos;
+    Vec2i item;
     struct Vec2iList *next;
 };
 
-typedef struct Vec2iList Vec2iList;
+typedef struct {
+    Vec2i key;
+    Vec2i value;
+} Vec2iHTItem;
 
-/*******************
- * vec2i.c functions
- *******************/
+struct Vec2iHT {
+    Vec2iHTItem **items;
+    Vec2iHTList **ofbuckets;
+    int size;
+    int count;
+};
+
+struct Vec2iHTList {
+    Vec2iHTItem *item;
+    struct Vec2iHTList *next;
+};
+
+/*******
+ * Vec2i
+ *******/
 Vec2i make_vec(int x, int y);
 Vec2i add_vec(Vec2i a, Vec2i b);
 Vec2i subtract_vec(Vec2i a, Vec2i b);
 bool eq_vec(Vec2i a, Vec2i b);
 int man_dist(Vec2i a, Vec2i b);
 
+/***********
+ * Vec2iList
+ ***********/
 Vec2iList* create_vec2i_list(Vec2i pos);
 void push_vec2i_list(Vec2iList **headref, Vec2i pos);
 Vec2i pop_vec2i_list(Vec2iList **headref);
 int count_vec2i_list(Vec2iList *headref);
 void destroy_vec2i_list(Vec2iList **headref);
-
-Vec2iList* bh_line(Vec2i start, Vec2i finish);
-void bh_line_add(Vec2iList **head, Vec2i pos); 
 bool vec2i_list_contains(Vec2iList *head, Vec2i pos);
+
+/*********
+ * Vec2iHT
+ *********/
+unsigned long vec2i_hash(Vec2i key, int size);
+Vec2iHTItem* create_Vec2iHTItem(Vec2i key, Vec2i value);
+Vec2iHT* create_Vec2iHT(int size);
+void destroy_Vec2iHTItem(Vec2iHTItem *item);
+void destroy_Vec2iHT(Vec2iHT *table);
+void handle_Vec2iHT_collision(Vec2iHT *table, 
+        unsigned long index, Vec2iHTItem *item);
+void insert_Vec2iHT(Vec2iHT *table, Vec2i key, Vec2i value);
+Vec2i search_Vec2iHT(Vec2iHT *table, Vec2i key); 
+Vec2iHTList** create_Vec2iHT_ofbuckets(Vec2iHT *table);
+void destroy_Vec2iHT_ofbuckets(Vec2iHT *table);
+void delete_Vec2iHT(Vec2iHT *table, Vec2i key); 
+
+/*************
+ * Vec2iHTList
+ *************/
+Vec2iHTList* create_Vec2iHTList(Vec2iHTItem *item); 
+Vec2iHTList* insert_Vec2iHTList(Vec2iHTList *headref, Vec2iHTItem *item); 
+Vec2iHTItem* pop_Vec2iHTList(Vec2iHTList **headref); 
+void destroy_Vec2iHTList(Vec2iHTList *headref); 
+
 #endif
