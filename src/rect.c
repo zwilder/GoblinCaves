@@ -19,6 +19,9 @@
 */
 #include <goblincaves.h>
 
+/****************
+ * Rect functions
+ ****************/
 Rect make_rect(int x, int y, int width, int height) {
     Rect result;
     result.pos.x = x;
@@ -70,3 +73,49 @@ Vec2i get_center(Rect a) {
     return result;
 }
 
+/********************
+ * RectList functions
+ ********************/
+RectList* create_RectList(Rect data) {
+    RectList *node = malloc(sizeof(RectList));
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void push_RectList(RectList **headref, Rect data) {
+    RectList *node = create_RectList(data);
+    if(!(*headref)) {
+        *headref = node;
+        return;
+    }
+    node->next = *headref;
+    *headref = node;
+}
+
+Rect pop_RectList(RectList **headref) {
+    if(!(*headref)) {
+        return make_rect(0,0,0,0);
+    }
+    Rect data = (*headref)->data;
+    RectList *tmp = *headref;
+    *headref = (*headref)->next;
+    free(tmp);
+    return data;
+}
+
+int count_RectList(RectList *headref) {
+    if(!headref) {
+        return 0;
+    }
+    return (count_RectList(headref->next) + 1);
+}
+
+void destroy_RectList(RectList **headref) {
+    RectList *tmp = NULL;
+    while(*headref) {
+        tmp = *headref;
+        *headref = (*headref)->next;
+        free(tmp);
+    }
+}

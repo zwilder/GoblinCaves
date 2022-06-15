@@ -25,13 +25,29 @@ typedef struct {
     Vec2i pos;
 } Rect;
 
-/******************
- * rect.c functions
- ******************/
+struct RectList {
+    Rect data;
+    struct RectList *next;
+};
+
+typedef struct RectList RectList;
+
+/****************
+ * Rect functions
+ ****************/
 Rect make_rect(int x, int y, int width, int height); 
 bool point_in_rect(Rect a, Vec2i b);
 Vec2i random_point_in_rect(Rect a);
 bool rect_intersect(Rect a, Rect b);
 Vec2i get_center(Rect a);
+
+/********************
+ * RectList functions
+ ********************/
+RectList* create_RectList(Rect data);
+void push_RectList(RectList **headref, Rect data);
+Rect pop_RectList(RectList **headref);
+int count_RectList(RectList *headref);
+void destroy_RectList(RectList **headref);
 
 #endif

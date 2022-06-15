@@ -37,17 +37,15 @@ void build_dungeon(void) {
 }
 
 void build_basic_dungeon(void) {
-    int x,y,w,h,i;
+    int x,y,w,h;
     Rect newRoom;
     bool intersects;
     int numRooms = 0;
     int attempts = 0;
     int minattempts = 0;
-    Rect rooms[MAX_NUM_ROOMS];
+    RectList *rooms = NULL;
+    RectList *tmp = NULL;
 
-    for(i = 0; i < MAX_NUM_ROOMS; i++) {
-        rooms[i] = make_rect(-5,-5,0,0);
-    }
     while(numRooms < MIN_NUM_ROOMS && minattempts < 100) {
         while(numRooms < MAX_NUM_ROOMS && attempts < 500) {
             x = mt_rand(1, MAP_WIDTH - MAX_ROOM_SIZE - 1);
@@ -62,11 +60,13 @@ void build_basic_dungeon(void) {
             }
             newRoom = make_rect(x,y,w,h);
             intersects = false;
-            for(i = 0; i < MAX_NUM_ROOMS; i++) {
-               if(rect_intersect(newRoom, rooms[i])) {
+            tmp = rooms;
+            while(tmp) {
+                if(rect_intersect(newRoom, tmp->data)) {
                     intersects = true;
                     break;
-               } 
+                }
+                tmp = tmp->next;
             }
             if((newRoom.pos.x + newRoom.dim.x >= MAP_WIDTH) ||
                    (newRoom.pos.y + newRoom.dim.y >= MAP_HEIGHT)) {
@@ -74,46 +74,48 @@ void build_basic_dungeon(void) {
             }
             if(!intersects) {
                 place_room(newRoom);
-                rooms[numRooms] = newRoom;
-                numRooms += 1;
+                push_RectList(&rooms, newRoom);
+                numRooms = count_RectList(rooms);
             }
             attempts++;
         }
         minattempts++;
     }
-
-    for(i = 0; i < MAX_NUM_ROOMS; i++) {
-        if(rooms[i].pos.x < 0) {
-            break;
-        }
-        make_fancy_room(rooms[i]);
+    tmp = rooms;
+    while(tmp) {
+        make_fancy_room(tmp->data);
+        tmp = tmp->next;
     }
 
-    for(i = 0; i < MAX_NUM_ROOMS; i++) {
-        if(rooms[i].pos.x < 0) {
-            break;
-        }
-        if(i > 0) {
-            place_corridor(get_center(rooms[i]), get_center(rooms[i-1]));
-        }
-    }
-    for(i = 0; i < MAX_NUM_ROOMS; i++) {
-        if(rooms[i].pos.x < 0) {
-            i--; /* i is now the number of the last room */
-            break;
-        }
-        place_doors(rooms[i]);
-        if(i > 0) {
-            place_monsters(rooms[i]);
-        }
+    tmp = rooms;
+    while(tmp->next) {
+        place_corridor(get_center(tmp->data), get_center(tmp->next->data));
+        tmp = tmp->next; 
     }
 
-    place_tile(get_center(rooms[mt_rand(1,i-1)]), TILE_DN);
+    tmp = rooms;
+    while(tmp) {
+        place_doors(tmp->data);
+        if(tmp != rooms) {
+            place_monsters(tmp->data);
+        }
+        tmp = tmp->next;
+    }
+
+    /* Get random room */
+    x = mt_rand(0, count_RectList(rooms) - 1);
+    y = 0;
+    tmp = rooms;
+    while(y != x) {
+        y++;
+        tmp = tmp->next;
+    }
+    place_tile(get_center(tmp->data), TILE_DN);
     if(g_mapcur->lvl != 0) {
-        place_tile(get_center(rooms[0]), TILE_UP);
+        place_tile(get_center(rooms->data), TILE_UP);
     } else {
-        place_tile(get_center(rooms[0]), TILE_FLOOR);
+        place_tile(get_center(rooms->data), TILE_FLOOR);
     }
-    g_player->pos = get_center(rooms[0]); 
-
+    g_player->pos = get_center(rooms->data); 
+    destroy_RectList(&rooms);
 }
