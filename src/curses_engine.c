@@ -41,22 +41,6 @@ bool curses_setup(void) {
     return success;
 }
 
-void setcolor(int fg, int bg) {
-    /* Set the color pair (colornum) and bold/bright (A_BOLD) */
-    attron(COLOR_PAIR(colornum(fg,bg)));
-    if(is_bold(fg)) {
-        attron(A_BOLD);
-    }
-}
-
-void unsetcolor(int fg, int bg) {
-    /* Unset the color pair (colornum) and bold/bright (A_BOLD) */
-    attroff(COLOR_PAIR(colornum(fg,bg)));
-    if(is_bold(fg)) {
-        attroff(A_BOLD);
-    }
-}
-
 void curses_draw_main(int x, int y, Glyph glyph) {
     int xoffset = COLS / 2; /* terminal center x */
     int yoffset = LINES / 2; /* terminal center y */

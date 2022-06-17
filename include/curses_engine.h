@@ -24,8 +24,6 @@
  * curses_engine.c functions
  ***************************/
 bool curses_setup(void);
-void setcolor(int fg, int bg);
-void unsetcolor(int fg, int bg);
 void curses_draw_main(int x, int y, Glyph glyph);
 void curses_draw_ui(int x, int y, char *msg);
 void curses_draw_msg(int x, int y, char *msg);
