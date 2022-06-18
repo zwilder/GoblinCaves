@@ -32,6 +32,8 @@ void engine_run(void) {
     int events;
     bool running = true;
     while(running) {
+        /* draw */
+        engine_draw();
         /* Handle Events */
         events = handle_keyboard(get_input());
         if(check_flag(events, EV_QUIT)) {
@@ -39,8 +41,6 @@ void engine_run(void) {
         }
         /* update */
         events = update(events);
-        /* draw */
-        engine_draw();
     }
 }
 

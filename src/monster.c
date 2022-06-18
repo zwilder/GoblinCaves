@@ -35,12 +35,12 @@ typedef struct {
 */
 Monster monsterTable[NUM_MON] =
 {
-    /* pos  dpos  glyph                        name            str dex per vit, flags,            locID,curHP */
-    { {0,0},{0,0},{'%',RED,BLACK},           "Corpse"          ,0,0,0,0, MF_NONE,                     0,0},
-    { {0,0},{0,0},{'g',GREEN,BLACK},         "Goblin"          ,2,3,2,2, MF_ALIVE,                    0,0},
-    { {0,0},{0,0},{'g',BRIGHT_GREEN,BLACK},  "Goblin Archer"   ,2,3,3,1, MF_ALIVE | MF_RANGED,        0,0},
-    { {0,0},{0,0},{'B',BROWN,BLACK},         "Bat"             ,1,3,1,2, MF_ALIVE | MF_SKIRMISH,      0,0},
-    { {0,0},{0,0},{'g',BRIGHT_MAGENTA,BLACK},"Goblin Priest"   ,2,3,4,3, MF_ALIVE | MF_NECRO,         0,0}
+    /* pos  dpos  glyph                        name            st,dx,pe,vi,sp, flags,            locID,curHP,en */
+    { {0,0},{0,0},{'%',RED,BLACK},           "Corpse"          ,0,0,0,0,0,   MF_NONE,                     0,0,0},
+    { {0,0},{0,0},{'g',GREEN,BLACK},         "Goblin"          ,2,3,2,2,100, MF_ALIVE,                    0,0,0},
+    { {0,0},{0,0},{'g',BRIGHT_GREEN,BLACK},  "Goblin Archer"   ,2,3,3,1,100, MF_ALIVE | MF_RANGED,        0,0,0},
+    { {0,0},{0,0},{'B',BROWN,BLACK},         "Bat"             ,1,3,1,2,50, MF_ALIVE | MF_SKIRMISH,       0,0,0},
+    { {0,0},{0,0},{'g',BRIGHT_MAGENTA,BLACK},"Goblin Priest"   ,2,3,4,3,100, MF_ALIVE | MF_NECRO,         0,0,0}
 };
 
 Monster* create_monster_at(Vec2i pos, int type) {
@@ -69,9 +69,11 @@ Monster* create_monster(void) {
     newMonster->dex = 0;
     newMonster->per = 0;
     newMonster->vit = 0;
+    newMonster->spd = 0;
     newMonster->flags = MF_NONE;
     newMonster->locID = -1;
     newMonster->curhp = 0;
+    newMonster->energy = 0;
     return newMonster;
 }
 
@@ -96,10 +98,12 @@ Monster* create_player(MList **head) {
     newPlayer->dex = mt_rand(5,10);
     newPlayer->vit = mt_rand(5,10);
     newPlayer->per = mt_rand(5,10);
+    newPlayer->spd = 100;
 
-    newPlayer->curhp = get_max_hp(newPlayer);
     newPlayer->flags = MF_ALIVE | MF_PLAYER;
     newPlayer->locID = 0;
+    newPlayer->curhp = get_max_hp(newPlayer);
+    newPlayer->energy = 0;
 
     push_mlist(head, newPlayer);
     
@@ -164,6 +168,7 @@ void melee_combat(Monster *atk, Monster *def) {
         push_msg(&g_msghead, msg);
     }
     free(msg);
+    def->flags = remove_flag(def->flags, MF_SLEEP);
 }
 
 void kill_monster(Monster *target) {
@@ -188,31 +193,42 @@ bool is_alive(Monster *target) {
     return check_flag(target->flags, MF_ALIVE);
 }
 
+void change_state(Monster *monster, int mflagcur, int mflagnext) {
+    monster->flags = remove_flag(monster->flags, mflagcur);
+    monster->flags = engage_flag(monster->flags, mflagnext);
+}
+
 void take_turn(Monster *monster) {
+    /* Broken */
+    /*
     if(!check_flag(monster->flags, MF_HAS_TURN)) {
+        //Doesn't have turn to take 
         return;
     }
-    int dist = man_dist(g_player->pos, monster->pos);
+    Monster *target = NULL;
     char *msg = malloc(80 * sizeof(char));
     if(check_flag(monster->flags, MF_SLEEP)) {
-        /* Monster is asleep, is player within sight? */
-        if(dist < get_fov(monster)) {
-            monster->flags = remove_flag(monster->flags, MF_SLEEP); 
-            monster->flags = engage_flag(monster->flags, MF_SEENPLAYER);
+        // Monster is asleep, is player within sight? 
+        if(is_explored(monster->pos.x, monster->pos.y)) {
+            change_state(monster, MF_SLEEP, MF_SEENPLAYER);
             snprintf(msg,80,"The %s wakes up!",monster->name);
             push_msg(&g_msghead, msg);
         }
     } else if(check_flag(monster->flags, MF_SEENPLAYER)) {
-        /* Monster has seen the player, if close enough to attack, attack.
-         * Otherwise move closer */
-        /* g(1,0) @(0,1) man dist = 2?
-         * sqrt((abs(x1-x2))^2+abs(y1-y2)^2) = sqrt(abs(1-0)^2+abs(0-1)^2) =
-         * sqrt(1 + 1) = 1.41 = 1?
-         * .g...
-         * @....
-         * .....
-         */
+        if(monster->locID != g_mapcur->lvl) {
+            change_state(monster, MF_SEENPLAYER, MF_EXPLORING);
+        }
+        monster->dpos = astar_step(monster->pos, g_player->pos, true);
+        if(!vec_null(monster->dpos)) {
+            // Take a step along path, attacking target if exists 
+            target = monster_at_pos(g_mlist, monster->dpos, g_mapcur->lvl);
+            if(target) {
+                melee_combat(monster, target);
+            } 
+        }
     }
     free(msg);
+    monster->energy -= monster->spd;
     monster->flags = remove_flag(monster->flags, MF_HAS_TURN);
+    */
 }

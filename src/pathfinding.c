@@ -133,6 +133,76 @@ void bh_line_add(Vec2iList **head, Vec2i pos) {
 Vec2iList* open_neighbors_at(Vec2i pos, bool checkMonsters) {
     Vec2iList *results = NULL;
     int x, y;
+    Vec2i tl,tr,bl,br;
+    // Diagonal
+    tl = make_vec(pos.x - 1, pos.y - 1);
+    tr = make_vec(pos.x + 1, pos.y - 1);
+    bl = make_vec(pos.x - 1, pos.y + 1);
+    br = make_vec(pos.x + 1, pos.y + 1);
+    if(!is_blocked(tl.x,tl.y) && in_bounds(tl.x,tl.y)){
+        if(!checkMonsters) {
+            push_Vec2i_list(&results, tl);
+        } else {
+            if(!monster_at_pos(g_mlist, tl, g_mapcur->lvl)) {
+                push_Vec2i_list(&results, tl);
+            }
+        }
+    }
+    if(!is_blocked(tr.x,tr.y) && in_bounds(tr.x,tr.y)){
+        if(!checkMonsters) {
+            push_Vec2i_list(&results, tr);
+        } else {
+            if(!monster_at_pos(g_mlist, tr, g_mapcur->lvl)) {
+                push_Vec2i_list(&results, tr);
+            }
+        }
+    }
+    if(!is_blocked(bl.x,bl.y) && in_bounds(bl.x,bl.y)){
+        if(!checkMonsters) {
+            push_Vec2i_list(&results, bl);
+        } else {
+            if(!monster_at_pos(g_mlist, bl, g_mapcur->lvl)) {
+                push_Vec2i_list(&results, bl);
+            }
+        }
+    }
+    if(!is_blocked(br.x,br.y) && in_bounds(br.x,br.y)){
+        if(!checkMonsters) {
+            push_Vec2i_list(&results, br);
+        } else {
+            if(!monster_at_pos(g_mlist, br, g_mapcur->lvl)) {
+                push_Vec2i_list(&results, br);
+            }
+        }
+    }
+               
+    // Cardinal
+    for(x = pos.x - 1, y = pos.y; x <= pos.x + 1; x += 2) {
+        if(!is_blocked(x,y) && in_bounds(x,y)) {
+            if(!checkMonsters) {
+                push_Vec2i_list(&results, make_vec(x,y));
+            } else {
+                if(!monster_at_pos(g_mlist, make_vec(x,y), g_mapcur->lvl)) {
+                    push_Vec2i_list(&results, make_vec(x,y));
+                }
+            }
+        }
+    }
+    for(y = pos.y - 1, x = pos.x; y <= pos.y + 1; y += 2) {
+        if(!is_blocked(x,y) && in_bounds(x,y)) {
+            if(!checkMonsters) {
+                push_Vec2i_list(&results, make_vec(x,y));
+            } else {
+                if(!monster_at_pos(g_mlist, make_vec(x,y), g_mapcur->lvl)) {
+                    push_Vec2i_list(&results, make_vec(x,y));
+                }
+            }
+        }
+    }
+    /*
+    // All the cordinates except center. I **think** adding the diagonals to the
+    // list first (so they are at the back of the list) makes the paths slightly
+    // smoother (more priority given to the things searched first?)
     for(x = pos.x - 1; x <= pos.x + 1; x++) {
         for(y = pos.y - 1; y <= pos.y + 1; y++) {
             if(!is_blocked(x,y) && in_bounds(x,y)) {
@@ -146,6 +216,7 @@ Vec2iList* open_neighbors_at(Vec2i pos, bool checkMonsters) {
             }
         }
     }
+    */
     return results;
 }
 
@@ -154,105 +225,36 @@ int movement_cost_at(Vec2i pos) {
     return 0;
 }
 
-/* ALl I need to make the following functions work in a test program is a
- * modified open_neighbors_at(pos) function, then vec2i.h/c. Might be worthwhile
- * once I get the last couple functions up making a nice NCurses demo of these,
- * maybe mimicing the RedBlobGames demos? */
-Vec2iList* breadth_first_search(Vec2i start, bool monsterblock) {
-    /* Breadth first search, returns ALL tiles that are not blocked.
-     * Could be used for flood filling or other fun? Mostly here for comparison
-     * in the future. */
-    Vec2iList *reached = create_Vec2i_list(start);
-    Vec2iList *frontier = create_Vec2i_list(start);
-    Vec2iList *neighbors = NULL;
-    int count = 0;
-    int i = 0;
-    Vec2i cur = NULLVEC;
-
-    while(frontier) {
-        cur = pop_Vec2i_list(&frontier);
-        neighbors = open_neighbors_at(cur, monsterblock);
-        count = count_Vec2i_list(neighbors);
-        for(i = 0; i < count; i++) {
-            if(!Vec2i_list_contains(reached, neighbors[i].item)) {
-                push_Vec2i_list(&reached, neighbors[i].item);
-                push_Vec2i_list(&frontier, neighbors[i].item);
-            }
-        }
-        destroy_Vec2i_list(&neighbors);
-        neighbors = NULL;
-    }
-
-    destroy_Vec2i_list(&frontier);
-    destroy_Vec2i_list(&neighbors);
-    return reached;
-}
-/*
 Vec2iHT* dijkstra_map(Vec2i start, bool monsterblock) {
-    Vec
-
-}
-*/
-
-Vec2iHT* bfs_path(Vec2i start, Vec2i goal, bool monsterblock) {
-    /* BFS with early exit, that returns a path from start to goal */
-    Vec2iList *frontier = create_Vec2i_list(start);
-    Vec2iList *neighbors = NULL;
-    Vec2iHT *camefrom = create_Vec2iHT(5000); 
-    int count = 0;
-    int i = 0;
-    Vec2i cur = NULLVEC;
-    Vec2i next = NULLVEC;
-
-    insert_Vec2iHT(camefrom, start, start);
-    while(frontier) {
-        cur = pop_Vec2i_list(&frontier);
-        if(eq_vec(cur, goal)) {
-            /* Early exit, found goal */
-            break;
-        }
-        neighbors = open_neighbors_at(cur, monsterblock);
-        count = count_Vec2i_list(neighbors);
-        for(i = 0; i < count; i++) {
-            next = neighbors[i].item;
-            if(!vec_null(search_Vec2iHT(camefrom, next))) {
-                push_Vec2i_list(&frontier, next);
-                insert_Vec2iHT(camefrom, next, cur);
-            }
-        }
-        destroy_Vec2i_list(&neighbors);
-        neighbors = NULL;
-    }
-    destroy_Vec2i_list(&frontier);
-    destroy_Vec2i_list(&neighbors);
-    return camefrom;
-}
-
-Vec2iHT* gbfs_path(Vec2i start, Vec2i goal, bool monsterblock) {
-    /* Greedy BFS with early exit, returns path from start to goal.
-     * Heuristic: Manhattan Distance */
     Vec2iPQ *frontier = create_Vec2iPQ(start, 0);
     Vec2iList *neighbors = NULL;
+    Vec2iList *tmp = NULL;
     Vec2iHT *camefrom = create_Vec2iHT(5000); 
-    int count = 0;
-    int i = 0;
+    Vec2iHT *costSoFar = create_Vec2iHT(5000); 
+    Vec2i cost;
+
     int p = 0;
+    int newcost = 0;
     Vec2i cur = NULLVEC;
     Vec2i next = NULLVEC;
 
     insert_Vec2iHT(camefrom, start, start);
+    /* The cost is stored in the x of the value, y is 0 */
+    /* If we pass this in, we should be able to get D maps for multiple things
+     * by combining maps */
+    insert_Vec2iHT(costSoFar, start, make_vec(0,0));
     while(frontier) {
         cur = pop_Vec2iPQ(&frontier);
-        if(eq_vec(cur, goal)) {
-            /* Early exit, found goal */
-            break;
-        }
         neighbors = open_neighbors_at(cur, monsterblock);
-        count = count_Vec2i_list(neighbors);
-        for(i = 0; i < count; i++) {
-            next = neighbors[i].item;
-            if(!vec_null(search_Vec2iHT(camefrom, next))) {
-                p = man_dist(goal, next);
+        for(tmp = neighbors; tmp; tmp = tmp->next) {
+            next = tmp->item;
+            cost = search_Vec2iHT(costSoFar, cur);
+            newcost = cost.x + movement_cost_at(next);
+            cost = search_Vec2iHT(costSoFar, next);
+            if(vec_null(search_Vec2iHT(costSoFar, next)) || 
+                    (newcost < cost.x)) {
+                insert_Vec2iHT(costSoFar, next, make_vec(newcost, 0));
+                p = newcost;
                 push_Vec2iPQ(&frontier, next, p);
                 insert_Vec2iHT(camefrom, next, cur);
             }
@@ -262,18 +264,38 @@ Vec2iHT* gbfs_path(Vec2i start, Vec2i goal, bool monsterblock) {
     }
     destroy_Vec2iPQ(&frontier);
     destroy_Vec2i_list(&neighbors);
-    return camefrom;
+    destroy_Vec2iHT(camefrom);
+    return costSoFar;
 }
 
-Vec2iHT* astar_path(Vec2i start, Vec2i goal, bool monsterblock) {
+Vec2i astar_step(Vec2i start, Vec2i goal, bool monsterblock) {
+    Vec2iList *path = astar_path(start, goal, monsterblock);
+    Vec2i result = start;
+    if(path) {
+        result = path->item;
+    }
+    destroy_Vec2i_list(&path);
+    return result;
+}
+
+Vec2iList* construct_path(Vec2iHT *input, Vec2i start, Vec2i goal) {
+    Vec2iList *path = NULL;
+    Vec2i cur = goal;
+    while(!eq_vec(cur, start)) {
+        push_Vec2i_list(&path, cur);
+        cur = search_Vec2iHT(input, cur);
+    }
+    return path;
+}
+
+Vec2iList* astar_path(Vec2i start, Vec2i goal, bool monsterblock) {
     Vec2iPQ *frontier = create_Vec2iPQ(start, 0);
     Vec2iList *neighbors = NULL;
+    Vec2iList *tmp = NULL;
     Vec2iHT *camefrom = create_Vec2iHT(5000); 
     Vec2iHT *costSoFar = create_Vec2iHT(5000); 
     Vec2i cost;
 
-    int count = 0;
-    int i = 0;
     int p = 0;
     int newcost = 0;
     Vec2i cur = NULLVEC;
@@ -289,16 +311,15 @@ Vec2iHT* astar_path(Vec2i start, Vec2i goal, bool monsterblock) {
             break;
         }
         neighbors = open_neighbors_at(cur, monsterblock);
-        count = count_Vec2i_list(neighbors);
-        for(i = 0; i < count; i++) {
-            next = neighbors[i].item;
+        for(tmp = neighbors; tmp; tmp = tmp->next) {
+            next = tmp->item;
             cost = search_Vec2iHT(costSoFar, cur);
             newcost = cost.x + movement_cost_at(next);
             cost = search_Vec2iHT(costSoFar, next);
-            if(!vec_null(search_Vec2iHT(costSoFar, next)) || 
+            if(vec_null(search_Vec2iHT(costSoFar, next)) || 
                     (newcost < cost.x)) {
                 insert_Vec2iHT(costSoFar, next, make_vec(newcost, 0));
-                p = newcost + man_dist(goal, next);
+                p = newcost + man_dist(goal,next);
                 push_Vec2iPQ(&frontier, next, p);
                 insert_Vec2iHT(camefrom, next, cur);
             }
@@ -306,8 +327,11 @@ Vec2iHT* astar_path(Vec2i start, Vec2i goal, bool monsterblock) {
         destroy_Vec2i_list(&neighbors);
         neighbors = NULL;
     }
-    destroy_Vec2iHT(costSoFar);
+    tmp = construct_path(camefrom, start, goal);
     destroy_Vec2iPQ(&frontier);
     destroy_Vec2i_list(&neighbors);
-    return camefrom;
+    destroy_Vec2iHT(costSoFar);
+    destroy_Vec2iHT(camefrom);
+    return tmp;
 }
+

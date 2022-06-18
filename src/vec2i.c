@@ -203,9 +203,6 @@ Vec2iHT* create_Vec2iHT(int size) {
 }
 
 void destroy_Vec2iHTItem(Vec2iHTItem *item) {
-    if(!item) {
-        return;
-    }
     free(item);
 }
 
@@ -214,9 +211,7 @@ void destroy_Vec2iHT(Vec2iHT *table) {
     Vec2iHTItem *item = NULL;
     for(i = 0; i < table->size; i++) {
         item = table->items[i];
-        if(item) {
-            destroy_Vec2iHTItem(item);
-        }
+        destroy_Vec2iHTItem(item);
     }
     destroy_Vec2iHT_ofbuckets(table);
     free(table->items);
@@ -252,8 +247,9 @@ void insert_Vec2iHT(Vec2iHT *table, Vec2i key, Vec2i value) {
     } else {
         /* Key exists */
         if(eq_vec(cur->key, key)) {
-            /* Same key, update value */
+            /* Same key, update value, destroy unneeded new item*/
             table->items[index]->value = value;
+            destroy_Vec2iHTItem(item); 
         } else {
             handle_Vec2iHT_collision(table, index, item);
         }
@@ -261,6 +257,9 @@ void insert_Vec2iHT(Vec2iHT *table, Vec2i key, Vec2i value) {
 }
 
 Vec2i search_Vec2iHT(Vec2iHT *table, Vec2i key) {
+    if(vec_null(key) || !table) {
+        return NULLVEC;
+    }
     int index = Vec2i_hash(key, table->size);
     Vec2iHTItem *item = table->items[index];
     Vec2iHTList *head = table->ofbuckets[index];

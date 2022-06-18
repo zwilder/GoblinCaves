@@ -325,6 +325,11 @@ void place_monsters(Rect room) {
         if(!monster_at_pos(g_mlist, pos, g_mapcur->lvl) &&
                 !is_blocked(pos.x,pos.y)) {
             Monster *newMonster = create_monster_at(pos, M_GOBLIN);
+            if(mt_bool()) {
+                newMonster->flags = engage_flag(newMonster->flags, MF_EXPLORING);
+            } else {
+                newMonster->flags = engage_flag(newMonster->flags, MF_SLEEP);
+            }
             newMonster->locID = g_mapcur->lvl;
             push_mlist(&g_mlist, newMonster);
         }

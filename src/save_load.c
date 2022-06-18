@@ -188,9 +188,11 @@ void save_monster(Monster *monster, FILE *f) {
     fwrite(&(monster->dex), sizeof(int), 1, f);
     fwrite(&(monster->vit), sizeof(int), 1, f);
     fwrite(&(monster->per), sizeof(int), 1, f);
+    fwrite(&(monster->spd), sizeof(int), 1, f);
     fwrite(&(monster->curhp), sizeof(int), 1, f);
     fwrite(&(monster->flags), sizeof(int), 1, f);
     fwrite(&(monster->locID), sizeof(int), 1, f);
+    fwrite(&(monster->energy), sizeof(int), 1, f);
 }
 
 Monster* load_monster(FILE *f) {
@@ -212,9 +214,11 @@ Monster* load_monster(FILE *f) {
     fread(&(monster->dex), sizeof(int), 1, f);
     fread(&(monster->vit), sizeof(int), 1, f);
     fread(&(monster->per), sizeof(int), 1, f);
+    fread(&(monster->spd), sizeof(int), 1, f);
     fread(&(monster->curhp), sizeof(int), 1, f);
     fread(&(monster->flags), sizeof(int), 1, f);
     fread(&(monster->locID), sizeof(int), 1, f);
+    fread(&(monster->energy), sizeof(int), 1, f);
     return monster;
 }
 

@@ -162,42 +162,25 @@ HP: xxx/xxx    stat                                      St:xx Dx:xx Pe:xx Vi:xx
                                                                                *
      * curses_draw_ui(int x, int uirow, char *msg)
      */
-    char snum[5];
-    char depth[12] = "Depth: -";
-    char hpstr[12] = "HP: ";
-    char statstr[24] = "St:";
+    char *depth = malloc(40 * sizeof(char));
+    char *hpstr = malloc(40 * sizeof(char));
+    char *statstr = malloc(40 * sizeof(char));
     int lvl = (g_mapcur->lvl + 1) * 10;
     curses_draw_ui(0, 0, g_player->name);
-    kr_itoa(lvl, snum);
-    strcat(depth, snum);
+    snprintf(depth,40, "Depth: -%d", lvl);
     curses_draw_ui(SCREEN_WIDTH - strlen(depth),0, depth);
 
-    /* Construct HP string */
-    kr_itoa(g_player->curhp, snum);
-    strcat(hpstr, snum);
-    strcat(hpstr, "/");
-    kr_itoa(get_max_hp(g_player), snum);
-    strcat(hpstr, snum);
+    snprintf(hpstr,40, "HP: %d/%d", g_player->curhp, get_max_hp(g_player));
     curses_draw_ui(0,1, hpstr);
 
-    /* Construct stat string */
-    kr_itoa(g_player->str, snum);
-    strcat(statstr, snum);
-    strcat(statstr, " Dx:");
-    kr_itoa(g_player->dex, snum);
-    strcat(statstr, snum);
-    strcat(statstr, " Pe:");
-    kr_itoa(g_player->per, snum);
-    strcat(statstr, snum);
-    strcat(statstr, " Vi:");
-    kr_itoa(g_player->vit, snum);
-    strcat(statstr, snum);
+    snprintf(statstr,40,"Spd:%d St:%d Dx:%d Pe:%d Vi:%d",
+            g_player->spd, g_player->str, g_player->dex, 
+            g_player->per, g_player->vit);
     curses_draw_ui(SCREEN_WIDTH - strlen(statstr),1,statstr);
 
-    /*
-    curses_draw_ui(0, 1, "HP: xxx/xxx    stat                                      St:xx Dx:xx Pe:xx Vi:xx");
-    */
-
+    free(depth);
+    free(hpstr);
+    free(statstr);
 }
 
 void draw_msg(void) {

@@ -38,9 +38,11 @@ typedef struct {
     int dex;
     int per;
     int vit;
+    int spd;
     int flags;
     int locID;
     int curhp;
+    int energy;
 } Monster;
 
 typedef enum {
@@ -69,5 +71,6 @@ void melee_combat(Monster *atk, Monster *def);
 void kill_monster(Monster *target);
 bool is_alive(Monster *target);
 
+void change_state(Monster *monster, int mflagcur, int mflagnext);
 void take_turn(Monster *monster); 
 #endif 

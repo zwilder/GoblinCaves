@@ -53,7 +53,8 @@ typedef enum {
     EV_CHST_GAME       = 1 << 11,
     EV_CHST_HELP       = 1 << 12,
     EV_CHST_NWPL       = 1 << 13,
-    EV_CHST_LOG        = 1 << 14
+    EV_CHST_LOG        = 1 << 14,
+    EV_PLAYER_KP       = 1 << 15
 } EventFlags;
 
 typedef enum {

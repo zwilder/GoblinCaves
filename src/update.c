@@ -40,16 +40,68 @@ int update(int events) {
         g_gamestate = ST_LOG;
         events = remove_flag(events, EV_CHST_LOG);
     }
+    /* Grant energy */
+    /* Take turns */
+    /* Pos = dpos */
+    //update_energy();
+    //events = update_monsters(events);
+    events = update_player(events);
+    return events;
+}
+
+void update_energy(void) {
+    /* Broken */
+    /*
+    MList *tmp = NULL;
+    for(tmp = g_mlist; tmp; tmp = tmp->next) {
+        if(!tmp) {
+            break;
+        }
+        if(tmp->data->locID != g_mapcur->lvl) {
+            continue;
+        }
+        if(check_flag(tmp->data->flags, MF_ALIVE)) {
+            tmp->data->energy += 10;
+            if(tmp->data->energy > 0) {
+                tmp->data->flags = engage_flag(tmp->data->flags,
+                MF_HAS_TURN);
+            }
+        } else {
+            tmp->data->energy = 0;
+            tmp->data->flags = remove_flag(tmp->data->flags,
+                    MF_HAS_TURN);
+        }
+    }
+    */
+}
+
+int update_monsters(int events) {
+    /* Broken */
+    /*
+    MList *tmp = NULL;
+    for(tmp = g_mlist; tmp; tmp = tmp->next) {
+        if(tmp->data == g_player) {
+            continue; //Skip player
+        } else {
+            take_turn(tmp->data);
+        }
+    }
+    */
+    return events;
+}
+
+int update_player(int events) {
+    bool success = false;
     if(check_flag(events, EV_MOVE)) {
-        player_move();
+        success = player_move();
         events = remove_flag(events, EV_MOVE);
     }
     if(check_flag(events, EV_OPEN)) {
-        open_door(add_vec(get_direction("Open"), g_player->pos));
+        success = open_door(add_vec(get_direction("Open"), g_player->pos));
         events = remove_flag(events, EV_OPEN);
     }
     if(check_flag(events, EV_CLOSE)) {
-        close_door(add_vec(get_direction("Close"), g_player->pos));
+        success = close_door(add_vec(get_direction("Close"), g_player->pos));
         events = remove_flag(events, EV_CLOSE);
     }
     if(check_flag(events, EV_DN)) {
@@ -62,6 +114,7 @@ int update(int events) {
             } else {
                 push_msg(&g_msghead, "You stumble.");
             }
+            success = true;
         }
     }
     if(check_flag(events, EV_UP)) {
@@ -80,14 +133,21 @@ int update(int events) {
             } else {
                 push_msg(&g_msghead, "You stumble.");
             }
+            success = true;
         }
+    }
+    if(success){
+        /*Broken*/
+        //g_player->energy -= g_player->spd;
+        //g_player->flags = remove_flag(g_player->flags, MF_HAS_TURN);
     }
     return events;
 }
 
-void player_move(void) {
+bool player_move(void) {
     Vec2i dpos = g_player->dpos;
     int dposMask = 0;
+    bool success = false;
     /* Will check for entities at location here */
     Monster *target = monster_at_pos(g_mlist, dpos, g_mapcur->lvl);
     if(target) {
@@ -95,9 +155,11 @@ void player_move(void) {
         //destroy_mlist_monster(&g_mlist, target);
         if(check_flag(target->flags, MF_ALIVE)) {
             melee_combat(g_player, target);
-            return;
+            success = true;
+            return success;
         } else {
             push_msg(&g_msghead, "You step over some mangled remains.");
+            success = true;
         }
     }
     /* Check tile at location */
@@ -107,17 +169,22 @@ void player_move(void) {
         /* Tile blocks movment, is it a door? */
         if(check_flag(dposMask, TF_CDOOR)) {
             /* Is door locked check will go here */
-            open_door(dpos);
+            success = open_door(dpos);
         }
     } else {
         /* Tile does not block movement */
         set_player_pos(g_player->dpos);
         tile_flavor_msg(g_player->dpos);
+        g_player->energy -= g_player->spd;
+        g_player->flags = remove_flag(g_player->flags, MF_HAS_TURN);
+        success = true;
     }
+    return success;
 }
 
-void open_door(Vec2i pos) {
+bool open_door(Vec2i pos) {
     int mask = get_tflags_at(pos.x,pos.y);
+    bool success = false;
     /*check to see if there is even a closed door at the location first */
     if(check_flag(mask, TF_CDOOR)) {
         if(mt_bool()) {
@@ -129,13 +196,16 @@ void open_door(Vec2i pos) {
         }
         place_tile(pos, TILE_ODOOR);
         update_fov();
+        success = true;
     } else {
         push_msg(&g_msghead, "What door?");
     }
+    return success;
 }
 
-void close_door(Vec2i pos) {
+bool close_door(Vec2i pos) {
     int mask = get_tflags_at(pos.x,pos.y);
+    bool success = false;
     /*check to see if there is even an open door at the location first */
     if(check_flag(mask, TF_ODOOR)) {
         if(mt_bool()) {
@@ -147,9 +217,11 @@ void close_door(Vec2i pos) {
         }
         place_tile(pos, TILE_CDOOR);
         update_fov();
+        success = true;
     } else {
         push_msg(&g_msghead, "What door?");
     }
+    return success;
 }
 
 void change_level(int shift) {
