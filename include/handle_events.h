@@ -23,6 +23,7 @@
 /***************************
  * handle_events.c functions
  ***************************/
+int handle_events(void);
 int handle_keyboard(int input);
 int handle_keyboard_menu(int input);
 int handle_keyboard_help(int input);

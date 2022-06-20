@@ -139,7 +139,7 @@ Vec2iList* open_neighbors_at(Vec2i pos, bool checkMonsters) {
     tr = make_vec(pos.x + 1, pos.y - 1);
     bl = make_vec(pos.x - 1, pos.y + 1);
     br = make_vec(pos.x + 1, pos.y + 1);
-    if(!is_blocked(tl.x,tl.y) && in_bounds(tl.x,tl.y)){
+    if(!is_blocked(tl.x,tl.y) || is_cdoor(tl.x,tl.y)){
         if(!checkMonsters) {
             push_Vec2i_list(&results, tl);
         } else {
@@ -148,7 +148,7 @@ Vec2iList* open_neighbors_at(Vec2i pos, bool checkMonsters) {
             }
         }
     }
-    if(!is_blocked(tr.x,tr.y) && in_bounds(tr.x,tr.y)){
+    if(!is_blocked(tr.x,tr.y) || is_cdoor(tr.x,tr.y)){
         if(!checkMonsters) {
             push_Vec2i_list(&results, tr);
         } else {
@@ -157,7 +157,7 @@ Vec2iList* open_neighbors_at(Vec2i pos, bool checkMonsters) {
             }
         }
     }
-    if(!is_blocked(bl.x,bl.y) && in_bounds(bl.x,bl.y)){
+    if(!is_blocked(bl.x,bl.y) || is_cdoor(bl.x,bl.y)){
         if(!checkMonsters) {
             push_Vec2i_list(&results, bl);
         } else {
@@ -166,7 +166,7 @@ Vec2iList* open_neighbors_at(Vec2i pos, bool checkMonsters) {
             }
         }
     }
-    if(!is_blocked(br.x,br.y) && in_bounds(br.x,br.y)){
+    if(!is_blocked(br.x,br.y) || is_cdoor(br.x,br.y)){
         if(!checkMonsters) {
             push_Vec2i_list(&results, br);
         } else {
@@ -178,7 +178,7 @@ Vec2iList* open_neighbors_at(Vec2i pos, bool checkMonsters) {
                
     // Cardinal
     for(x = pos.x - 1, y = pos.y; x <= pos.x + 1; x += 2) {
-        if(!is_blocked(x,y) && in_bounds(x,y)) {
+        if(!is_blocked(x,y) || is_cdoor(x,y)) {
             if(!checkMonsters) {
                 push_Vec2i_list(&results, make_vec(x,y));
             } else {
@@ -189,7 +189,7 @@ Vec2iList* open_neighbors_at(Vec2i pos, bool checkMonsters) {
         }
     }
     for(y = pos.y - 1, x = pos.x; y <= pos.y + 1; y += 2) {
-        if(!is_blocked(x,y) && in_bounds(x,y)) {
+        if(!is_blocked(x,y) || is_cdoor(x,y)) {
             if(!checkMonsters) {
                 push_Vec2i_list(&results, make_vec(x,y));
             } else {
@@ -205,7 +205,7 @@ Vec2iList* open_neighbors_at(Vec2i pos, bool checkMonsters) {
     // smoother (more priority given to the things searched first?)
     for(x = pos.x - 1; x <= pos.x + 1; x++) {
         for(y = pos.y - 1; y <= pos.y + 1; y++) {
-            if(!is_blocked(x,y) && in_bounds(x,y)) {
+            if(!is_blocked(x,y) || is_cdoor(x,y)) {
                 if(!checkMonsters) {
                     push_Vec2i_list(&results, make_vec(x,y));
                 } else {

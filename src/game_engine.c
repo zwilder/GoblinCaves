@@ -31,16 +31,20 @@ void engine_run(void) {
     /* Enter main loop */
     int events;
     bool running = true;
+    //double start = time(NULL)* 1000; //Start time in ms
     while(running) {
-        /* draw */
-        engine_draw();
+        //start = time(NULL) * 1000;
         /* Handle Events */
-        events = handle_keyboard(get_input());
+        events = handle_events();
         if(check_flag(events, EV_QUIT)) {
             running = false;
         }
         /* update */
         events = update(events);
+        /* draw */
+        engine_draw();
+        /* 16ms is ~60fps, time(NULL) * 1000 is time in ms */
+        //sleep((start + 16 - (time(NULL) * 1000))/1000);
     }
 }
 

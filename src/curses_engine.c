@@ -24,7 +24,7 @@ bool curses_setup(void) {
 
     initscr();
     noecho();
-    /*nodelay(stdscr, true);*/
+    //nodelay(stdscr, true);
     curs_set(0);
     cbreak();
     keypad(stdscr, true);

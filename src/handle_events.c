@@ -19,6 +19,34 @@
 */
 #include <goblincaves.h>
 
+int handle_events(void) {
+    MList *tmp = NULL;
+    int events = EV_NONE;
+    switch(g_gamestate) {
+        case ST_GAME:
+            //if(check_flag(g_player->flags, MF_HAS_TURN)) {
+                events = handle_keyboard(get_input());
+            //}
+            for(tmp = g_mlist; tmp; tmp = tmp->next) {
+                if(!tmp) {
+                    break; //for loops run at least once
+                }
+                if(tmp->data == g_player) {
+                    continue; //Skip player
+                } 
+                if(tmp->data->locID == g_mapcur->lvl) {
+                    // ONLY monsters on current level take turns
+                    take_turn(tmp->data);
+                }
+            }
+            break;
+        default:
+            events = handle_keyboard(get_input());
+            break;
+    }
+    return events;
+}
+
 int handle_keyboard(int input) {
     int output = EV_NONE;
     switch(g_gamestate) {
@@ -93,57 +121,49 @@ int handle_keyboard_game(int input) {
         case 'k':
             /* up */
             newPos.y--;
-            output = EV_MOVE;
             break;
         case KEY_DOWN:
         case 'j':
             /* down */
             newPos.y++;
-            output = EV_MOVE;
             break;
         case KEY_LEFT:
         case 'h':
             /* left */
             newPos.x--;
-            output = EV_MOVE;
             break;
         case KEY_RIGHT:
         case 'l':
             /* right */
             newPos.x++;
-            output = EV_MOVE;
             break;
         case 'y':
             newPos.x--;
             newPos.y--;
-            output = EV_MOVE;
             break;
         case 'u':
             newPos.x++;
             newPos.y--;
-            output = EV_MOVE;
             break;
         case 'b':
             newPos.x--;
             newPos.y++;
-            output = EV_MOVE;
             break;
         case 'n':
             newPos.x++;
             newPos.y++;
-            output = EV_MOVE;
             break;
         case 'o':
-            output = EV_OPEN; 
+            g_player->flags = engage_flag(g_player->flags, MF_OPENDOOR);
             break;
         case 'c':
-            output = EV_CLOSE;
+            g_player->flags = engage_flag(g_player->flags, MF_CLOSEDOOR);
             break;
         case '>':
-            output = EV_DN;
+            g_player->flags = engage_flag(g_player->flags, MF_MVDNSTAIRS);
             break;
         case '<':
-            output = EV_UP;
+            g_player->flags = engage_flag(g_player->flags, MF_MVUPSTAIRS);
             break;
         case 'L':
             output = EV_CHST_LOG;
@@ -155,7 +175,6 @@ int handle_keyboard_game(int input) {
             }
             break;
         case '?':
-            /*Temporary, should be EV_CHST_HELP or something */
             output = EV_CHST_HELP;
             break;
         case 'q':
@@ -166,7 +185,10 @@ int handle_keyboard_game(int input) {
         default:
             break;
     }
-    g_player->dpos = newPos;
+    if(!eq_vec(g_player->pos, newPos)) {
+        g_player->dpos = newPos;
+        g_player->flags = engage_flag(g_player->flags, MF_MOVE);
+    }
     return output;
 }
 

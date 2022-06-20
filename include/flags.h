@@ -58,18 +58,23 @@ typedef enum {
 } EventFlags;
 
 typedef enum {
-    MF_NONE         = 1 << 0,
-    MF_PLAYER       = 1 << 1,
-    MF_ALIVE        = 1 << 2,
-    MF_RANGED       = 1 << 3,
-    MF_SKIRMISH     = 1 << 4,
-    MF_AFRAID       = 1 << 5,
-    MF_SLEEP        = 1 << 6,
-    MF_HAS_TURN     = 1 << 7,
-    MF_NECRO        = 1 << 8,
-    MF_SEENPLAYER   = 1 << 9,
-    MF_PACK         = 1 << 10,
-    MF_EXPLORING    = 1 << 11
+    MF_NONE            = 1 << 0,
+    MF_PLAYER          = 1 << 1,
+    MF_ALIVE           = 1 << 2,
+    MF_RANGED          = 1 << 3,
+    MF_SKIRMISH        = 1 << 4,
+    MF_AFRAID          = 1 << 5,
+    MF_SLEEP           = 1 << 6,
+    MF_HAS_TURN        = 1 << 7,
+    MF_NECRO           = 1 << 8,
+    MF_SEENPLAYER      = 1 << 9,
+    MF_PACK            = 1 << 10,
+    MF_EXPLORING       = 1 << 11,
+    MF_MOVE            = 1 << 12,
+    MF_OPENDOOR        = 1 << 13,
+    MF_CLOSEDOOR       = 1 << 14,
+    MF_MVDNSTAIRS      = 1 << 15,
+    MF_MVUPSTAIRS      = 1 << 16
 } MonsterFlags;
 
 typedef enum {

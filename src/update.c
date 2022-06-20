@@ -43,16 +43,19 @@ int update(int events) {
     /* Grant energy */
     /* Take turns */
     /* Pos = dpos */
-    //update_energy();
-    //events = update_monsters(events);
-    events = update_player(events);
+    if(g_gamestate == ST_GAME) {
+        //update_energy();
+        update_monsters();
+        //if(check_flag(g_player->flags, MF_HAS_TURN)) {
+            update_player();
+        //}
+    }
     return events;
 }
 
 void update_energy(void) {
-    /* Broken */
-    /*
     MList *tmp = NULL;
+    char *msg = malloc(80 * sizeof(char));
     for(tmp = g_mlist; tmp; tmp = tmp->next) {
         if(!tmp) {
             break;
@@ -63,51 +66,94 @@ void update_energy(void) {
         if(check_flag(tmp->data->flags, MF_ALIVE)) {
             tmp->data->energy += 10;
             if(tmp->data->energy > 0) {
-                tmp->data->flags = engage_flag(tmp->data->flags,
-                MF_HAS_TURN);
+                tmp->data->flags = engage_flag(tmp->data->flags, MF_HAS_TURN);
             }
+            snprintf(msg,80,"Granting energy to: %s - now has %d energy",
+                    tmp->data->name, tmp->data->energy);
+            write_log(msg);
+
         } else {
             tmp->data->energy = 0;
             tmp->data->flags = remove_flag(tmp->data->flags,
                     MF_HAS_TURN);
         }
     }
-    */
+    free(msg);
 }
 
-int update_monsters(int events) {
-    /* Broken */
-    /*
+void update_monsters(void) {
     MList *tmp = NULL;
+    Monster *target = NULL;
+    Monster *monster = NULL;
+    char *msg = malloc(80 * sizeof(char));
     for(tmp = g_mlist; tmp; tmp = tmp->next) {
         if(tmp->data == g_player) {
             continue; //Skip player
-        } else {
-            take_turn(tmp->data);
+        } 
+        monster = tmp->data;
+        /* If monster moved, update it's position here */
+        if(check_flag(monster->flags, MF_MOVE)) {
+            target = monster_at_pos(g_mlist, monster->dpos,g_mapcur->lvl);
+            /*
+            snprintf(msg,80, "%s on DLvl %d is moving: %d,%d to %d,%d",
+                    monster->name, g_mapcur->lvl, monster->pos.x,
+                    monster->pos.y, monster->dpos.x, monster->dpos.y);
+            write_log(msg); 
+            */
+            if(target) {
+                /*Moving into a target*/
+                melee_combat(monster, target);
+            } else if(is_cdoor(monster->dpos.x,monster->dpos.y)) {
+                /*Moving into a closed door, open it*/
+                place_tile(monster->dpos, TILE_ODOOR);
+                update_fov();
+                snprintf(msg,80,"The %s opens the door!", monster->name);
+                push_msg(&g_msghead, msg);
+            } else {
+                /*Moving into an open space*/
+                monster->pos = monster->dpos;
+            }
+            monster->flags = remove_flag(monster->flags, MF_MOVE);
         }
+        if(check_flag(monster->flags, MF_OPENDOOR)) {
+            if(is_cdoor(monster->dpos.x,monster->dpos.y)) {
+                place_tile(monster->dpos, TILE_ODOOR);
+            }
+            monster->flags = remove_flag(monster->flags, MF_OPENDOOR);
+        }
+        if(check_flag(monster->flags, MF_CLOSEDOOR)) {
+            if(is_odoor(monster->dpos.x,monster->dpos.y)) {
+                place_tile(monster->dpos, TILE_CDOOR);
+            }
+            monster->flags = remove_flag(monster->flags, MF_CLOSEDOOR);
+        }
+
+        /* End turn */
+        //monster->flags = remove_flag(monster->flags, MF_HAS_TURN);
+        //monster->energy -= monster->spd;
     }
-    */
-    return events;
+    free(msg);
 }
 
-int update_player(int events) {
+void update_player(void) {
     bool success = false;
-    if(check_flag(events, EV_MOVE)) {
+    int pflags = g_player->flags;
+    char *msg = malloc(80 * sizeof(char));
+    if(check_flag(pflags, MF_MOVE)) {
         success = player_move();
-        events = remove_flag(events, EV_MOVE);
+        pflags = remove_flag(pflags, MF_MOVE);
     }
-    if(check_flag(events, EV_OPEN)) {
+    if(check_flag(pflags, MF_OPENDOOR)) {
         success = open_door(add_vec(get_direction("Open"), g_player->pos));
-        events = remove_flag(events, EV_OPEN);
+        pflags = remove_flag(pflags, MF_OPENDOOR);
     }
-    if(check_flag(events, EV_CLOSE)) {
+    if(check_flag(pflags, MF_CLOSEDOOR)) {
         success = close_door(add_vec(get_direction("Close"), g_player->pos));
-        events = remove_flag(events, EV_CLOSE);
+        pflags = remove_flag(pflags, MF_CLOSEDOOR);
     }
-    if(check_flag(events, EV_DN)) {
+    if(check_flag(pflags, MF_MVDNSTAIRS)) {
         if(get_glyphch_at(g_player->pos.x,g_player->pos.y) == '>') {
             change_level(1);
-            events = remove_flag(events, EV_DN);
         } else {
             if(mt_bool()){ 
                 push_msg(&g_msghead, "You stare at the ground.");
@@ -116,11 +162,11 @@ int update_player(int events) {
             }
             success = true;
         }
+        pflags = remove_flag(pflags, MF_MVDNSTAIRS);
     }
-    if(check_flag(events, EV_UP)) {
+    if(check_flag(pflags, MF_MVUPSTAIRS)) {
         if(get_glyphch_at(g_player->pos.x, g_player->pos.y) == '<') {
             change_level(-1);
-            events = remove_flag(events, EV_UP);
         } else {
             if(mt_chance(10)) {
                 push_msg(&g_msghead, "You look up into the darkness... Hey a bat!");
@@ -135,13 +181,18 @@ int update_player(int events) {
             }
             success = true;
         }
+        pflags = remove_flag(pflags, MF_MVUPSTAIRS);
     }
+    g_player->flags = pflags;
     if(success){
-        /*Broken*/
         //g_player->energy -= g_player->spd;
         //g_player->flags = remove_flag(g_player->flags, MF_HAS_TURN);
+        //snprintf(msg,80,"%s took a turn, now has %d energy.", g_player->name,
+        //        g_player->energy);
+        //snprintf(msg,80,"%s took a turn.", g_player->name);
+        //write_log(msg);
     }
-    return events;
+    free(msg);
 }
 
 bool player_move(void) {
@@ -150,10 +201,10 @@ bool player_move(void) {
     bool success = false;
     /* Will check for entities at location here */
     Monster *target = monster_at_pos(g_mlist, dpos, g_mapcur->lvl);
-    if(target) {
+    if(target && (target != g_player)) {
         /* Attack target - temporary */
         //destroy_mlist_monster(&g_mlist, target);
-        if(check_flag(target->flags, MF_ALIVE)) {
+        if(check_flag(target->flags, MF_ALIVE) ) {
             melee_combat(g_player, target);
             success = true;
             return success;
@@ -175,8 +226,8 @@ bool player_move(void) {
         /* Tile does not block movement */
         set_player_pos(g_player->dpos);
         tile_flavor_msg(g_player->dpos);
-        g_player->energy -= g_player->spd;
-        g_player->flags = remove_flag(g_player->flags, MF_HAS_TURN);
+        //g_player->energy -= g_player->spd;
+        //g_player->flags = remove_flag(g_player->flags, MF_HAS_TURN);
         success = true;
     }
     return success;

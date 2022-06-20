@@ -245,9 +245,23 @@ bool is_explored(int x, int y) {
     return check_flag(g_tilemap[get_map_index(x,y)].flags, TF_EXP);
 }
 
-bool is_blocked(int x, int y) {
+bool is_cdoor(int x, int y) {
     if(!in_bounds(x,y)) {
         return false;
+    }
+    return check_flag(g_tilemap[get_map_index(x,y)].flags, TF_CDOOR);
+}
+
+bool is_odoor(int x, int y) {
+    if(!in_bounds(x,y)) {
+        return false;
+    }
+    return check_flag(g_tilemap[get_map_index(x,y)].flags, TF_ODOOR);
+}
+
+bool is_blocked(int x, int y) {
+    if(!in_bounds(x,y)) {
+        return true;
     }
     return check_flag(g_tilemap[get_map_index(x,y)].flags, TF_BLK_MV);
 }

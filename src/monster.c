@@ -199,14 +199,14 @@ void change_state(Monster *monster, int mflagcur, int mflagnext) {
 }
 
 void take_turn(Monster *monster) {
-    /* Broken */
-    /*
-    if(!check_flag(monster->flags, MF_HAS_TURN)) {
-        //Doesn't have turn to take 
-        return;
-    }
-    Monster *target = NULL;
+    /* Take turn should add FLAGS not actually do things! 
+     * Then, the things are done when the update_monster() function is called. 
+     * Should work! */
     char *msg = malloc(80 * sizeof(char));
+    //if(!check_flag(monster->flags, MF_HAS_TURN)) {
+    //    return; //Monster doesn't have turn
+    //}
+
     if(check_flag(monster->flags, MF_SLEEP)) {
         // Monster is asleep, is player within sight? 
         if(is_explored(monster->pos.x, monster->pos.y)) {
@@ -218,17 +218,26 @@ void take_turn(Monster *monster) {
         if(monster->locID != g_mapcur->lvl) {
             change_state(monster, MF_SEENPLAYER, MF_EXPLORING);
         }
-        monster->dpos = astar_step(monster->pos, g_player->pos, true);
-        if(!vec_null(monster->dpos)) {
-            // Take a step along path, attacking target if exists 
-            target = monster_at_pos(g_mlist, monster->dpos, g_mapcur->lvl);
-            if(target) {
-                melee_combat(monster, target);
-            } 
+        monster->dpos = astar_step(monster->pos, g_player->pos, false);
+        //monster->dpos = monster->pos;
+        //monster->dpos.x -= mt_rand(-1,1);
+        //monster->dpos.y -= mt_rand(-1,1);
+        if(vec_null(monster->dpos)) {
+            snprintf(msg,80,"The %s howls in fury!", monster->name);
+            push_msg(&g_msghead, msg);
+            monster->dpos = monster->pos;
+        }
+        monster->flags = engage_flag(monster->flags, MF_MOVE);
+    } else if(check_flag(monster->flags, MF_EXPLORING)) {
+        if(is_visible(monster->pos.x, monster->pos.y)) {
+            change_state(monster, MF_EXPLORING, MF_SEENPLAYER);
         }
     }
+    //monster->flags = remove_flag(monster->flags, MF_HAS_TURN);
+    //monster->energy -= monster->spd;
+    //snprintf(msg,80,"%s took a turn, now has %d energy.", g_player->name,
+    //        g_player->energy);
+    //snprintf(msg,80,"%s took a turn.",monster->name);
+    //write_log(msg);
     free(msg);
-    monster->energy -= monster->spd;
-    monster->flags = remove_flag(monster->flags, MF_HAS_TURN);
-    */
 }

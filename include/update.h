@@ -25,8 +25,8 @@
  ********************/
 int update(int events);
 void update_energy(void); 
-int update_monsters(int events);
-int update_player(int events);
+void update_monsters(void);
+void update_player(void);
 bool player_move(void);
 bool open_door(Vec2i pos);
 bool close_door(Vec2i pos);
