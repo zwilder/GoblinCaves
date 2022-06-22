@@ -17,23 +17,26 @@
 * You should have received a copy of the GNU General Public License
 * along with Goblin Caves.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef MSG_H
-#define MSG_H
+#ifndef SLIST_H
+#define SLIST_H
 
-struct Msg {
-    char *str;
-    struct Msg *next;
+struct SList {
+    char *data;
+    int length;
+    struct SList *next;
 };
+typedef struct SList SList;
 
-typedef struct Msg Msg;
-
-Msg* create_msg(char *str);
-char* pop_msg(Msg **head);
-char* pop_msg_back(Msg **head);
-void push_msg(Msg **head, char *str);
-int count_msg(Msg **head); 
-void remove_last_msg(Msg **head);
-void destroy_msglist(Msg **head);
-void cull_msg(Msg **head);
+/*******************
+ * slist.c functions
+ *******************/
+SList* create_SList(char *s);
+SList* create_SList_blank(int strsize);
+void push_SList_blank(SList **head, int strsize);
+void destroy_SList(SList **head);
+void push_SList(SList **head, char *s);
+int count_SList(SList *node);
+int count_chars_SList(SList *node, bool incSpace); 
+SList* split_string(char *s, char delim); 
 
 #endif

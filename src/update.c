@@ -40,6 +40,18 @@ int update(int events) {
         g_gamestate = ST_LOG;
         events = remove_flag(events, EV_CHST_LOG);
     }
+    /*
+     * IDEA! What if... each update loop we only update ONE monster, then
+     * advance the turn counter to the next monster for the next loop? We could
+     * probably optimize draw if we do this by only drawing when it's the
+     * player's turn. We might need to make MList circular, so the last node's
+     * next points to the first node. Maybe improve MList by implementing it as
+     * a BST or skip list.
+     *
+     * ANOTHER IDEA: Have a PQ list of monster*, with the priority =
+     * monster->energy. check monsters when list is empty for monsters with
+     * energy > 0, grant energy to all monsters. Pop off highest priority here,
+     * take turn, update ends. */ 
     /* Grant energy */
     /* Take turns */
     /* Pos = dpos */

@@ -106,6 +106,20 @@ void remove_last_msg(Msg **head) {
     return;
 }
 
+void destroy_msglist(Msg **head){
+    if(!(*head)) {
+        return;
+    }
+
+    while(*head) {
+        free(pop_msg(head));
+    }
+    *head = NULL;
+}
+
+/********************************
+ * Non portable, project specific
+ ********************************/
 void cull_msg(Msg **head) {
     int msgcount = count_msg(head);
     int screenrows = SCREEN_HEIGHT + GUI_HEIGHT + MSG_HEIGHT - 3;
@@ -116,15 +130,4 @@ void cull_msg(Msg **head) {
         remove_last_msg(head);
         msgcount = count_msg(head);
     }
-}
-
-void destroy_msglist(Msg **head){
-    if(!(*head)) {
-        return;
-    }
-
-    while(*head) {
-        free(pop_msg(head));
-    }
-    *head = NULL;
 }

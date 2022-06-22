@@ -39,6 +39,7 @@
 #include <flags.h>
 #include <tree.h>
 #include <msg.h>
+#include <slist.h>
 
 /***********************
  * Major data structures
