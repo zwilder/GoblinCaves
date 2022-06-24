@@ -105,7 +105,55 @@ int count_chars_SList(SList *node, bool incSpace) {
     return result;
 }
 
+char* get_string_SList(SList *node) {
+    if(!node) {
+        return NULL;
+    }
+    char *result = malloc((sizeof(char) *count_chars_SList(node, true)) + 1);
+    SList *tmp = node;
+    int i = 0;
+    int letters = 0;
+    while(tmp) {
+        for(i = 0; tmp->data[i] != '\0'; i++) {
+            result[letters] = tmp->data[i];
+            letters++;
+        }
+        if(tmp->data[i+1] != '\0') {
+            result[letters] = ' ';
+        }
+        letters++;
+        tmp = tmp->next;
+    }
+    for(i = 0; i < count_chars_SList(node,true); i++) {
+        if(result[i] == '\0') {
+            result[i] = ' ';
+        }
+    }
+    result[i] = '\0';
+    return result;
+}
+
+void add_SList(SList **to, SList **from) {
+    /* Add all words from "from" to back of "to" list */
+    if(!(*to) || !(*from)) {
+        return;
+    }
+    SList *tmp = *to;
+    while(tmp->next) {
+        tmp = tmp->next;
+    }
+
+    while(*from) {
+        tmp->next = *from;
+        tmp = tmp->next;
+        *from = (*from)->next;
+    }
+}
+
 SList* split_string(char *s, char delim) {
+    if(!s) {
+        return NULL;
+    }
     SList *result = NULL;
     SList *tmp = NULL;
     int i = 0;

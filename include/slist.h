@@ -37,6 +37,8 @@ void destroy_SList(SList **head);
 void push_SList(SList **head, char *s);
 int count_SList(SList *node);
 int count_chars_SList(SList *node, bool incSpace); 
+char* get_string_SList(SList *node);
+void add_SList(SList **to, SList **from); 
 SList* split_string(char *s, char delim); 
 
 #endif

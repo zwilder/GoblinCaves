@@ -184,28 +184,65 @@ HP: xxx/xxx    stat                                      St:xx Dx:xx Pe:xx Vi:xx
 }
 
 void draw_msg(void) {
-    /*
-     * Check g_msghead for msgs
-     * count messages
-     * while i < count
-     *  - Pop off top msg
-     *  - check length of top msg
-     *    - If length greater than SCREEN_WIDTH, split lines
-     *  - draw top msg on the first two lines of the screen
-     *  - i++
-     *  -if(i > 1) display [More - any key]
-     */
+    SList *msgwords = NULL;
+    SList *tmp = NULL;
     char *msg;
     int i = 0;
+    int line = 0;
     int msgcount = count_msg(&g_msghead);
     while(i < msgcount) {
         msg = pop_msg_back(&g_msghead);
-        curses_draw_msg(0,i,msg);
+        //curses_draw_msg(0,i,msg);
+        tmp = split_string(msg, ' ');
+        if(!msgwords) {
+            msgwords = tmp;
+            tmp = NULL;
+        } else {
+            add_SList(&msgwords, &tmp);
+            destroy_SList(&tmp);
+        }
         push_msg(&g_msgloghead, msg);
-        free(msg); /* Messy? */
+        free(msg); 
         i++;
     }
-
+    if(msgwords) {
+        msg = malloc(sizeof(char) * 500); //Large buffer
+        i = 0;
+        tmp = msgwords;
+        while(tmp) {
+            if((line == 1) && ((i + tmp->length + 17) > 80)) {
+                /* Display [More - any key] prompt,
+                 * kinda hacky. */
+                curses_draw_msg(0,line,msg);
+                setcolor(BLACK, WHITE);
+                curses_draw_msg(80 - 16, line, "[More - any key]");
+                unsetcolor(BLACK, WHITE);
+                draw_screen();
+                draw_gui();
+                get_input();
+                memset(msg,' ',80);
+                msg[81] = '\0';
+                curses_draw_msg(0,0, msg);
+                curses_draw_msg(0,1, msg);
+                memset(msg,0,500);
+                line = 0;
+                i = 0;
+            }
+            if(((i + tmp->length) > 80)) {
+                curses_draw_msg(0,line,msg);
+                memset(msg,0,500);
+                line++;
+                i = 0;
+            }
+            i += snprintf(msg+i, 500 - i, "%s ",tmp->data);
+            tmp = tmp->next;
+            if(!tmp && (strlen(msg) > 0)) {
+                curses_draw_msg(0,line,msg);
+            }
+        }
+        free(msg);
+    }
+    destroy_SList(&msgwords);
 }
 
 void draw_msg_log(void) {
