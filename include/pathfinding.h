@@ -25,6 +25,7 @@ void bh_line_add(Vec2iList **head, Vec2i pos);
 
 Vec2iList* open_neighbors_at(Vec2i pos, bool checkMonsters); 
 int movement_cost_at(Vec2i pos);
+int movement_cost_to(Vec2i a, Vec2i b); 
 
 Vec2iHT* dijkstra_map(Vec2i start, bool monsterblock);
 Vec2i astar_step(Vec2i start, Vec2i goal, bool monsterblock);

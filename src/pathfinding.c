@@ -225,6 +225,24 @@ int movement_cost_at(Vec2i pos) {
     return 0;
 }
 
+int movement_cost_to(Vec2i a, Vec2i b) {
+    /*
+     * Looking for change in BOTH x and y when subtracting the vectors. A single
+     * diagonal step will always end up as (-1,-1) (-1,1),(1,1), (1,-1)
+     */
+    Vec2i sub = subtract_vec(a,b);
+    static Vec2i tl = {-1,-1};
+    static Vec2i tr = {1,-1};
+    static Vec2i bl = {-1,1};
+    static Vec2i br = {1,1};
+    if (eq_vec(sub,tl) || eq_vec(sub,tr) ||
+            eq_vec(sub,bl) || eq_vec(sub,br)) {
+        return 142;
+    } else {
+        return 100;
+    }
+}
+
 Vec2iHT* dijkstra_map(Vec2i start, bool monsterblock) {
     Vec2iPQ *frontier = create_Vec2iPQ(start, 0);
     Vec2iList *neighbors = NULL;
@@ -314,7 +332,7 @@ Vec2iList* astar_path(Vec2i start, Vec2i goal, bool monsterblock) {
         for(tmp = neighbors; tmp; tmp = tmp->next) {
             next = tmp->item;
             cost = search_Vec2iHT(costSoFar, cur);
-            newcost = cost.x + movement_cost_at(next);
+            newcost = cost.x + movement_cost_to(cur,next);
             cost = search_Vec2iHT(costSoFar, next);
             if(vec_null(search_Vec2iHT(costSoFar, next)) || 
                     (newcost < cost.x)) {

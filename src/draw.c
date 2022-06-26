@@ -192,7 +192,6 @@ void draw_msg(void) {
     int msgcount = count_msg(&g_msghead);
     while(i < msgcount) {
         msg = pop_msg_back(&g_msghead);
-        //curses_draw_msg(0,i,msg);
         tmp = split_string(msg, ' ');
         if(!msgwords) {
             msgwords = tmp;
@@ -210,15 +209,30 @@ void draw_msg(void) {
         i = 0;
         tmp = msgwords;
         while(tmp) {
-            if((line == 1) && ((i + tmp->length + 17) > 80)) {
-                /* Display [More - any key] prompt,
-                 * kinda hacky. */
+            /*
+            if(line > 1) {
+                setcolor(BLACK, WHITE);
+                memset(msg,' ',80);
+                msg[81] = '\0';
+                curses_draw_msg(0,line,msg);
+                curses_draw_msg(23,line,"[More - Press any key to continue]");
+                unsetcolor(BLACK, WHITE);
+                get_input();
+                draw_screen();
+                memset(msg,' ',80);
+                msg[81] = '\0';
+                curses_draw_msg(0,0, msg);
+                curses_draw_msg(0,1, msg);
+                memset(msg,0,500);
+                line = 0;
+                i = 0;
+            }
+            */
+            if((line == 1) && ((i + tmp->length + 7) > 80)) {
                 curses_draw_msg(0,line,msg);
                 setcolor(BLACK, WHITE);
-                curses_draw_msg(80 - 16, line, "[More - any key]");
+                curses_draw_msg(80 - 7, line, "[More]");
                 unsetcolor(BLACK, WHITE);
-                draw_screen();
-                draw_gui();
                 get_input();
                 memset(msg,' ',80);
                 msg[81] = '\0';

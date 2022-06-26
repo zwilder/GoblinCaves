@@ -150,6 +150,7 @@ void melee_combat(Monster *atk, Monster *def) {
     int chancetohit = mt_rand(0,atk->dex + atk->str);
     int defense = mt_rand(0, def->dex + def->per);
     int wpndmg = 10; //temporary
+    def->flags = remove_flag(def->flags, MF_SLEEP);
     if(chancetohit > defense) {
         if(check_flag(atk->flags, MF_PLAYER)) {
             snprintf(msg,80,"You hit the %s.",def->name);
@@ -168,7 +169,6 @@ void melee_combat(Monster *atk, Monster *def) {
         push_msg(&g_msghead, msg);
     }
     free(msg);
-    def->flags = remove_flag(def->flags, MF_SLEEP);
 }
 
 void kill_monster(Monster *target) {

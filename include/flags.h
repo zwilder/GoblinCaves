@@ -82,7 +82,8 @@ typedef enum {
     ST_GAME,
     ST_HELP,
     ST_NWPL,
-    ST_LOG
+    ST_LOG,
+    ST_GAMEOVER
 } StateFlags;
 
 bool check_flag(int mask, int flag);
