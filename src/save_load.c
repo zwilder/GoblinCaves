@@ -30,9 +30,13 @@ void save_tile(Tile tile, FILE *f) {
 
 Tile load_tile(FILE *f) {
     Tile result;
-    fread(&(result.pos), sizeof(Vec2i),1,f);
-    fread(&(result.glyph), sizeof(Glyph),1,f);
-    fread(&(result.flags), sizeof(TileFlags),1,f);
+    int bytesread = 0;
+    bytesread += fread(&(result.pos), sizeof(Vec2i),1,f);
+    bytesread += fread(&(result.glyph), sizeof(Glyph),1,f);
+    bytesread += fread(&(result.flags), sizeof(TileFlags),1,f);
+    if(!bytesread) {
+        write_log("Zero bytes read during load tile!!");
+    }
     return result;
 }
 
@@ -76,16 +80,17 @@ Map* load_map(FILE *f) {
     Map* readmap = NULL;
     Map* nextmap = NULL;
     int count;
+    int bytesread = 0;
     int i = 0;
     int j = 0;
     char *lvlmsg = "Loading level: ";
     char msg[80];
     char num[5];
-    fread(&count, sizeof(int),1,f);
+    bytesread += fread(&count, sizeof(int),1,f);
 
     while(i <= count) {
         readmap = create_map(NULL);
-        fread(&(readmap->lvl), sizeof(int), 1, f);
+        bytesread += fread(&(readmap->lvl), sizeof(int), 1, f);
         kr_itoa(readmap->lvl, num);
         strcpy(msg, lvlmsg);
         strcat(msg, num);
@@ -107,6 +112,9 @@ Map* load_map(FILE *f) {
         i++;
     }
     write_log("Map loaded successfully!");
+    if(!bytesread) {
+        write_log("Zero bytes read during load_map!!");
+    }
 
     return head;
 }
@@ -145,17 +153,22 @@ void save_mlist(MList *head, FILE *f) {
 
 MList* load_mlist(FILE *f) {
     MList *readlist = NULL;
+    int bytesread = 0;
     int count = 0;
     int i = 0;
     char *countmsg = " monster(s) counted in mlist.";
     char finalmsg[80];
-    fread(&count, sizeof(int), 1,f);
+    bytesread += fread(&count, sizeof(int), 1,f);
     kr_itoa(count, finalmsg);
     strcat(finalmsg, countmsg);
     write_log(finalmsg);
     for(i = 0; i < count; i++) {
         write_log("Loading monster from mlist...");
         push_mlist(&readlist, load_monster(f));
+    }
+
+    if(!bytesread) {
+        write_log("Zero bytes read during load_mlist!!");
     }
 
     return readlist;
@@ -197,28 +210,29 @@ void save_monster(Monster *monster, FILE *f) {
 
 Monster* load_monster(FILE *f) {
     Monster *monster = create_monster();
+    int bytesread = 0;
     int namesize = 0;
     char namemsg[80] = "Loading: ";
-    fread(&namesize, sizeof(int), 1, f);
+    bytesread += fread(&namesize, sizeof(int), 1, f);
 
     monster->name = malloc(namesize * sizeof(char));
-    fread(monster->name, sizeof(char), namesize, f);
+    bytesread += fread(monster->name, sizeof(char), namesize, f);
 
     strcat(namemsg, monster->name);
     write_log(namemsg);
 
-    fread(&(monster->pos), sizeof(Vec2i), 1, f);
-    fread(&(monster->dpos), sizeof(Vec2i), 1, f);
-    fread(&(monster->glyph), sizeof(Glyph), 1, f);
-    fread(&(monster->str), sizeof(int), 1, f);
-    fread(&(monster->dex), sizeof(int), 1, f);
-    fread(&(monster->vit), sizeof(int), 1, f);
-    fread(&(monster->per), sizeof(int), 1, f);
-    fread(&(monster->spd), sizeof(int), 1, f);
-    fread(&(monster->curhp), sizeof(int), 1, f);
-    fread(&(monster->flags), sizeof(int), 1, f);
-    fread(&(monster->locID), sizeof(int), 1, f);
-    fread(&(monster->energy), sizeof(int), 1, f);
+    bytesread += fread(&(monster->pos), sizeof(Vec2i), 1, f);
+    bytesread += fread(&(monster->dpos), sizeof(Vec2i), 1, f);
+    bytesread += fread(&(monster->glyph), sizeof(Glyph), 1, f);
+    bytesread += fread(&(monster->str), sizeof(int), 1, f);
+    bytesread += fread(&(monster->dex), sizeof(int), 1, f);
+    bytesread += fread(&(monster->vit), sizeof(int), 1, f);
+    bytesread += fread(&(monster->per), sizeof(int), 1, f);
+    bytesread += fread(&(monster->spd), sizeof(int), 1, f);
+    bytesread += fread(&(monster->curhp), sizeof(int), 1, f);
+    bytesread += fread(&(monster->flags), sizeof(int), 1, f);
+    bytesread += fread(&(monster->locID), sizeof(int), 1, f);
+    bytesread += fread(&(monster->energy), sizeof(int), 1, f);
     return monster;
 }
 
@@ -257,6 +271,7 @@ int load_game(void) {
     write_log("Loading game started...");
     FILE *f = fopen("save_data.bin","rb+");
     int curlvl = 0;
+    int bytesread = 0;
 
     if(f == NULL) {
         error_msg_box("No save data found!", BLACK, WHITE);
@@ -281,7 +296,10 @@ int load_game(void) {
     g_maphead = load_map(f);
 
     /* read current level int curlvl*/
-    fread(&(curlvl), sizeof(int), 1, f);
+    bytesread += fread(&(curlvl), sizeof(int), 1, f);
+    if(!bytesread) {
+        write_log("Zero bytes read for curlvl!!");
+    }
 
     /* set g_mapcur to curlvl */
     g_mapcur = find_map(g_maphead, curlvl);
