@@ -111,8 +111,9 @@ Monster* create_player(MList **head) {
 }
 
 void destroy_player(void) {
-    if(NULL != g_player) {
-        free(g_player);
+    if(g_player) {
+        destroy_monster(g_player);
+        g_player = NULL;
     }
 }
 
@@ -180,12 +181,16 @@ void kill_monster(Monster *target) {
     char *msg = malloc(80 * sizeof(char));
     if(check_flag(target->flags, MF_PLAYER)) {
         snprintf(msg,80,"Everything goes dark... you die.");
+        g_gamestate = ST_GAMEOVER;
     } else if (is_alive(target)) {
         snprintf(msg, 80, "The %s collapses in a bloody heap!", target->name);
     }
     push_msg(&g_msghead, msg);
     //push_mlist(&g_mlist, create_monster_at(target->pos, M_CORPSE));
     destroy_mlist_monster(&g_mlist, target);
+    if(target == g_player) {
+        g_player = NULL;
+    }
     free(msg);
 }
 

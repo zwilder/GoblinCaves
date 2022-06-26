@@ -148,6 +148,9 @@ void update_monsters(void) {
 }
 
 void update_player(void) {
+    if(!g_player) {
+        return;
+    }
     bool success = false;
     int pflags = g_player->flags;
     char *msg = malloc(80 * sizeof(char));

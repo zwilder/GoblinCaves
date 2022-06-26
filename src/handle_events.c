@@ -65,6 +65,8 @@ int handle_keyboard(int input) {
         case ST_LOG:
             output = handle_keyboard_log(input);
             break;
+        case ST_GAMEOVER:
+            break;
         default: break;
     }
     return output;
