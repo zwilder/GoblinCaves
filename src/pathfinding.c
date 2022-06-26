@@ -221,8 +221,15 @@ Vec2iList* open_neighbors_at(Vec2i pos, bool checkMonsters) {
 }
 
 int movement_cost_at(Vec2i pos) {
-    /*Stupid function, will eventually do something */
-    return 0;
+    int result = 0;
+    /* Monster at pos? add a cost */
+    if(monster_at_pos(g_mlist, pos, g_mapcur->lvl)) {
+        /* absurdly high, but makes monsters really avoid moving into a spot
+         * that is already occupied*/
+        result += 5000; 
+    }
+    /* Could add other costs here, check tile flags, etc */
+    return result;
 }
 
 int movement_cost_to(Vec2i a, Vec2i b) {
@@ -230,6 +237,7 @@ int movement_cost_to(Vec2i a, Vec2i b) {
      * Looking for change in BOTH x and y when subtracting the vectors. A single
      * diagonal step will always end up as (-1,-1) (-1,1),(1,1), (1,-1)
      */
+    int result = movement_cost_at(b);
     Vec2i sub = subtract_vec(a,b);
     static Vec2i tl = {-1,-1};
     static Vec2i tr = {1,-1};
@@ -237,10 +245,11 @@ int movement_cost_to(Vec2i a, Vec2i b) {
     static Vec2i br = {1,1};
     if (eq_vec(sub,tl) || eq_vec(sub,tr) ||
             eq_vec(sub,bl) || eq_vec(sub,br)) {
-        return 142;
+        result += 142;
     } else {
-        return 100;
+        result += 100;
     }
+    return result;
 }
 
 Vec2iHT* dijkstra_map(Vec2i start, bool monsterblock) {
