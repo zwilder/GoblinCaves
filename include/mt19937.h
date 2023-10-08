@@ -44,6 +44,8 @@
 #define MT19937_H
 
 #include <stdio.h>
+#include <stdlib.h> /* Added by ZW, for his functions at the bottom (need RAND_MAX)*/
+#include <stdbool.h> /* Added by ZW, for his functions at the bottom (need bool)*/
 
 void init_genrand(unsigned long s);
 void init_by_array(unsigned long init_key[], int key_length);
@@ -53,5 +55,13 @@ double genrand_real1(void);
 double genrand_real2(void);
 double genrand_real3(void);
 double genrand_res53(void); 
+
+/*
+ * Functions below added by Zach Wilder, 2022, with the same conditions as
+ * above.
+ */
+int mt_rand(int min, int max); 
+bool mt_bool(void); 
+bool mt_chance(int chance);
 
 #endif

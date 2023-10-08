@@ -1,6 +1,6 @@
 /*
 * Goblin Caves
-* Copyright (C) Zach Wilder 2022
+* Copyright (C) Zach Wilder 2022-2023
 * 
 * This file is a part of Goblin Caves
 *
@@ -29,10 +29,6 @@ void engine_close(void);
 void engine_draw(void);
 int get_input(void);
 void new_game(void);
-
-int mt_rand(int min, int max); 
-bool mt_bool(void); 
-bool mt_chance(int chance);
 
 void kr_itoa(int n, char s[]);
 void kr_reverse(char s[]);

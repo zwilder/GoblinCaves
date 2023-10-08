@@ -1,6 +1,6 @@
 /*
 * Goblin Caves
-* Copyright (C) Zach Wilder 2022
+* Copyright (C) Zach Wilder 2022-2023
 * 
 * This file is a part of Goblin Caves
 *
@@ -37,6 +37,7 @@ typedef struct RectList RectList;
  ****************/
 Rect make_rect(int x, int y, int width, int height); 
 bool point_in_rect(Rect a, Vec2i b);
+bool xy_in_rect(Rect a, int x, int y);
 Vec2i random_point_in_rect(Rect a);
 bool rect_intersect(Rect a, Rect b);
 Vec2i get_center(Rect a);

@@ -1,6 +1,6 @@
 /*
 * Goblin Caves
-* Copyright (C) Zach Wilder 2022
+* Copyright (C) Zach Wilder 2022-2023
 * 
 * This file is a part of Goblin Caves
 *
@@ -18,16 +18,36 @@
 * along with Goblin Caves.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <goblincaves.h>
-
 const Vec2i NULLVEC = {INT_MIN, INT_MIN};
 
+/*******
+ * Vec2i is a two dimensional integer vector container - an x,y coordinate pair.
+ * It has many (many) uses outside of just graphing, however, and I tend to
+ * write a version of it for almost every project. The name was borrowed from
+ * SFML (Simple Fast Media Layer). I liked the name they used more than what I
+ * used to call it ("Point" - yeah, that sucks), so I stole it. I could use the
+ * functions contained here as a template for similar containers (two
+ * dimensional floats, short ints, chars (uint8_t), etc).
+ *
+ * This file contains all the functions that make Vec2i useful - it is portable
+ * and requires only vec2i.h. (Note: the include <goblincaves.h> above is just
+ * to stay consistent with in this project; everything uses a common header
+ * file.
+ *
+ ********/
+
+/********
+ * Vec2i
+ ********/
 Vec2i make_vec(int x, int y) {
+    /* Takes an x,y pair of ints and returns a Vec2i */
     Vec2i result = {};
     result.x = x;
     result.y = y;
     return result;
 }
 Vec2i add_vec(Vec2i a, Vec2i b) {
+    /* Takes two Vec2i, adds them together, and returns the result */
     Vec2i result;
     result.x = a.x + b.x;
     result.y = a.y + b.y;
@@ -35,6 +55,7 @@ Vec2i add_vec(Vec2i a, Vec2i b) {
 }
 
 Vec2i subtract_vec(Vec2i a, Vec2i b) {
+    /* Takes two Vec2i, subtracts them, and returns the result */
     Vec2i result;
     result.x = a.x - b.x;
     result.y = a.y - b.y;
@@ -42,22 +63,28 @@ Vec2i subtract_vec(Vec2i a, Vec2i b) {
 }
 
 bool eq_vec(Vec2i a, Vec2i b) {
+    /* Takes two Vec2i and returns true if they equal each other */
     return ((a.x == b.x) && (a.y == b.y));
 }
 
 bool vec_null(Vec2i a) {
+    /* Checks a Vec2i to see if it is NULLVEC */
     return (eq_vec(NULLVEC, a));
 }
 
 int man_dist(Vec2i a, Vec2i b) {
+    /* Returns the manhattan distance between two Vec2i */
     return (abs(a.x - b.x) + abs(a.y - b.y));
 }
 
 /***********
  * Vec2iList
+ *
+ * Simple linked list of Vec2i
  ***********/
 
 Vec2iList* create_Vec2i_list(Vec2i pos) {
+    /* Allocates memory for a Vec2iList node, and returns a pointer to it. */
     Vec2iList *newnode = malloc(sizeof(Vec2iList));
     newnode->item = pos;
     newnode->next = NULL;
@@ -65,6 +92,11 @@ Vec2iList* create_Vec2i_list(Vec2i pos) {
 }
 
 void push_Vec2i_list(Vec2iList **head, Vec2i pos) {
+    /* Takes a pointer to a head node of a Vec2i list, and:
+     * 1) Checks if head is NULL, if it is it creates a node and returns.
+     * 2) Creates a new node with data "pos"
+     * 3) Assigns the new node's next value to head.
+     */
     if(!(*head)) {
         *head = create_Vec2i_list(pos);
         return;
@@ -75,6 +107,13 @@ void push_Vec2i_list(Vec2iList **head, Vec2i pos) {
 }
 
 Vec2i pop_Vec2i_list(Vec2iList **head) {
+    /* Takes a pointer to a head node of a Vec2i list, and:
+     * 1) Returns NULLVEC if head is NULL
+     * 2) Takes the data from the head node
+     * 3) Sets the pointer for the head node to the next item
+     * 4) Frees the old head node
+     * 5) Returns the data from the old head node
+     */
     if(!(*head)) {
         return (NULLVEC);
     }
@@ -86,6 +125,7 @@ Vec2i pop_Vec2i_list(Vec2iList **head) {
 }
 
 int count_Vec2i_list(Vec2iList *head) {
+    /* Counts the items in a Vec2i list, returns the count */
     if(!head) {
         return 0;
     }
@@ -93,6 +133,7 @@ int count_Vec2i_list(Vec2iList *head) {
 }
 
 void destroy_Vec2i_list(Vec2iList **head) {
+    /* Frees the memory for a Vec2i list */
     if(!(*head)) {
         return;
     }
@@ -105,6 +146,7 @@ void destroy_Vec2i_list(Vec2iList **head) {
 }
 
 bool Vec2i_list_contains(Vec2iList *head, Vec2i pos) {
+    /* Checks to see if the Vec2iList contains a Vec2i pos */
     bool result = false;
     Vec2iList *tmp = head;
     while(tmp) {
@@ -119,8 +161,13 @@ bool Vec2i_list_contains(Vec2iList *head, Vec2i pos) {
 
 /*********
  * Vec2iPQ
+ *
+ * Priority queue Vec2i list, each node contains a Vec2i item and a priority p.
+ * New items are added to the list in increasing priority so the items with
+ * highest priority are at the top of the list. 
  *********/
 Vec2iPQ* create_Vec2iPQ(Vec2i item, int p) {
+    /* Creates a Vec2iPQ node, with Vec2i item and priority int p */
     Vec2iPQ *newnode = malloc(sizeof(Vec2iPQ));
     newnode->item = item;
     newnode->p = p;
@@ -129,10 +176,14 @@ Vec2iPQ* create_Vec2iPQ(Vec2i item, int p) {
 }
 
 Vec2i peek_Vec2iPQ(Vec2iPQ **head) {
+    /* Returns the value of the Vec2iPQ node at the top of the list */
     return((*head)->item);
 }
 
 Vec2i pop_Vec2iPQ(Vec2iPQ **head) {
+    /* Takes the top item off the Vec2iPQ list, sets the next node as the new
+     * head, stores the Vec2i list, frees the memory of the old top node, and
+     * returns the stored list. */
     if(!(*head)) {
         return NULLVEC;
     }
@@ -144,6 +195,7 @@ Vec2i pop_Vec2iPQ(Vec2iPQ **head) {
 }
 
 void push_Vec2iPQ(Vec2iPQ **head, Vec2i item, int p) {
+    /* Adds a new Vec2i item with priority p to a Vec2iPQ list. */
     if(!(*head)) {
         *head = create_Vec2iPQ(item, p);
         return;
@@ -164,6 +216,7 @@ void push_Vec2iPQ(Vec2iPQ **head, Vec2i item, int p) {
 }
 
 void destroy_Vec2iPQ(Vec2iPQ **head) {
+    /* Frees all the nodes in a Vec2iPQ list */
     if(!(*head)) {
         return;
     }
@@ -177,12 +230,17 @@ void destroy_Vec2iPQ(Vec2iPQ **head) {
 
 /*********
  * Vec2iHT
+ *
+ * Hash table Vec2i list. This list creates a hash table containing nodes with a
+ * Vec2i value/key pair.  
  *********/
 unsigned long Vec2i_hash(Vec2i key, int size) {
+    /* Simple hash function - nothing fancy here */
     return(((key.y << 16) ^ key.x) % size);
 }
 
 Vec2iHTItem* create_Vec2iHTItem(Vec2i key, Vec2i value) {
+    /* Given a Vec2i key/value pair, return a Vec2iHTItem node */
     Vec2iHTItem *item = malloc(sizeof(Vec2iHTItem));
     item->key = key;
     item->value = value;
@@ -190,6 +248,8 @@ Vec2iHTItem* create_Vec2iHTItem(Vec2i key, Vec2i value) {
 }
 
 Vec2iHT* create_Vec2iHT(int size) {
+    /* Create a Vec2iHT table of int size, allocating memory, set each item to
+     * NULL, and returning the table */
     int i = 0;
     Vec2iHT *table = malloc(sizeof(Vec2iHT));
     table->size = size;
@@ -203,10 +263,21 @@ Vec2iHT* create_Vec2iHT(int size) {
 }
 
 void destroy_Vec2iHTItem(Vec2iHTItem *item) {
+    /* This frees the memory held by a Vec2iHTItem...
+     * Why this is it's own function is a total mystery that can never be
+     * solved. Just kidding, the prototype function I based this off of stored a
+     * key/value pair of strings (char*), so for the item to be destroyed in
+     * that case the memory needed to be released for both key and value
+     * strings, then the item.*/
+    if(!item) {
+        return;
+    }
     free(item);
 }
 
 void destroy_Vec2iHT(Vec2iHT *table) {
+    /* This loops through a Vec2iHT table, free the memory held by each item
+     * before freeing the memory held by the table */
     int i = 0;
     Vec2iHTItem *item = NULL;
     for(i = 0; i < table->size; i++) {
@@ -220,6 +291,8 @@ void destroy_Vec2iHT(Vec2iHT *table) {
 
 void handle_Vec2iHT_collision(Vec2iHT *table, 
         unsigned long index, Vec2iHTItem *item) {
+    /* If an item inserted into a Vec2iHT ends up with the same hash, this
+     * function puts the item into a "Bucket" associated with the hash */
     Vec2iHTList *head = table->ofbuckets[index];
     if(!head) {
         /* Create the list */
@@ -231,6 +304,14 @@ void handle_Vec2iHT_collision(Vec2iHT *table,
 }
 
 void insert_Vec2iHT(Vec2iHT *table, Vec2i key, Vec2i value) {
+    /* This function takes a key/value pair of Vec2i, generates a hash for the
+     * pair. Then it checks to see if an item at that hash index exists. If
+     * there isn't an item there, it stores the new key/value pair there. If
+     * there is an item there, and it has the same key as the item we just
+     * passed in, we update the value of the item. If there's an item there with
+     * a different key, then we handle the collision and put the item into an
+     * overflow "bucket".
+     */
     Vec2iHTItem *item = create_Vec2iHTItem(key,value);
     int index = Vec2i_hash(key,table->size);
     Vec2iHTItem *cur = table->items[index];
@@ -257,6 +338,8 @@ void insert_Vec2iHT(Vec2iHT *table, Vec2i key, Vec2i value) {
 }
 
 Vec2i search_Vec2iHT(Vec2iHT *table, Vec2i key) {
+    /* This is the money function - it searches a given Vec2iHT table for a key,
+     * returning the value. */
     if(vec_null(key) || !table) {
         return NULLVEC;
     }
@@ -277,6 +360,8 @@ Vec2i search_Vec2iHT(Vec2iHT *table, Vec2i key) {
 }
 
 Vec2iHTList** create_Vec2iHT_ofbuckets(Vec2iHT *table) {
+    /* This function creates the list of overflow buckets for a given Vec2iHT
+     * table */
     Vec2iHTList **buckets = calloc(table->size, sizeof(Vec2iHTList*));
     int i;
     for(i = 0; i < table->size; i++) {
@@ -286,6 +371,8 @@ Vec2iHTList** create_Vec2iHT_ofbuckets(Vec2iHT *table) {
 }
 
 void destroy_Vec2iHT_ofbuckets(Vec2iHT *table) {
+    /* This function destroys the list of overflow buckets in a table, freeing
+     * the memory as it goes */
     Vec2iHTList **buckets = table->ofbuckets;
     int i;
     for(i = 0; i < table->size; i++) {
@@ -295,6 +382,9 @@ void destroy_Vec2iHT_ofbuckets(Vec2iHT *table) {
 }
 
 void delete_Vec2iHT(Vec2iHT *table, Vec2i key) {
+    /* This chonky function finds a key/value pair by the key, removing it from
+     * the hash table. Along the way, it checks the overflow buckets and moves
+     * them "up the chain" if they exist. */
     int index = Vec2i_hash(key, table->size);
     Vec2iHTItem *item = table->items[index];
     Vec2iHTList *head = table->ofbuckets[index];
@@ -352,8 +442,12 @@ void delete_Vec2iHT(Vec2iHT *table, Vec2i key) {
 
 /*************
  * Vec2iHTList
+ *
+ * Simple linked list of Vec2iHTItems - really shouldn't be used directly,
+ * mostly a helper for the Vec2iHT.
  *************/
 Vec2iHTList* create_Vec2iHTList(Vec2iHTItem *item) {
+    /* Creates a node for the Vec2iHTList, containing a Vec2iHTItem */
     Vec2iHTList *list = malloc(sizeof(Vec2iHTList));
     if(!list) {
         return NULL;
@@ -364,6 +458,7 @@ Vec2iHTList* create_Vec2iHTList(Vec2iHTItem *item) {
 }
 
 Vec2iHTList* insert_Vec2iHTList(Vec2iHTList *headref, Vec2iHTItem *item) {
+    /* Inserts a new Vec2iHTItem into the list */
     Vec2iHTList *newnode = create_Vec2iHTList(item);
     Vec2iHTList *tmp = NULL;
     if(!headref) {
@@ -383,6 +478,8 @@ Vec2iHTList* insert_Vec2iHTList(Vec2iHTList *headref, Vec2iHTItem *item) {
 }
 
 Vec2iHTItem* pop_Vec2iHTList(Vec2iHTList **headref) {
+    /* Takes the top item of the Vec2iHTList out of the list, returning the
+     * Vec2iHTItem associated with it. */
     if(!(*headref)) {
         return NULL;
     }
@@ -400,6 +497,8 @@ Vec2iHTItem* pop_Vec2iHTList(Vec2iHTList **headref) {
 }
 
 void destroy_Vec2iHTList(Vec2iHTList *headref) {
+    /* Destroys a Vec2iHTList, looping through each item and freeing memory as
+     * it goes */
     Vec2iHTList *tmp = headref;
     while(headref) {
         tmp = headref;

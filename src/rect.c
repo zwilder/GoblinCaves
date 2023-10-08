@@ -1,6 +1,6 @@
 /*
 * Goblin Caves
-* Copyright (C) Zach Wilder 2022
+* Copyright (C) Zach Wilder 2022-2023
 * 
 * This file is a part of Goblin Caves
 *
@@ -19,10 +19,16 @@
 */
 #include <goblincaves.h>
 
+/* This file contains functions that make the Rect struct useful, including a
+ * linked list, and will eventually be portable outside this project. Requires vec2i.h,
+ * mt19937.h to be included. 
+ */
+
 /****************
  * Rect functions
  ****************/
 Rect make_rect(int x, int y, int width, int height) {
+    /* Given x,y coordinates and a width,height, return a Rect */
     Rect result;
     result.pos.x = x;
     result.pos.y = y;
@@ -32,12 +38,21 @@ Rect make_rect(int x, int y, int width, int height) {
 }
 
 bool point_in_rect(Rect a, Vec2i b) {
+    /* Given a rect and an x,y Vec2 point, return if the point is in the
+     * rectangle */
     bool x = ((b.x > a.pos.x) && (b.x < a.dim.x));
     bool y = ((b.y > a.pos.y) && (b.y < a.dim.y));
     return (x && y);
 }
 
+bool xy_in_rect(Rect a, int x, int y) {
+    /* Same as point_in_rect above, but the user passed in an x,y coordinate
+     * pair */
+    return(point_in_rect(a, make_vec(x,y)));
+}
+
 Vec2i random_point_in_rect(Rect a) {
+    /* Return a Vec2i containing a random point in the rectangle */
     Vec2i result = make_vec(0,0);
     result.x = mt_rand(a.pos.x + 1, a.pos.x + a.dim.x - 1);
     result.y = mt_rand(a.pos.y + 1, a.pos.y + a.dim.y - 1);
@@ -45,7 +60,10 @@ Vec2i random_point_in_rect(Rect a) {
 }
 
 bool rect_intersect(Rect a, Rect b) {
-    /* https://silentmatt.com/rectangle-intersection/ */
+    /* Check if two rectangles intersect, the math was wigging me out so all
+     * credit for this goes to:
+     * https://silentmatt.com/rectangle-intersection/
+     */
     int ax1,ay1,ax2,ay2;
     int bx1,by1,bx2,by2;
     bool result = false;
@@ -67,6 +85,9 @@ bool rect_intersect(Rect a, Rect b) {
 }
 
 Vec2i get_center(Rect a) {
+    /* Returns a Vec2i containing the x,y coordinates of the center of a given
+     * Rect.
+     */
     Vec2i result;
     result.x = a.pos.x + (int)(a.dim.x / 2);
     result.y = a.pos.y + (int)(a.dim.y / 2);
@@ -75,8 +96,11 @@ Vec2i get_center(Rect a) {
 
 /********************
  * RectList functions
+ *
+ * Simple linked list of Rects
  ********************/
 RectList* create_RectList(Rect data) {
+    /* Create and return a RectList node */
     RectList *node = malloc(sizeof(RectList));
     node->data = data;
     node->next = NULL;
@@ -84,6 +108,7 @@ RectList* create_RectList(Rect data) {
 }
 
 void push_RectList(RectList **headref, Rect data) {
+    /* Add a RectList node to a list */
     RectList *node = create_RectList(data);
     if(!(*headref)) {
         *headref = node;
@@ -94,6 +119,7 @@ void push_RectList(RectList **headref, Rect data) {
 }
 
 Rect pop_RectList(RectList **headref) {
+    /* Remove the head of the RectList list, returning the data Rect */
     if(!(*headref)) {
         return make_rect(0,0,0,0);
     }
@@ -105,6 +131,7 @@ Rect pop_RectList(RectList **headref) {
 }
 
 int count_RectList(RectList *headref) {
+    /* Count the number of nodes in a RectList */
     if(!headref) {
         return 0;
     }
@@ -112,6 +139,8 @@ int count_RectList(RectList *headref) {
 }
 
 void destroy_RectList(RectList **headref) {
+    /* Starting with a reference to the head node, go through and free the
+     * entire RectList from memory */
     RectList *tmp = NULL;
     while(*headref) {
         tmp = *headref;

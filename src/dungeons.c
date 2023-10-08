@@ -1,6 +1,6 @@
 /*
 * Goblin Caves
-* Copyright (C) Zach Wilder 2022
+* Copyright (C) Zach Wilder 2022-2023
 * 
 * This file is a part of Goblin Caves
 *
@@ -21,8 +21,14 @@
 
 /******************
  * Dungeon creation
+ * 
+ * This file contains the various algorithms to build dungeons, using the
+ * functions in map_features.c
  ******************/
+
 void build_dungeon(void) {
+    /* This function fills a map with wall tiles, places a solid border of rock
+     * around it, then calls a dungeon building algorithm to carve out rooms. */
     int x, y;
     for(x = 0; x < MAP_WIDTH; x++) {
         for(y = 0; y < MAP_HEIGHT; y++) {
@@ -37,6 +43,33 @@ void build_dungeon(void) {
 }
 
 void build_basic_dungeon(void) {
+    /* Basic dungeon building algorithm.
+     * First, repeat the following a number of times to generate a list of
+     * rooms. We don't worry about what happens if there is too few rooms,
+     * because there will always be SOME rooms. It's very rare that the number
+     * of rooms is less than the minimum anyways.
+     * 1) Pick a random x,y coordinate on the map.
+     * 2) Make a rectangle of random width,height
+     * 3) Check to see if that rectangle intersects with any of the other
+     *    rectangles in the list of rooms. If it does, discard it.
+     * 4) Check to see if the rectangle is out of bounds (outside the map). If
+     *    it is, discard it.
+     * 5) If the rectangle is fine, put the rectangle into the list of rooms.
+     * 
+     * Next do the following to make the dungeon interesting:
+     * 1) Go through the list of rooms, making rooms "fancy" - adding neat
+     *    features and spice (from map_features.c).
+     * 2) Place cooridors (tunnels) connecting the rooms, adding doors when
+     *    necessary. 
+     * 3) Place monsters in the rooms.
+     * 4) Place items in the rooms (not implemented, yet). TODO
+     * 
+     * Finally
+     * 1) Place the player in the first room, with a staircase leading up
+     *    if they are on a level other than the first.
+     * 2) Place the staircase leading down in a random room that is not the
+     *    first room. 
+     */
     int x,y,w,h;
     Rect newRoom;
     bool intersects;
