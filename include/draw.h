@@ -1,6 +1,6 @@
 /*
 * Goblin Caves
-* Copyright (C) Zach Wilder 2022
+* Copyright (C) Zach Wilder 2022-2023
 * 
 * This file is a part of Goblin Caves
 *
@@ -25,7 +25,7 @@
  ******************/
 Glyph* create_screen(void);
 Vec2i get_camera(void);
-void draw_screen(void);
+void draw_game(void);
 void draw_gui(void);
 void draw_msg(void);
 void draw_msg_log(void);

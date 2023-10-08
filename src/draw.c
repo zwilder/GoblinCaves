@@ -27,6 +27,10 @@ const int GUI_HEIGHT = 2;
 const int MSG_HEIGHT = 2; 
 
 Glyph* create_screen(void) {
+    /* This function allocates memory for the array of glyphs that contain the
+     * "screen" that is drawn to, then initializes the entire screen with blank
+     * spaces (' ', white text/black background).
+     */ 
     Glyph *newScreen = malloc(SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Glyph));
     int i;
     for(i = 0; i < (SCREEN_WIDTH * SCREEN_HEIGHT); i++) {
@@ -39,10 +43,17 @@ Glyph* create_screen(void) {
 }
 
 int get_screen_index(int x, int y) {
+    /* The screen array is one dimensional, this takes a coordinate pair and
+     * returns the index of the point in the screen array. This function
+     * **could** be used with any one dimensional, x/y coordinate array */
     return (x + (SCREEN_WIDTH * y));
 }
 
 Vec2i get_camera(void) {
+    /* This nifty function allows the map where the player is to be bigger than
+     * the screen. It finds and returns a "camera" which is just a set of
+     * x,y coordinates that centers the player on the screen.
+     */
     Vec2i camera;
 
     /* Get the camera */
@@ -68,7 +79,20 @@ Vec2i get_camera(void) {
 
     return camera;
 }
-void draw_screen(void) {
+void draw_game(void) {
+    /* This function creates an array of glyphs (char ch, color fg, color bg)
+     * representing the screen, then draws to the screen array in the following
+     * order (so that the lower items are drawn on "top" of/over the higher
+     * items):
+     * 1 - Map (tiles)
+     * 2 - Pickups (items)
+     * 3 - Enemies
+     * 4 - Player
+     *
+     * Then, each glyph in the screen array is actually drawn to the screen by
+     * calling curses_draw_main(...). Finally, the screen array is freed from
+     * memory.
+     */
     int x, y, index, mapIndex;
     MList *tmp;
     Vec2i screenpos, mappos;
@@ -157,10 +181,13 @@ void draw_screen(void) {
 
 void draw_gui(void) {
     /* 
+     * This function constructs the following strings:
+     
 Player Name                                                             Depth:xx
 HP: xxx/xxx    stat                                      St:xx Dx:xx Pe:xx Vi:xx 
-                                                                               *
-     * curses_draw_ui(int x, int uirow, char *msg)
+                                                                               
+     * Then calls curses_draw_ui(int x, int uirow, char *msg) to draw the
+     * strings in the appropriate place.
      */
     char *depth = malloc(40 * sizeof(char));
     char *hpstr = malloc(40 * sizeof(char));
@@ -184,6 +211,14 @@ HP: xxx/xxx    stat                                      St:xx Dx:xx Pe:xx Vi:xx
 }
 
 void draw_msg(void) {
+    /* This function loops through the messages list, clearing entries by:
+     *
+     * 1) Clearing (popping) the message in the global linked list
+     * 2) Adding it to a string (msg)
+     * 3) Pushing the message into the message log linked list.
+     * 4) Drawing the messages to the top of the screen by calling
+     *    curses_draw_msg(...)
+     */
     SList *msgwords = NULL;
     SList *tmp = NULL;
     char *msg;
@@ -260,15 +295,16 @@ void draw_msg(void) {
 }
 
 void draw_msg_log(void) {
+    /* This function draws the message log on the screen, with newer messages on
+     * the top. It relies on the fact that the number of entries in the message
+     * log list is less than screen height - 2. */
     int msgcount;
     int i = 0;
     int contx = (SCREEN_WIDTH / 2) - (strlen("[Press any key to continue]")/2);
     Msg *cur = g_msgloghead;
     cull_msg(&g_msgloghead);
     msgcount = count_msg(&g_msgloghead);
-    setcolor(BLACK, WHITE);
     curses_draw_titlebar("Message Log", BLACK, WHITE);
-    unsetcolor(BLACK, WHITE);
     while (i < msgcount) {
         curses_draw_msg(0,i+1, cur->str);
         i++;
@@ -278,11 +314,16 @@ void draw_msg_log(void) {
 }
 
 void set_screen_glyph_at(Glyph *screen, Vec2i pos, Glyph glyph) {
+    /* Given an array of glyphs, it sets the glyph at position x,y (pos) to the
+     * glyph (glyph) passed in. Really a helper function to avoid typing this
+     * repeatedly */
     int index = get_screen_index(pos.x,pos.y);
     screen[index] = glyph;
 }
 
 void clear_screen(Glyph *screen) {
+    /* Clears an array of glyphs by setting every glyph in the array to a
+     * space (' ') with a black background */
     int x, y, index;
     for (x = 0; x < SCREEN_WIDTH; x++) {
         for(y = 0; y < SCREEN_HEIGHT; y++) {
@@ -295,6 +336,7 @@ void clear_screen(Glyph *screen) {
 }
 
 void destroy_screen(Glyph *screen) {
+    /* If an array of glyphs exists, free the memory. */
     if(NULL != screen) {
         free(screen);
     }

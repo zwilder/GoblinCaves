@@ -65,6 +65,7 @@
 #include <draw.h>
 #include <fov.h>
 #include <save_load.h>
+#include <inventory.h>
 
 /**********
  * The rest

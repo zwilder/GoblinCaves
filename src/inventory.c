@@ -47,6 +47,8 @@
 ...............................................................................
  */
 void draw_inv(void) {
+    /*curses_draw_msg is not the right function for doing this Zachary - go fix
+     * yo'self */
     curses_draw_titlebar("- Inventory -", WHITE, BLACK);
 
     /* For each of the following, the string will have a +

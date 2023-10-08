@@ -1,6 +1,6 @@
 /*
 * Goblin Caves
-* Copyright (C) Zach Wilder 2022
+* Copyright (C) Zach Wilder 2022-2023
 * 
 * This file is a part of Goblin Caves
 *
@@ -17,9 +17,27 @@
 * You should have received a copy of the GNU General Public License
 * along with Goblin Caves.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+/* One of the goals with this project was to not tie the program to a specific
+ * library for visuals - To that end, all the functions that call NCURSES
+ * routines directly **should** be in this file. There's a couple of random ones
+ * in update.c that need to be addressed. 
+ *
+ * Really, what should be done at some point is instead of the game calling
+ * these functions, it should call a generic function (engine_setup() for
+ * example) that calls these functions. This would allow me to add an easy
+ * flag check to see what visual library we are using - SDL, NCURSES, etc.
+ *
+ * Additionally, I really don't have to be using NCURSES at all and can do
+ * better printing/input handling with calls to the terminal directly... But I
+ * figured that out after all this was written (see the "Cards" project,
+ * github.com/zwilder/cards).
+ * */
 #include <goblincaves.h>
 
 bool curses_setup(void) {
+    /* General NCURSES setup routine, calls the NCURSES functions to get the
+     * terminal ready for drawing/input */
     bool success = false;
 
     initscr();
@@ -42,6 +60,9 @@ bool curses_setup(void) {
 }
 
 void curses_draw_main(int x, int y, Glyph glyph) {
+    /* Draws a glyph (char ch, color fg, color bg) at the x,y coordinates on the
+     * terminal, making sure to center the screen (program screen) regardless of
+     * user terminal size */
     int xoffset = COLS / 2; /* terminal center x */
     int yoffset = LINES / 2; /* terminal center y */
 
@@ -56,6 +77,8 @@ void curses_draw_main(int x, int y, Glyph glyph) {
 }
 
 void curses_draw_ui(int x, int y, char *msg) {
+    /* Draws a message (msg) at the BOTTOM of the screen given x,y (UI row)
+     * coordinates with white text on a black background */ 
     int xoffset = COLS / 2;
     int yoffset = LINES / 2;
     xoffset -= SCREEN_WIDTH / 2;
@@ -70,6 +93,7 @@ void curses_draw_ui(int x, int y, char *msg) {
 }
 
 void curses_draw_msg(int x, int y, char *msg) {
+    /* Draws a message (msg) at the given x,y coordinates */
     int xoffset = COLS / 2;
     int yoffset = LINES / 2;
     xoffset -= SCREEN_WIDTH / 2;
@@ -86,6 +110,8 @@ void curses_draw_msg(int x, int y, char *msg) {
 }
 
 void curses_draw_titlebar(char *title, Color fg, Color bg) {
+    /* Draws a "titlebar" (string centered on the top row of the screen) with
+     * the given foreground/background colors */
     int xoffset = COLS / 2;
     int x = xoffset - (SCREEN_WIDTH / 2);
     int yoffset = LINES / 2;
@@ -120,6 +146,9 @@ void msg_box(char* msg, Color fg, Color bg) {
 }
 
 bool yn_prompt(char* msg, Color fg, Color bg) {
+    /* Pops up a box in the middle of the screen, requesting a yes/no answer to
+     * a question (y/n/Y/N keypress from the user), and returning true if the
+     * user answers yes, false if not. Neat! */
     int msglength = strlen(msg);
     int i,j,x,y;
     int boxHeight = 1;
@@ -153,6 +182,9 @@ bool yn_prompt(char* msg, Color fg, Color bg) {
 }
 
 void error_msg_box(char* msg, Color fg, Color bg) {
+    /* Clear's the screen to print a message (msg) in a specifed
+     * foreground/background color in the center of the screen, and waiting for
+     * a keypress from the user to return */
     erase();
     int msglength = strlen(msg);
     int i,j,x,y;
@@ -177,6 +209,9 @@ void error_msg_box(char* msg, Color fg, Color bg) {
     getch();
 }
 void draw_menu(void) {
+    /* This function draws my super fantastic text art main menu splash screen
+     * in the appropriate colors. I'm relatively positive there is a better,
+     * cleaner way to do this but this works well enough. */
     int artWidth = 54;
     int artHeight = 23;
     int xoff = (COLS / 2) - (artWidth / 2);
@@ -224,7 +259,9 @@ void draw_menu(void) {
 }
 
 void draw_help(void) {
-    /* Not thrilled with this, but it works for now */
+    /* Displays the "help" screen. Like the main menu function above,
+     * there is probably a better, cleaner way to do this...
+     * But this works for now */
     int artWidth = 80;
     int artHeight = 20;
     int xoff = (COLS / 2) - (artWidth / 2);
@@ -254,6 +291,9 @@ void draw_help(void) {
 }
 
 void draw_nwpl(void) {
+    /* This function displays the "New player" screen, which currently just asks
+     * for the player to enter a name for their adventurer. If they enter
+     * nothing it prints an error asking them to try again. */
     int xoff = (COLS / 2);
     int yoff = (LINES / 2);
     char mesg[] = "What is your name, adventurer? ";

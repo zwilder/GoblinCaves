@@ -52,7 +52,7 @@ void engine_draw(void) {
     erase(); /* Curses call, will need to be fixed if I add graphics */
     switch(g_gamestate) {
         case ST_GAME:
-            draw_screen();
+            draw_game();
             draw_gui();
             draw_msg();
             break;
