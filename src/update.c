@@ -40,6 +40,10 @@ int update(int events) {
         g_gamestate = ST_LOG;
         events = remove_flag(events, EV_CHST_LOG);
     }
+    if(check_flag(events, EV_CHST_INV)) {
+        g_gamestate = ST_INV;
+        events = remove_flag(events, EV_CHST_INV);
+    }
     /*
      * IDEA! What if... each update loop we only update ONE monster, then
      * advance the turn counter to the next monster for the next loop? We could

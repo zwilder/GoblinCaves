@@ -317,6 +317,10 @@ void place_border(void) {
 }
 
 void place_monsters(Rect room) {
+    if(mt_chance(33)) {
+        /* Small chance that no monsters are placed in room */
+        return;
+    }
     int num = mt_rand(0, MAX_MONSTERS);
     Monster *newMonster = NULL;
     Vec2i pos;

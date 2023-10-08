@@ -74,6 +74,9 @@ void engine_draw(void) {
             draw_msg();
             g_gamestate = ST_MENU;
             break;
+        case ST_INV:
+            //draw_inv();
+            break;
         default:
             break;
     }

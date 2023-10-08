@@ -211,7 +211,7 @@ void draw_menu(void) {
     mvprintw(yoff + 20, xoff,"[b] - Load Adventure                  [d] - Quit");
     unsetcolor(BRIGHT_WHITE,BLACK);
     setcolor(WHITE,BLACK);
-    mvprintw(yoff + 22, xoff,"                -- ©Zach Wilder 2022 --");
+    mvprintw(yoff + 22, xoff,"            -- ©Zach Wilder 2022-2023 --");
     unsetcolor(WHITE,BLACK);
 
     /* Fix characters that should be brown not bright green */
