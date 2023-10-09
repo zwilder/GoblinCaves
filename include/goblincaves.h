@@ -37,7 +37,6 @@
 #include <vec2i.h>
 #include <rect.h>
 #include <flags.h>
-#include <tree.h>
 #include <msg.h>
 #include <slist.h>
 

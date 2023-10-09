@@ -1,6 +1,6 @@
 /*
 * Goblin Caves
-* Copyright (C) Zach Wilder 2022
+* Copyright (C) Zach Wilder 2022-2023
 * 
 * This file is a part of Goblin Caves
 *
@@ -20,7 +20,18 @@
 
 #include <goblincaves.h>
 
+/*******
+ * SList
+ *
+ * A simple linked list of nodes containing a string (char*) and an int with the
+ * length of the string. Portable outside of this project. 
+ *******/
+
 SList* create_SList(char *s) {
+    /* Create a SList node, calculate the length of string s (don't forget the
+     * \0 at the end!), store both the string and the length, and return the
+     * node.
+     */
     SList *node = malloc(sizeof(SList));
     node->data = malloc(sizeof(char) * (strlen(s) + 1));
     strcpy(node->data, s);
@@ -40,6 +51,8 @@ SList* create_SList_blank(int strsize) {
 }
 
 void push_SList_blank(SList **head, int strsize) {
+    /* Push a blank node onto the SList, reserving space for a string of strsize
+     * length in the node */
     SList *newNode = create_SList_blank(strsize);
     SList *tmp;
     if(!(*head)) {
@@ -58,6 +71,8 @@ void push_SList_blank(SList **head, int strsize) {
 }
 
 void destroy_SList(SList **head) {
+    /* Destroy a SList, looping through and freeing the memory for the stored
+     * strings before freeing the memory used by the node. */
     SList *tmp = *head;
     while(*head) {
         tmp = *head;
@@ -68,6 +83,7 @@ void destroy_SList(SList **head) {
 }
 
 void push_SList(SList **head, char *s) {
+    /* Push a new node onto the SList, containing string s */
     SList *newNode = create_SList(s);
     SList *tmp;
     if(!(*head)) {
@@ -86,6 +102,7 @@ void push_SList(SList **head, char *s) {
 }
 
 int count_SList(SList *node) {
+    /* Count and return the number of nodes in the SList */
     if(!node) {
         return 0;
     }
@@ -93,6 +110,8 @@ int count_SList(SList *node) {
 }
 
 int count_chars_SList(SList *node, bool incSpace) {
+    /* Count and return the number of characters in each string in SList,
+     * optionally including the spaces */
     SList *tmp = node;
     int result = 0;
     while(tmp) {
@@ -106,10 +125,11 @@ int count_chars_SList(SList *node, bool incSpace) {
 }
 
 char* get_string_SList(SList *node) {
+    /* Combine all the strings in SList into one string, and then return it */
     if(!node) {
         return NULL;
     }
-    char *result = malloc((sizeof(char) *count_chars_SList(node, true)) + 1);
+    char *result = malloc((sizeof(char) * count_chars_SList(node, true)) + 1);
     SList *tmp = node;
     int i = 0;
     int letters = 0;
@@ -151,6 +171,9 @@ void add_SList(SList **to, SList **from) {
 }
 
 SList* split_string(char *s, char delim) {
+    /* Nifty function that takes a string s, splits it by delimeter delim,
+     * and returns the results as an Slist*
+     */
     if(!s) {
         return NULL;
     }

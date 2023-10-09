@@ -1,6 +1,6 @@
 /*
 * Goblin Caves
-* Copyright (C) Zach Wilder 2022
+* Copyright (C) Zach Wilder 2022-2023
 * 
 * This file is a part of Goblin Caves
 *
@@ -20,6 +20,7 @@
 
 #include <goblincaves.h>
 Glyph make_glyph(char ch, Color fg, Color bg) {
+    /* Returns a Glyph with char ch, Color fg foreground, Color bg background */
     Glyph glyph = {};
     glyph.ch = ch;
     glyph.fg = fg;

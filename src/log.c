@@ -83,19 +83,3 @@ void log_rect(Rect a) {
             a.pos.x, a.pos.y, a.dim.x, a.dim.y);
     fclose(fp);
 }
-
-void log_leaves(Node *node) {
-    FILE *fp;
-    if(NULL == node) {
-        return;
-    }
-    if(NULL == node->leftChild) {
-        fp = fopen("log.txt", "a");
-        fprintf(fp, "Leaf with data: ");
-        fprintf(fp, "\n\t-");
-        log_rect(node->data);
-        fclose(fp);
-    }
-    log_leaves(node->leftChild);
-    log_leaves(node->rightChild);
-}
