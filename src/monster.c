@@ -1,6 +1,6 @@
 /*
 * Goblin Caves
-* Copyright (C) Zach Wilder 2022
+* Copyright (C) Zach Wilder 2022-2023
 * 
 * This file is a part of Goblin Caves
 *
@@ -19,8 +19,23 @@
 */
 #include <goblincaves.h>
 
-Monster* g_player;
-/*
+/*****
+ * Monster
+ *
+ * This is one of the "major" datatypes (the others being tile, effects,
+ * pickups/items). I keep going back and forth on if Player should be a major
+ * type separate from Monster - but for now Monster contains both the enemies in
+ * the game and the player character.
+ *
+ * The game keeps all monsters in a big list (MList g_mlist), and each monster
+ * keeps track of where it is. A pointer to the player character is also kept
+ * (g_player) to keep track of all their stats. 
+ *
+ * Eventually this file will be chonky, and I'm likely going to split it into
+ * separate files - monster.c, player.c, stats.c - to corral all the related
+ * functions together.
+ *
+ * For reference:
 typedef struct { 
     Vec2i pos;
     Vec2i dpos;
@@ -32,9 +47,20 @@ typedef struct {
     int vit;
     int curhp;
 } Monster;
-*/
+ *****/  
+
+Monster* g_player;
+
 Monster monsterTable[NUM_MON] =
 {
+    /* To help keep make monster creation easier, there is an enum MonsterTypes
+     * (int) that can be passed in to create_monster_at(...) - that number
+     * corresponds to a listing in this table.
+     *
+     * I liked how in Barbarian I could edit (and create) monsters in a .config
+     * file, and will most likely to something similar in the future for Goblin
+     * Caves.
+     */
     /* pos  dpos  glyph                        name            st,dx,pe,vi,sp, flags,            locID,curHP,en */
     { {0,0},{0,0},{'%',RED,BLACK},           "Corpse"          ,0,0,0,0,0,   MF_NONE,                     0,0,0},
     { {0,0},{0,0},{'g',GREEN,BLACK},         "Goblin"          ,2,3,2,2,100, MF_ALIVE,                    0,0,0},
@@ -44,6 +70,9 @@ Monster monsterTable[NUM_MON] =
 };
 
 Monster* create_monster_at(Vec2i pos, int type) {
+    /* Creates (allocates memory for) a Monster at Vec2i pos of type
+     * MonsterTypes (int), then returns that Monster. This is the usual way of
+     * creating a monster. */
     Monster *newMonster = calloc(1,sizeof(Monster));
     *newMonster = monsterTable[type];
     newMonster->name = malloc((strlen(monsterTable[type].name) + 1) * sizeof(char));
@@ -56,10 +85,10 @@ Monster* create_monster_at(Vec2i pos, int type) {
 }
 
 Monster* create_monster(void) {
+    /* Creates (allocates memory for) a blank Monster - all 0/default values,
+     * and returns the Monster. This is used by the load function in
+     * save_load.c, which needs a blank monster to load the save data onto. */
     Monster *newMonster = malloc(sizeof(Monster));
-    /*
-    *newMonster = monsterTable[M_CORPSE];
-    */
     newMonster->pos = make_vec(0,0);
     newMonster->dpos = make_vec(0,0);
     newMonster->glyph = make_glyph('%', RED, BLACK);
@@ -78,6 +107,8 @@ Monster* create_monster(void) {
 }
 
 void destroy_monster(Monster* monster) {
+    /* Free the memory for a Monster, and set it's value to NULL. The NULL value
+     * is important! */
     if(monster) {
         free(monster->name);
         monster->name = NULL;
@@ -87,7 +118,9 @@ void destroy_monster(Monster* monster) {
 }
 
 Monster* create_player(MList **head) {
-    /* Player creation will eventually have it's own state */
+    /* Player creation will eventually have it's own state, but for now this
+     * makes the player. The player's name is set in a temprary function in
+     * curses_engine.c (draw_nwpl()) - because that makes sense? */
     Monster* newPlayer = calloc(1, sizeof(Monster));
 
     newPlayer->pos = make_vec(0,0);
@@ -111,6 +144,8 @@ Monster* create_player(MList **head) {
 }
 
 void destroy_player(void) {
+    /* Calls destroy_monster to free the memory held by the player, and then
+     * sets g_player to NULL (important) */
     if(g_player) {
         destroy_monster(g_player);
         g_player = NULL;
@@ -118,13 +153,13 @@ void destroy_player(void) {
 }
 
 void set_player_pos(Vec2i pos) {
+    /* Sets the player's position to to pos, and adjusts the player's background
+     * to the tile's background. */
     g_player->pos = pos;
     g_player->glyph.bg = get_glyphbg_at(pos.x,pos.y);
     update_fov();
 }
 
-/* If I do change these to be more generic, they should go in their own file,
- * "stats.c" or something. ORGANIZED. */
 int get_fov(Monster *monster) {
     /* Just returning the perception, for now.
      * Might be useful to have this accept the perception/vitality as input then
@@ -139,14 +174,17 @@ int get_max_hp(Monster *monster) {
 }
 
 void melee_combat(Monster *atk, Monster *def) {
-/* Random assortment of stats, not sure how they will be used so this is
- * just for fun. 
- * Maybe: Damage done is weapon + str
- *        Chance to hit is dex + str
- *        HP is vit + str
- *        FOV Radius is per + vit
- *        Chance to be hit is dex + per
- *        Str 3 Dex 2 Per 2 Vit 2 */
+    /* Resolves combat between an attacking monster (atk) and a defending
+     * monster (def).
+     *
+     * Random assortment of stats, not sure how they will be used so this is
+     * just for fun. 
+     * Maybe: Damage done is weapon + str
+     *        Chance to hit is dex + str
+     *        HP is vit + str
+     *        FOV Radius is per + vit
+     *        Chance to be hit is dex + per
+     *        Str 3 Dex 2 Per 2 Vit 2 */
     char *msg = malloc(80 * sizeof(char));
     int chancetohit = mt_rand(0,atk->dex + atk->str);
     int defense = mt_rand(0, def->dex + def->per);
@@ -173,6 +211,12 @@ void melee_combat(Monster *atk, Monster *def) {
 }
 
 void kill_monster(Monster *target) {
+    /* Handles killing off a monster, displaying a message on the screen.
+     * Writing this comment a year after writing this function, and I have
+     * absolutely no idea why I'm using snprintf to write the message instead of
+     * one the drawing functions? 
+     *
+     * TODO: snprintf needs to be changed. */
     /*
     char msg[80];
     strcpy(msg, target->name);
@@ -195,15 +239,22 @@ void kill_monster(Monster *target) {
 }
 
 bool is_alive(Monster *target) {
+    /* Little heper that checks if a target Monster is alive */
     return check_flag(target->flags, MF_ALIVE);
 }
 
 void change_state(Monster *monster, int mflagcur, int mflagnext) {
+    /* Removes flag mflacur from Monster, and engages flag mflagnext. Used by
+     * take_turn(...) for the monsters AI */
     monster->flags = remove_flag(monster->flags, mflagcur);
     monster->flags = engage_flag(monster->flags, mflagnext);
 }
 
 void take_turn(Monster *monster) {
+    /* Messy function that enables a Monster to take it's turn.
+     *
+     * TODO: Fix take_turn()
+     */
     /* Take turn should add FLAGS not actually do things! 
      * Then, the things are done when the update_monster() function is called. 
      * Should work! */
