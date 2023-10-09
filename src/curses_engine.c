@@ -263,7 +263,7 @@ void draw_help(void) {
      * there is probably a better, cleaner way to do this...
      * But this works for now */
     int artWidth = 80;
-    int artHeight = 20;
+    int artHeight = 24;
     int xoff = (COLS / 2) - (artWidth / 2);
     int yoff = (LINES / 2) - (artHeight / 2);
     setcolor(BLACK,WHITE);
@@ -286,7 +286,7 @@ void draw_help(void) {
 
     mvprintw(yoff + 16,xoff,"   ^");
     mvprintw(yoff + 17,xoff,"<- v ->  : Movement, arrow keys");
-    mvprintw(yoff + 19,xoff,"                           - Press any key to exit -                            ");
+    mvprintw(yoff + 22,xoff,"                           - Press any key to exit -                            ");
     unsetcolor(WHITE,BLACK);
 }
 
