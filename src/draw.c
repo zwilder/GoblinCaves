@@ -321,6 +321,11 @@ void set_screen_glyph_at(Glyph *screen, Vec2i pos, Glyph glyph) {
     screen[index] = glyph;
 }
 
+void set_xy_screen_glyph(Glyph *screen, int x, int y, Glyph glyph) {
+    /* Same as above, except instead of a vector an x/y pos is passed in. */
+    set_screen_glyph_at(screen, make_vec(x,y), glyph);
+}
+
 void clear_screen(Glyph *screen) {
     /* Clears an array of glyphs by setting every glyph in the array to a
      * space (' ') with a black background */

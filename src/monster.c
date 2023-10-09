@@ -211,17 +211,7 @@ void melee_combat(Monster *atk, Monster *def) {
 }
 
 void kill_monster(Monster *target) {
-    /* Handles killing off a monster, displaying a message on the screen.
-     * Writing this comment a year after writing this function, and I have
-     * absolutely no idea why I'm using snprintf to write the message instead of
-     * one the drawing functions? 
-     *
-     * TODO: snprintf needs to be changed. */
-    /*
-    char msg[80];
-    strcpy(msg, target->name);
-    strcat(msg, " collapses in a bloody heap!");
-    */
+    /* Handles killing off a monster, displaying a message on the screen.*/
     char *msg = malloc(80 * sizeof(char));
     if(check_flag(target->flags, MF_PLAYER)) {
         snprintf(msg,80,"Everything goes dark... you die.");

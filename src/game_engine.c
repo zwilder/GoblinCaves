@@ -69,9 +69,8 @@ void engine_draw(void) {
             draw_msg_log();
             break;
         case ST_GAMEOVER:
-            //draw_gameover();
-            //Temporarily just draw the message screen and switch states
             draw_msg();
+            draw_art(ART_TOMBSTONE);
             g_gamestate = ST_MENU;
             break;
         case ST_INV:

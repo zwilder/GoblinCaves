@@ -73,5 +73,6 @@
 #include <dungeons.h>
 #include <log.h>
 #include <pathfinding.h>
+#include <art.h>
 
 #endif

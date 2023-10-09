@@ -17,22 +17,15 @@
 * You should have received a copy of the GNU General Public License
 * along with Goblin Caves.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DRAW_H
-#define DRAW_H
+#ifndef ART_H
+#define ART_H
 
-/******************
- * draw.c functions
- ******************/
-Glyph* create_screen(void);
-Vec2i get_camera(void);
-void draw_game(void);
-void draw_gui(void);
-void draw_msg(void);
-void draw_msg_log(void);
-void set_screen_glyph_at(Glyph *screen, Vec2i pos, Glyph glyph);
-void set_xy_screen_glyph(Glyph *screen, int x, int y, Glyph glyph);
-void destroy_screen(Glyph *screen);
-void clear_screen(Glyph *screen);
-int get_screen_index(int x, int y);
+typedef enum {
+    ART_NONE        = 0,
+    ART_TOMBSTONE
+} ART_TYPES;
 
-#endif
+void draw_art(int art);
+void draw_tombstone(Glyph *screen);
+
+#endif // ART_H
