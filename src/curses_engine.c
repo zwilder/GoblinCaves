@@ -262,6 +262,7 @@ void draw_help(void) {
     /* Displays the "help" screen. Like the main menu function above,
      * there is probably a better, cleaner way to do this...
      * But this works for now */
+    /*
     int artWidth = 80;
     int artHeight = 24;
     int xoff = (COLS / 2) - (artWidth / 2);
@@ -288,6 +289,8 @@ void draw_help(void) {
     mvprintw(yoff + 17,xoff,"<- v ->  : Movement, arrow keys");
     mvprintw(yoff + 22,xoff,"                           - Press any key to exit -                            ");
     unsetcolor(WHITE,BLACK);
+    */
+    draw_art(ART_HELLO_WORLD);
 }
 
 void draw_nwpl(void) {
