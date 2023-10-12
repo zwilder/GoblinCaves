@@ -17,28 +17,24 @@
 * You should have received a copy of the GNU General Public License
 * along with Toolbox.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SLIST_H
-#define SLIST_H
+#ifndef TOOLBOX_H
+#define TOOLBOX_H
 
-struct SList {
-    char *data;
-    int length;
-    struct SList *next;
-};
-typedef struct SList SList;
+/*****
+ * System includes
+ *****/
+#include <stdio.h>
+#include <stdlib.h> 
+#include <stdbool.h>
+#include <limits.h>
+#include <string.h>
 
-/*******************
- * slist.c functions
- *******************/
-SList* create_SList(char *s);
-SList* create_SList_blank(int strsize);
-void push_SList_blank(SList **head, int strsize);
-void destroy_SList(SList **head);
-void push_SList(SList **head, char *s);
-int count_SList(SList *node);
-int count_chars_SList(SList *node, bool incSpace); 
-char* get_string_SList(SList *node);
-void add_SList(SList **to, SList **from); 
-SList* split_string(char *s, char delim); 
+/*****
+ * Toolbox
+ *****/
+#include <mt19937.h> /* Random number generator */
+#include <vec2i.h> /* Integer pair container and lists */
+#include <rect.h> /* Rectangle container and list */
+#include <slist.h> /* String list */
 
-#endif
+#endif //TOOLBOX_H

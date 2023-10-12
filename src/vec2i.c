@@ -1,23 +1,23 @@
 /*
-* Goblin Caves
+* Toolbox
 * Copyright (C) Zach Wilder 2022-2023
 * 
-* This file is a part of Goblin Caves
+* This file is a part of Toolbox
 *
-* Goblin Caves is free software: you can redistribute it and/or modify
+* Toolbox is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
 * (at your option) any later version.
 * 
-* Goblin Caves is distributed in the hope that it will be useful,
+* Toolbox is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
 * 
 * You should have received a copy of the GNU General Public License
-* along with Goblin Caves.  If not, see <http://www.gnu.org/licenses/>.
+* along with Toolbox.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <goblincaves.h>
+#include <toolbox.h>
 const Vec2i NULLVEC = {INT_MIN, INT_MIN};
 
 /*******
@@ -28,11 +28,6 @@ const Vec2i NULLVEC = {INT_MIN, INT_MIN};
  * used to call it ("Point" - yeah, that sucks), so I stole it. I could use the
  * functions contained here as a template for similar containers (two
  * dimensional floats, short ints, chars (uint8_t), etc).
- *
- * This file contains all the functions that make Vec2i useful - it is portable
- * and requires only vec2i.h. (Note: the include <goblincaves.h> above is just
- * to stay consistent with in this project; everything uses a common header
- * file.
  *
  ********/
 

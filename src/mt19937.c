@@ -41,7 +41,7 @@
    email: m-mat @ math.sci.hiroshima-u.ac.jp (remove space)
 */
 
-#include <mt19937.h>
+#include <toolbox.h>
 
 /* Period parameters */  
 #define N 624

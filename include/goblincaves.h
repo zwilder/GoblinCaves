@@ -32,13 +32,11 @@
 /***********************
  * Minor data structures
  ***********************/
+#include <toolbox.h>
 #include <color.h>
 #include <glyph.h>
-#include <vec2i.h>
-#include <rect.h>
 #include <flags.h>
 #include <msg.h>
-#include <slist.h>
 
 /***********************
  * Major data structures
@@ -56,7 +54,6 @@
 /******
  * Core 
  ******/
-#include <mt19937.h>
 #include <game_engine.h>
 #include <curses_engine.h>
 #include <handle_events.h>

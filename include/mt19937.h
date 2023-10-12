@@ -43,9 +43,6 @@
 #ifndef MT19937_H
 #define MT19937_H
 
-#include <stdio.h>
-#include <stdlib.h> /* Added by ZW, for his functions at the bottom (need RAND_MAX)*/
-#include <stdbool.h> /* Added by ZW, for his functions at the bottom (need bool)*/
 
 void init_genrand(unsigned long s);
 void init_by_array(unsigned long init_key[], int key_length);
