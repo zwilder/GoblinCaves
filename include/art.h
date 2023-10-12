@@ -23,11 +23,13 @@
 typedef enum {
     ART_NONE        = 0,
     ART_TOMBSTONE,
-    ART_HELLO_WORLD
+    ART_HELLO_WORLD,
+    ART_TITLE
 } ART_TYPES;
 
 void draw_art(int art);
 void draw_tombstone(Glyph *screen);
 void draw_hello_world(Glyph *screen);
+void draw_title_screen(Glyph *screen);
 
 #endif // ART_H

@@ -212,6 +212,7 @@ void draw_menu(void) {
     /* This function draws my super fantastic text art main menu splash screen
      * in the appropriate colors. I'm relatively positive there is a better,
      * cleaner way to do this but this works well enough. */
+    /*
     int artWidth = 54;
     int artHeight = 23;
     int xoff = (COLS / 2) - (artWidth / 2);
@@ -248,14 +249,22 @@ void draw_menu(void) {
     setcolor(WHITE,BLACK);
     mvprintw(yoff + 22, xoff,"            -- ©Zach Wilder 2022-2023 --");
     unsetcolor(WHITE,BLACK);
+    */
 
     /* Fix characters that should be brown not bright green */
+    /*
     setcolor(BROWN,BLACK);
     mvprintw(yoff + 2, xoff + 18, "|/");
     mvprintw(yoff + 2, xoff + 44, "\\/");
     mvprintw(yoff + 16, xoff + 16, "/|");
     mvprintw(yoff + 16, xoff + 50, "/\\");
     unsetcolor(BROWN,BLACK);
+    */
+    /* I replaced the above curses calls with the following super excessive 600
+     * line function that hand places each individual part of the art (see
+     * art.c). It's temporary, and the ideas on how to improve it are in the top
+     * of that file. */
+    draw_art(ART_TITLE);
 }
 
 void draw_help(void) {

@@ -31,26 +31,37 @@ x,y,char,color_foreground,color_background
  *
  * This file will probably contain the functions to read the .config files for
  * the art. 
+ *
+ * UPDATE: I wrote a small application "arttogc" that will read a script file
+ * and then generate the hard coded art below. The code it generates is
+ * excessive (very), but it works. Even better, I could just have it execute code
+ * instead of writing the code to a file if the reading code was put here...
+ * which will allow all art to just be read from a config file on demand - no
+ * recompiling necessary and MAYBE even while the game is running! WILD. 
  */
 void draw_art(int art) {
     /* This makes a screen, and draws art of ART_TYPE art on it */
-    Glyph *screen = create_screen();
+    Glyph *screen = create_full_screen();
+    int w,h;
     int x,y,index;
+    w = SCREEN_WIDTH;
+    h = SCREEN_HEIGHT + GUI_HEIGHT + MSG_HEIGHT;
 
     switch(art) {
         case ART_TOMBSTONE: draw_tombstone(screen); break;
         case ART_HELLO_WORLD: draw_hello_world(screen); break;
+        case ART_TITLE: draw_title_screen(screen); break;
         default: break;
     }
 
-    for(x = 0; x < SCREEN_WIDTH; x++) {
-        for(y = 0; y < SCREEN_HEIGHT; y++) {
+    for(x = 0; x < w; x++) {
+        for(y = 0; y < h; y++) {
             index = get_screen_index(x,y);
-            if(index > (SCREEN_WIDTH * SCREEN_HEIGHT - 1)) {
+            if(index > (w * h - 1)) {
                 break;
             }
             if(screen[index].ch != ' ') {
-                curses_draw_main(x,y, screen[index]);
+                curses_draw_main(x,y-2, screen[index]);
             }
         }
     }
@@ -455,24 +466,23 @@ void draw_tombstone(Glyph *screen) {
     set_xy_screen_glyph(screen, 42,27, make_glyph(95,BRIGHT_GREEN,BLACK));
     set_xy_screen_glyph(screen, 43,27, make_glyph(92,BRIGHT_GREEN,BLACK));
 }
-/*****
-
- __   __  _______  ___      ___      _______       
-|  | |  ||       ||   |    |   |    |       |      
-|  |_|  ||    ___||   |    |   |    |   _   |      
-|       ||   |___ |   |    |   |    |  | |  |      
-|       ||    ___||   |___ |   |___ |  |_|  |      
-|   _   ||   |___ |       ||       ||       |      
-|__| |__||_______||_______||_______||_______|      
- _     _  _______  ______    ___      ______   __  
-| | _ | ||       ||    _ |  |   |    |      | |  | 
-| || || ||   _   ||   | ||  |   |    |  _    ||  | 
-|       ||  | |  ||   |_||_ |   |    | | |   ||  | 
-|       ||  |_|  ||    __  ||   |___ | |_|   ||__| 
-|   _   ||       ||   |  | ||       ||       | __  
-|__| |__||_______||___|  |_||_______||______| |__| 
-*****/
 void draw_hello_world(Glyph *screen) {
+    /*****
+     __   __  _______  ___      ___      _______       
+    |  | |  ||       ||   |    |   |    |       |      
+    |  |_|  ||    ___||   |    |   |    |   _   |      
+    |       ||   |___ |   |    |   |    |  | |  |      
+    |       ||    ___||   |___ |   |___ |  |_|  |      
+    |   _   ||   |___ |       ||       ||       |      
+    |__| |__||_______||_______||_______||_______|      
+     _     _  _______  ______    ___      ______   __  
+    | | _ | ||       ||    _ |  |   |    |      | |  | 
+    | || || ||   _   ||   | ||  |   |    |  _    ||  | 
+    |       ||  | |  ||   |_||_ |   |    | | |   ||  | 
+    |       ||  |_|  ||    __  ||   |___ | |_|   ||__| 
+    |   _   ||       ||   |  | ||       ||       | __  
+    |__| |__||_______||___|  |_||_______||______| |__| 
+    *****/
     set_xy_screen_glyph(screen,2,1,make_glyph('_',7,0));
     set_xy_screen_glyph(screen,3,1,make_glyph('_',7,0));
     set_xy_screen_glyph(screen,7,1,make_glyph('_',7,0));
@@ -789,5 +799,633 @@ void draw_hello_world(Glyph *screen) {
     set_xy_screen_glyph(screen,48,14,make_glyph('_',14,0));
     set_xy_screen_glyph(screen,49,14,make_glyph('_',14,0));
     set_xy_screen_glyph(screen,50,14,make_glyph('|',14,0));
+}
+void draw_title_screen(Glyph *screen) {
+    /*****
+
+            ____\   /__\|_____|   /_____\  /\/_________\   /______
+                 \ /          |  /       \/             \ /      
+             _______  _______ |/_____   _       ________\/_       
+            (  ____ \(  ___  )(  ___ \ ( \      \__   __/( (    /|
+            | (    \/| (   ) || (   ) )| (         ) (   |  \  ( |
+            | |      | |   | || (__/ / | |         | |   |   \ | |
+            | | ____ | |   | ||  __ (  | |         | |   | (\ \) |
+            | | \_  )| |   | || (  \ \ | |         | |   | | \   |
+            | (___) || (___) || )___) )| (____/\___) (___| )  \  |
+            (_______)(_______)|/ \___/ (_______/\_______/|/    )_)
+                (  ____ \(  ___  )|\     /|(  ____ \(  ____ \
+                | (    \/| (   ) || )   ( || (    \/| (    \/       
+                | |      | (___) || |   | || (__    | (_____        
+                | |      |  ___  |( (   ) )|  __)   (_____  )       
+                | |      | (   ) | \ \_/ / | (            ) |       
+                | (____/\| )   ( |  \   /  | (____/\/\____) |       
+                (_______/|/ /|  \|   \_/   (_______/\_______) /\
+                /\         / |      /\               /\      /  \
+            ___/  \___/ \_/  |_____/  \|\______/\___/  \____/    \
+            [a] - New Adventure                   [c] High Scores
+            [b] - Load Adventure                  [d] Quit
+
+                        -- (c) Zach Wilder 2022-2023 --
+    *****/
+    set_xy_screen_glyph(screen,13,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,14,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,15,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,16,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,17,1,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,21,1,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,22,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,23,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,24,1,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,25,1,make_glyph('|',6,0));
+    set_xy_screen_glyph(screen,26,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,27,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,28,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,29,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,30,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,31,1,make_glyph('|',6,0));
+    set_xy_screen_glyph(screen,35,1,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,36,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,37,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,38,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,39,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,40,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,41,1,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,44,1,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,45,1,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,46,1,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,47,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,48,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,49,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,50,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,51,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,52,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,53,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,54,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,55,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,56,1,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,60,1,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,61,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,62,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,63,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,64,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,65,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,66,1,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,18,2,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,20,2,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,31,2,make_glyph('|',6,0));
+    set_xy_screen_glyph(screen,34,2,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,42,2,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,43,2,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,57,2,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,59,2,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,14,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,15,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,16,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,17,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,18,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,19,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,20,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,23,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,24,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,25,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,26,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,27,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,28,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,29,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,31,3,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,32,3,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,33,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,34,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,35,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,36,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,37,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,41,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,49,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,50,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,51,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,52,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,53,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,54,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,55,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,56,3,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,57,3,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,58,3,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,59,3,make_glyph('_',10,0));
+    screen[get_screen_index(31,3)].fg = 6;
+    screen[get_screen_index(32,3)].fg = 6;
+    screen[get_screen_index(57,3)].fg = 6;
+    screen[get_screen_index(58,3)].fg = 6;
+    set_xy_screen_glyph(screen,13,4,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,16,4,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,17,4,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,18,4,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,19,4,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,21,4,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,22,4,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,25,4,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,26,4,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,27,4,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,30,4,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,31,4,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,34,4,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,35,4,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,36,4,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,38,4,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,40,4,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,42,4,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,49,4,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,50,4,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,51,4,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,55,4,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,56,4,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,57,4,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,58,4,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,60,4,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,65,4,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,66,4,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,13,5,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,15,5,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,20,5,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,21,5,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,22,5,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,24,5,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,28,5,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,30,5,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,31,5,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,33,5,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,37,5,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,39,5,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,40,5,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,42,5,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,52,5,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,54,5,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,58,5,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,61,5,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,64,5,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,66,5,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,13,6,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,15,6,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,22,6,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,24,6,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,28,6,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,30,6,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,31,6,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,33,6,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,34,6,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,35,6,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,36,6,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,38,6,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,40,6,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,42,6,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,52,6,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,54,6,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,58,6,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,62,6,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,64,6,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,66,6,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,13,7,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,15,7,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,17,7,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,18,7,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,19,7,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,20,7,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,22,7,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,24,7,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,28,7,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,30,7,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,31,7,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,34,7,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,35,7,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,37,7,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,40,7,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,42,7,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,52,7,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,54,7,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,58,7,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,60,7,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,61,7,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,63,7,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,64,7,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,66,7,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,13,8,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,15,8,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,17,8,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,18,8,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,21,8,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,22,8,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,24,8,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,28,8,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,30,8,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,31,8,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,33,8,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,36,8,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,38,8,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,40,8,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,42,8,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,52,8,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,54,8,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,58,8,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,60,8,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,62,8,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,66,8,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,13,9,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,15,9,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,16,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,17,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,18,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,19,9,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,21,9,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,22,9,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,24,9,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,25,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,26,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,27,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,28,9,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,30,9,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,31,9,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,33,9,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,34,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,35,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,36,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,37,9,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,39,9,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,40,9,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,42,9,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,43,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,44,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,45,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,46,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,47,9,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,48,9,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,49,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,50,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,51,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,52,9,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,54,9,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,55,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,56,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,57,9,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,58,9,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,60,9,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,63,9,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,66,9,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,13,10,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,14,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,15,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,16,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,17,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,18,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,19,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,20,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,21,10,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,22,10,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,23,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,24,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,25,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,26,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,27,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,28,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,29,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,30,10,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,31,10,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,32,10,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,34,10,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,35,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,36,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,37,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,38,10,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,40,10,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,41,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,42,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,43,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,44,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,45,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,46,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,47,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,48,10,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,49,10,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,50,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,51,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,52,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,53,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,54,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,55,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,56,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,57,10,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,58,10,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,59,10,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,64,10,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,65,10,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,66,10,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,17,11,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,20,11,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,21,11,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,22,11,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,23,11,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,25,11,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,26,11,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,29,11,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,30,11,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,31,11,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,34,11,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,35,11,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,36,11,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,42,11,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,43,11,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,44,11,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,47,11,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,48,11,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,49,11,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,50,11,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,52,11,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,53,11,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,56,11,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,57,11,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,58,11,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,59,11,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,61,11,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,17,12,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,19,12,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,24,12,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,25,12,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,26,12,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,28,12,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,32,12,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,34,12,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,35,12,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,37,12,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,41,12,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,43,12,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,44,12,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,46,12,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,51,12,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,52,12,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,53,12,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,55,12,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,60,12,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,61,12,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,17,13,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,19,13,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,26,13,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,28,13,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,29,13,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,30,13,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,31,13,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,32,13,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,34,13,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,35,13,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,37,13,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,41,13,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,43,13,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,44,13,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,46,13,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,47,13,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,48,13,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,53,13,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,55,13,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,56,13,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,57,13,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,58,13,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,59,13,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,60,13,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,17,14,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,19,14,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,26,14,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,29,14,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,30,14,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,31,14,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,34,14,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,35,14,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,37,14,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,41,14,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,43,14,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,44,14,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,47,14,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,48,14,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,49,14,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,53,14,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,54,14,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,55,14,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,56,14,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,57,14,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,58,14,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,61,14,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,17,15,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,19,15,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,26,15,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,28,15,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,32,15,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,34,15,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,36,15,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,38,15,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,39,15,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,40,15,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,42,15,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,44,15,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,46,15,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,59,15,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,61,15,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,17,16,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,19,16,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,20,16,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,21,16,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,22,16,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,23,16,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,24,16,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,25,16,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,26,16,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,28,16,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,32,16,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,34,16,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,37,16,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,41,16,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,44,16,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,46,16,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,47,16,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,48,16,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,49,16,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,50,16,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,51,16,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,52,16,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,53,16,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,54,16,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,55,16,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,56,16,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,57,16,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,58,16,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,59,16,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,61,16,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,17,17,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,18,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,19,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,20,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,21,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,22,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,23,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,24,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,25,17,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,26,17,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,27,17,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,29,17,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,30,17,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,33,17,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,34,17,make_glyph('|',10,0));
+    set_xy_screen_glyph(screen,38,17,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,39,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,40,17,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,44,17,make_glyph('(',10,0));
+    set_xy_screen_glyph(screen,45,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,46,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,47,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,48,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,49,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,50,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,51,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,52,17,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,53,17,make_glyph('\\',10,0));
+    set_xy_screen_glyph(screen,54,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,55,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,56,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,57,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,58,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,59,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,60,17,make_glyph('_',10,0));
+    set_xy_screen_glyph(screen,61,17,make_glyph(')',10,0));
+    set_xy_screen_glyph(screen,63,17,make_glyph('/',10,0));
+    set_xy_screen_glyph(screen,64,17,make_glyph('\\',10,0));
+    screen[get_screen_index(29,17)].fg = 6;
+    screen[get_screen_index(30,17)].fg = 6;
+    screen[get_screen_index(63,17)].fg = 6;
+    screen[get_screen_index(64,17)].fg = 6;
+    set_xy_screen_glyph(screen,17,18,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,18,18,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,28,18,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,30,18,make_glyph('|',6,0));
+    set_xy_screen_glyph(screen,37,18,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,38,18,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,54,18,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,55,18,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,62,18,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,65,18,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,13,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,14,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,15,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,16,19,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,19,19,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,20,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,21,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,22,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,23,19,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,25,19,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,26,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,27,19,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,30,19,make_glyph('|',6,0));
+    set_xy_screen_glyph(screen,31,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,32,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,33,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,34,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,35,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,36,19,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,39,19,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,40,19,make_glyph('|',6,0));
+    set_xy_screen_glyph(screen,41,19,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,42,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,43,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,44,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,45,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,46,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,47,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,48,19,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,49,19,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,50,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,51,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,52,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,53,19,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,56,19,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,57,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,58,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,59,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,60,19,make_glyph('_',6,0));
+    set_xy_screen_glyph(screen,61,19,make_glyph('/',6,0));
+    set_xy_screen_glyph(screen,66,19,make_glyph('\\',6,0));
+    set_xy_screen_glyph(screen,13,20,make_glyph('[',15,0));
+    set_xy_screen_glyph(screen,14,20,make_glyph('a',15,0));
+    set_xy_screen_glyph(screen,15,20,make_glyph(']',15,0));
+    set_xy_screen_glyph(screen,17,20,make_glyph('-',15,0));
+    set_xy_screen_glyph(screen,19,20,make_glyph('N',15,0));
+    set_xy_screen_glyph(screen,20,20,make_glyph('e',15,0));
+    set_xy_screen_glyph(screen,21,20,make_glyph('w',15,0));
+    set_xy_screen_glyph(screen,23,20,make_glyph('A',15,0));
+    set_xy_screen_glyph(screen,24,20,make_glyph('d',15,0));
+    set_xy_screen_glyph(screen,25,20,make_glyph('v',15,0));
+    set_xy_screen_glyph(screen,26,20,make_glyph('e',15,0));
+    set_xy_screen_glyph(screen,27,20,make_glyph('n',15,0));
+    set_xy_screen_glyph(screen,28,20,make_glyph('t',15,0));
+    set_xy_screen_glyph(screen,29,20,make_glyph('u',15,0));
+    set_xy_screen_glyph(screen,30,20,make_glyph('r',15,0));
+    set_xy_screen_glyph(screen,31,20,make_glyph('e',15,0));
+    set_xy_screen_glyph(screen,51,20,make_glyph('[',15,0));
+    set_xy_screen_glyph(screen,52,20,make_glyph('c',15,0));
+    set_xy_screen_glyph(screen,53,20,make_glyph(']',15,0));
+    set_xy_screen_glyph(screen,55,20,make_glyph('H',15,0));
+    set_xy_screen_glyph(screen,56,20,make_glyph('i',15,0));
+    set_xy_screen_glyph(screen,57,20,make_glyph('g',15,0));
+    set_xy_screen_glyph(screen,58,20,make_glyph('h',15,0));
+    set_xy_screen_glyph(screen,60,20,make_glyph('S',15,0));
+    set_xy_screen_glyph(screen,61,20,make_glyph('c',15,0));
+    set_xy_screen_glyph(screen,62,20,make_glyph('o',15,0));
+    set_xy_screen_glyph(screen,63,20,make_glyph('r',15,0));
+    set_xy_screen_glyph(screen,64,20,make_glyph('e',15,0));
+    set_xy_screen_glyph(screen,65,20,make_glyph('s',15,0));
+    set_xy_screen_glyph(screen,13,21,make_glyph('[',15,0));
+    set_xy_screen_glyph(screen,14,21,make_glyph('b',15,0));
+    set_xy_screen_glyph(screen,15,21,make_glyph(']',15,0));
+    set_xy_screen_glyph(screen,17,21,make_glyph('-',15,0));
+    set_xy_screen_glyph(screen,19,21,make_glyph('L',15,0));
+    set_xy_screen_glyph(screen,20,21,make_glyph('o',15,0));
+    set_xy_screen_glyph(screen,21,21,make_glyph('a',15,0));
+    set_xy_screen_glyph(screen,22,21,make_glyph('d',15,0));
+    set_xy_screen_glyph(screen,24,21,make_glyph('A',15,0));
+    set_xy_screen_glyph(screen,25,21,make_glyph('d',15,0));
+    set_xy_screen_glyph(screen,26,21,make_glyph('v',15,0));
+    set_xy_screen_glyph(screen,27,21,make_glyph('e',15,0));
+    set_xy_screen_glyph(screen,28,21,make_glyph('n',15,0));
+    set_xy_screen_glyph(screen,29,21,make_glyph('t',15,0));
+    set_xy_screen_glyph(screen,30,21,make_glyph('u',15,0));
+    set_xy_screen_glyph(screen,31,21,make_glyph('r',15,0));
+    set_xy_screen_glyph(screen,32,21,make_glyph('e',15,0));
+    set_xy_screen_glyph(screen,51,21,make_glyph('[',15,0));
+    set_xy_screen_glyph(screen,52,21,make_glyph('d',15,0));
+    set_xy_screen_glyph(screen,53,21,make_glyph(']',15,0));
+    set_xy_screen_glyph(screen,55,21,make_glyph('Q',15,0));
+    set_xy_screen_glyph(screen,56,21,make_glyph('u',15,0));
+    set_xy_screen_glyph(screen,57,21,make_glyph('i',15,0));
+    set_xy_screen_glyph(screen,58,21,make_glyph('t',15,0));
+    set_xy_screen_glyph(screen,25,23,make_glyph('-',7,0));
+    set_xy_screen_glyph(screen,26,23,make_glyph('-',7,0));
+    set_xy_screen_glyph(screen,28,23,make_glyph('(',7,0));
+    set_xy_screen_glyph(screen,29,23,make_glyph('c',7,0));
+    set_xy_screen_glyph(screen,30,23,make_glyph(')',7,0));
+    set_xy_screen_glyph(screen,32,23,make_glyph('Z',7,0));
+    set_xy_screen_glyph(screen,33,23,make_glyph('a',7,0));
+    set_xy_screen_glyph(screen,34,23,make_glyph('c',7,0));
+    set_xy_screen_glyph(screen,35,23,make_glyph('h',7,0));
+    set_xy_screen_glyph(screen,37,23,make_glyph('W',7,0));
+    set_xy_screen_glyph(screen,38,23,make_glyph('i',7,0));
+    set_xy_screen_glyph(screen,39,23,make_glyph('l',7,0));
+    set_xy_screen_glyph(screen,40,23,make_glyph('d',7,0));
+    set_xy_screen_glyph(screen,41,23,make_glyph('e',7,0));
+    set_xy_screen_glyph(screen,42,23,make_glyph('r',7,0));
+    set_xy_screen_glyph(screen,44,23,make_glyph('2',7,0));
+    set_xy_screen_glyph(screen,45,23,make_glyph('0',7,0));
+    set_xy_screen_glyph(screen,46,23,make_glyph('2',7,0));
+    set_xy_screen_glyph(screen,47,23,make_glyph('2',7,0));
+    set_xy_screen_glyph(screen,48,23,make_glyph('-',7,0));
+    set_xy_screen_glyph(screen,49,23,make_glyph('2',7,0));
+    set_xy_screen_glyph(screen,50,23,make_glyph('0',7,0));
+    set_xy_screen_glyph(screen,51,23,make_glyph('2',7,0));
+    set_xy_screen_glyph(screen,52,23,make_glyph('3',7,0));
+    set_xy_screen_glyph(screen,54,23,make_glyph('-',7,0));
+    set_xy_screen_glyph(screen,55,23,make_glyph('-',7,0));
 
 }

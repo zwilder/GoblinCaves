@@ -42,6 +42,19 @@ Glyph* create_screen(void) {
     return newScreen;
 }
 
+Glyph* create_full_screen(void) {
+    int w,h,i;
+    w = SCREEN_WIDTH;
+    h = SCREEN_HEIGHT + GUI_HEIGHT + MSG_HEIGHT;
+    Glyph *newScreen = malloc(w * h * sizeof(Glyph));
+    for(i = 0; i < (w * h); i++) {
+        newScreen[i].ch = ' ';
+        newScreen[i].fg = WHITE;
+        newScreen[i].bg = BLACK;
+    }
+    return newScreen;
+}
+
 int get_screen_index(int x, int y) {
     /* The screen array is one dimensional, this takes a coordinate pair and
      * returns the index of the point in the screen array. This function
@@ -324,6 +337,25 @@ void set_screen_glyph_at(Glyph *screen, Vec2i pos, Glyph glyph) {
 void set_xy_screen_glyph(Glyph *screen, int x, int y, Glyph glyph) {
     /* Same as above, except instead of a vector an x/y pos is passed in. */
     set_screen_glyph_at(screen, make_vec(x,y), glyph);
+}
+
+void set_screen_str_at(Glyph *screen, Vec2i pos, char *str, Color fg, Color bg) {
+    int length = strlen(str);
+    char lenstr[280];
+    write_log("set_screen_str_at(...) called!");
+    write_log(str);
+    kr_itoa(length, lenstr);
+    write_log(lenstr);
+    log_vec(pos); 
+    log_vec(make_vec(fg,bg));
+    int i = 0;
+    for(i = 0; i < length; i++) {
+        set_screen_glyph_at(screen, pos, make_glyph(str[i],fg,bg));
+    }
+}
+
+void set_xy_screen_str(Glyph *screen, int x, int y, char *str, Color fg, Color bg) {
+    set_screen_str_at(screen, make_vec(x,y), str, fg, bg);
 }
 
 void clear_screen(Glyph *screen) {
