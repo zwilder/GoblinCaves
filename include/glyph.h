@@ -25,10 +25,19 @@
  ***********************/
 typedef struct {
     char ch;
-    Color fg;
-    Color bg;
+    int fg;
+    int bg;
 } Glyph;
 
-Glyph make_glyph(char ch, Color fg, Color bg);
+Glyph make_glyph(char ch, int fg, int bg);
+
+Glyph* create_screen(void);
+void set_screen_glyph_at(Glyph *screen, Vec2i pos, Glyph glyph);
+void set_xy_screen_glyph(Glyph *screen, int x, int y, Glyph glyph);
+void set_screen_str_at(Glyph *screen, Vec2i pos, char *str, int fg, int bg);
+void set_xy_screen_str(Glyph *screen, int x, int y, char *str, int fg, int bg);
+void destroy_screen(Glyph *screen);
+void clear_screen(Glyph *screen);
+int get_screen_index(int x, int y);
 
 #endif

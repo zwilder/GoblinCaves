@@ -23,19 +23,11 @@
 /******************
  * draw.c functions
  ******************/
-Glyph* create_screen(void);
-Glyph* create_full_screen(void);
-Vec2i get_camera(void);
 void draw_game(void);
 void draw_gui(void);
 void draw_msg(void);
 void draw_msg_log(void);
-void set_screen_glyph_at(Glyph *screen, Vec2i pos, Glyph glyph);
-void set_xy_screen_glyph(Glyph *screen, int x, int y, Glyph glyph);
-void set_screen_str_at(Glyph *screen, Vec2i pos, char *str, Color fg, Color bg);
-void set_xy_screen_str(Glyph *screen, int x, int y, char *str, Color fg, Color bg);
-void destroy_screen(Glyph *screen);
-void clear_screen(Glyph *screen);
-int get_screen_index(int x, int y);
+Vec2i get_camera(void);
+Glyph* create_full_screen(void);
 
 #endif

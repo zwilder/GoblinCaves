@@ -21,77 +21,9 @@
 
 /* SREEN HEIGHT + GUI_HEIGHT + MSG_HEIGHT should equal 24, game screen should
  * fill standard term dimensions 80x24 */
-const int SCREEN_WIDTH = 80;
-const int SCREEN_HEIGHT = 20; 
 const int GUI_HEIGHT = 2;
 const int MSG_HEIGHT = 2; 
 
-Glyph* create_screen(void) {
-    /* This function allocates memory for the array of glyphs that contain the
-     * "screen" that is drawn to, then initializes the entire screen with blank
-     * spaces (' ', white text/black background).
-     */ 
-    Glyph *newScreen = malloc(SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Glyph));
-    int i;
-    for(i = 0; i < (SCREEN_WIDTH * SCREEN_HEIGHT); i++) {
-        newScreen[i].ch = ' ';
-        newScreen[i].fg = WHITE;
-        newScreen[i].bg = BLACK;
-    }
-
-    return newScreen;
-}
-
-Glyph* create_full_screen(void) {
-    int w,h,i;
-    w = SCREEN_WIDTH;
-    h = SCREEN_HEIGHT + GUI_HEIGHT + MSG_HEIGHT;
-    Glyph *newScreen = malloc(w * h * sizeof(Glyph));
-    for(i = 0; i < (w * h); i++) {
-        newScreen[i].ch = ' ';
-        newScreen[i].fg = WHITE;
-        newScreen[i].bg = BLACK;
-    }
-    return newScreen;
-}
-
-int get_screen_index(int x, int y) {
-    /* The screen array is one dimensional, this takes a coordinate pair and
-     * returns the index of the point in the screen array. This function
-     * **could** be used with any one dimensional, x/y coordinate array */
-    return (x + (SCREEN_WIDTH * y));
-}
-
-Vec2i get_camera(void) {
-    /* This nifty function allows the map where the player is to be bigger than
-     * the screen. It finds and returns a "camera" which is just a set of
-     * x,y coordinates that centers the player on the screen.
-     */
-    Vec2i camera;
-
-    /* Get the camera */
-    camera.x = g_player->pos.x - (SCREEN_WIDTH / 2);
-    camera.y = g_player->pos.y - (SCREEN_HEIGHT / 2);
-
-    /* Adjust the camera if the player is too close to the edge */
-    if(g_player->pos.x < (SCREEN_WIDTH / 2)) {
-        camera.x = 0;
-    } else if (g_player->pos.x >= MAP_WIDTH - (SCREEN_WIDTH / 2)) {
-        camera.x = 1 + MAP_WIDTH - SCREEN_WIDTH;
-    } else {
-        camera.x = g_player->pos.x - (SCREEN_WIDTH / 2);
-    }
-
-    if(g_player->pos.y < (SCREEN_HEIGHT / 2)) {
-        camera.y = 0;
-    } else if (g_player->pos.y >= MAP_HEIGHT - (SCREEN_HEIGHT / 2)) {
-        camera.y = 1 + MAP_HEIGHT - SCREEN_HEIGHT;
-    } else {
-        camera.y = g_player->pos.y - (SCREEN_HEIGHT / 2);
-    }
-
-    return camera;
-}
 void draw_game(void) {
     /* This function creates an array of glyphs (char ch, color fg, color bg)
      * representing the screen, then draws to the screen array in the following
@@ -326,55 +258,53 @@ void draw_msg_log(void) {
     curses_draw_msg(contx, i+2, "[Press any key to continue]");
 }
 
-void set_screen_glyph_at(Glyph *screen, Vec2i pos, Glyph glyph) {
-    /* Given an array of glyphs, it sets the glyph at position x,y (pos) to the
-     * glyph (glyph) passed in. Really a helper function to avoid typing this
-     * repeatedly */
-    int index = get_screen_index(pos.x,pos.y);
-    screen[index] = glyph;
-}
+Vec2i get_camera(void) {
+    /* This nifty function allows the map where the player is to be bigger than
+     * the screen. It finds and returns a "camera" which is just a set of
+     * x,y coordinates that centers the player on the screen.
+     */
+    Vec2i camera;
 
-void set_xy_screen_glyph(Glyph *screen, int x, int y, Glyph glyph) {
-    /* Same as above, except instead of a vector an x/y pos is passed in. */
-    set_screen_glyph_at(screen, make_vec(x,y), glyph);
-}
+    /* Get the camera */
+    camera.x = g_player->pos.x - (SCREEN_WIDTH / 2);
+    camera.y = g_player->pos.y - (SCREEN_HEIGHT / 2);
 
-void set_screen_str_at(Glyph *screen, Vec2i pos, char *str, Color fg, Color bg) {
-    int length = strlen(str);
-    char lenstr[280];
-    write_log("set_screen_str_at(...) called!");
-    write_log(str);
-    kr_itoa(length, lenstr);
-    write_log(lenstr);
-    log_vec(pos); 
-    log_vec(make_vec(fg,bg));
-    int i = 0;
-    for(i = 0; i < length; i++) {
-        set_screen_glyph_at(screen, pos, make_glyph(str[i],fg,bg));
+    /* Adjust the camera if the player is too close to the edge */
+    if(g_player->pos.x < (SCREEN_WIDTH / 2)) {
+        camera.x = 0;
+    } else if (g_player->pos.x >= MAP_WIDTH - (SCREEN_WIDTH / 2)) {
+        camera.x = 1 + MAP_WIDTH - SCREEN_WIDTH;
+    } else {
+        camera.x = g_player->pos.x - (SCREEN_WIDTH / 2);
     }
-}
 
-void set_xy_screen_str(Glyph *screen, int x, int y, char *str, Color fg, Color bg) {
-    set_screen_str_at(screen, make_vec(x,y), str, fg, bg);
-}
-
-void clear_screen(Glyph *screen) {
-    /* Clears an array of glyphs by setting every glyph in the array to a
-     * space (' ') with a black background */
-    int x, y, index;
-    for (x = 0; x < SCREEN_WIDTH; x++) {
-        for(y = 0; y < SCREEN_HEIGHT; y++) {
-            index = get_screen_index(x,y);
-            screen[index].ch = ' ';
-            screen[index].fg = WHITE;
-            screen[index].bg = BLACK;
-        }
+    if(g_player->pos.y < (SCREEN_HEIGHT / 2)) {
+        camera.y = 0;
+    } else if (g_player->pos.y >= MAP_HEIGHT - (SCREEN_HEIGHT / 2)) {
+        camera.y = 1 + MAP_HEIGHT - SCREEN_HEIGHT;
+    } else {
+        camera.y = g_player->pos.y - (SCREEN_HEIGHT / 2);
     }
+
+    return camera;
 }
 
-void destroy_screen(Glyph *screen) {
-    /* If an array of glyphs exists, free the memory. */
-    if(NULL != screen) {
-        free(screen);
+Glyph* create_full_screen(void) {
+    /* This function allocates memory for the array of glyphs that contain the
+     * "screen" that is drawn to, then initializes the entire screen with blank
+     * spaces (' ', white text/black background). It's slightly different than
+     * create_screen(...) in glyph.c in that the Glyph* it returns includes the
+     * extra space taken up by the GUI bars at the top and bottom of the game
+     * screen. This is useful for the title screen, help screen, etc. 
+     */ 
+    int w,h,i;
+    w = SCREEN_WIDTH;
+    h = SCREEN_HEIGHT + GUI_HEIGHT + MSG_HEIGHT;
+    Glyph *newScreen = malloc(w * h * sizeof(Glyph));
+    for(i = 0; i < (w * h); i++) {
+        newScreen[i].ch = ' ';
+        newScreen[i].fg = WHITE;
+        newScreen[i].bg = BLACK;
     }
+    return newScreen;
 }

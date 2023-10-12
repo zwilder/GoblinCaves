@@ -30,8 +30,8 @@ extern MList *g_mlist; /* Reference to monster list mlist.c */
 
 extern StateFlags g_gamestate; /* Simple int state flag game_engine.c */
 
-extern const int SCREEN_WIDTH; /* draw.c */
-extern const int SCREEN_HEIGHT; /* draw.c */
+extern const int SCREEN_WIDTH; /* glyph.c */
+extern const int SCREEN_HEIGHT; /* glyph.c */
 extern const int GUI_HEIGHT; /* draw.c */
 extern const int MSG_HEIGHT; /* draw.c */
 extern const int MAP_WIDTH; /* map.c */

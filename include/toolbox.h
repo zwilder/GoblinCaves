@@ -36,5 +36,6 @@
 #include <vec2i.h> /* Integer pair container and lists */
 #include <rect.h> /* Rectangle container and list */
 #include <slist.h> /* String list */
+#include <glyph.h> /* Character/color container and screen functions */
 
 #endif //TOOLBOX_H

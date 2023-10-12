@@ -34,7 +34,6 @@
  ***********************/
 #include <toolbox.h>
 #include <color.h>
-#include <glyph.h>
 #include <flags.h>
 #include <msg.h>
 
