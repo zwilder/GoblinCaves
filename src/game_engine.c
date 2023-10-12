@@ -57,7 +57,7 @@ void engine_draw(void) {
             draw_msg();
             break;
         case ST_MENU:
-            draw_menu();
+            draw_art(ART_TITLE);
             break;
         case ST_HELP:
             draw_help();

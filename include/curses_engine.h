@@ -31,7 +31,6 @@ void curses_draw_titlebar(char *title, Color fg, Color bg);
 void msg_box(char* msg, Color fg, Color bg);
 void error_msg_box(char* msg, Color fg, Color bg);
 bool yn_prompt(char* msg, Color fg, Color bg);
-void draw_menu(void);
 void draw_help(void);
 void draw_nwpl(void);
 void curses_close(void);

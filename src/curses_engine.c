@@ -208,64 +208,6 @@ void error_msg_box(char* msg, Color fg, Color bg) {
     refresh();
     getch();
 }
-void draw_menu(void) {
-    /* This function draws my super fantastic text art main menu splash screen
-     * in the appropriate colors. I'm relatively positive there is a better,
-     * cleaner way to do this but this works well enough. */
-    /*
-    int artWidth = 54;
-    int artHeight = 23;
-    int xoff = (COLS / 2) - (artWidth / 2);
-    int yoff = (LINES / 2) - (artHeight / 2);
-    setcolor(BROWN,BLACK);
-    mvprintw(yoff,xoff,"  __\\   /__\\|_____|   /_____\\  /\\/_________\\   /______");
-    mvprintw(yoff + 1, xoff,"     \\ /          |  /       \\/             \\ /");
-    unsetcolor(BROWN,BLACK);
-    setcolor(BRIGHT_GREEN,BLACK);
-    mvprintw(yoff + 2, xoff," _______  _______ |/_____   _       ________\\/");
-    mvprintw(yoff + 3, xoff,"(  ____ \\(  ___  )(  ___ \\ ( \\      \\__   __/( (    /|");
-    mvprintw(yoff + 4, xoff,"| (    \\/| (   ) || (   ) )| (         ) (   |  \\  ( |");
-    mvprintw(yoff + 5, xoff,"| |      | |   | || (__/ / | |         | |   |   \\ | |");
-    mvprintw(yoff + 6, xoff,"| | ____ | |   | ||  __ (  | |         | |   | (\\ \\) |");
-    mvprintw(yoff + 7, xoff,"| | \\_  )| |   | || (  \\ \\ | |         | |   | | \\   |");
-    mvprintw(yoff + 8, xoff,"| (___) || (___) || )___) )| (____/\\___) (___| )  \\  |");
-    mvprintw(yoff + 9, xoff,"(_______)(_______)|/ \\___/ (_______/\\_______/|/    )_)");
-    mvprintw(yoff + 10, xoff,"    (  ____ \\(  ___  )|\\     /|(  ____ \\(  ____ \\");
-    mvprintw(yoff + 11, xoff,"    | (    \\/| (   ) || )   ( || (    \\/| (    \\/");    
-    mvprintw(yoff + 12, xoff,"    | |      | (___) || |   | || (__    | (_____");
-    mvprintw(yoff + 13, xoff,"    | |      |  ___  |( (   ) )|  __)   (_____  )");
-    mvprintw(yoff + 14, xoff,"    | |      | (   ) | \\ \\_/ / | (            ) |");
-    mvprintw(yoff + 15, xoff,"    | (____/\\| )   ( |  \\   /  | (____/\\/\\____) |");
-    mvprintw(yoff + 16, xoff,"    (_______/|/ /|  \\|   \\_/   (_______/\\_______) /\\");
-    unsetcolor(BRIGHT_GREEN,BLACK);
-    setcolor(BROWN,BLACK);
-    mvprintw(yoff + 17, xoff,"    /\\         / |      /\\               /\\      /  \\");
-    mvprintw(yoff + 18, xoff,"___/  \\___/ \\_/  |_____/  \\|\\______/\\___/  \\____/    \\");
-    unsetcolor(BROWN,BLACK);
-    setcolor(BRIGHT_WHITE,BLACK);
-    mvprintw(yoff + 19, xoff,"[a] - New Adventure                   [c] - High Scores");
-    mvprintw(yoff + 20, xoff,"[b] - Load Adventure                  [d] - Quit");
-    unsetcolor(BRIGHT_WHITE,BLACK);
-    setcolor(WHITE,BLACK);
-    mvprintw(yoff + 22, xoff,"            -- ©Zach Wilder 2022-2023 --");
-    unsetcolor(WHITE,BLACK);
-    */
-
-    /* Fix characters that should be brown not bright green */
-    /*
-    setcolor(BROWN,BLACK);
-    mvprintw(yoff + 2, xoff + 18, "|/");
-    mvprintw(yoff + 2, xoff + 44, "\\/");
-    mvprintw(yoff + 16, xoff + 16, "/|");
-    mvprintw(yoff + 16, xoff + 50, "/\\");
-    unsetcolor(BROWN,BLACK);
-    */
-    /* I replaced the above curses calls with the following super excessive 600
-     * line function that hand places each individual part of the art (see
-     * art.c). It's temporary, and the ideas on how to improve it are in the top
-     * of that file. */
-    draw_art(ART_TITLE);
-}
 
 void draw_help(void) {
     /* Displays the "help" screen. Like the main menu function above,
