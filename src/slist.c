@@ -209,6 +209,8 @@ SList* split_string(char *s, char delim) {
             letters++;
         }
     }
-    tmp->data[letters] = '\0';
+    if(tmp) {
+        tmp->data[letters] = '\0';
+    }
     return result;
 }
