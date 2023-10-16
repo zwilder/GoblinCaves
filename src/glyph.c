@@ -90,6 +90,7 @@ void set_screen_str_at(Glyph *screen, Vec2i pos, char *str, int fg, int bg) {
     int i = 0;
     for(i = 0; i < length; i++) {
         set_screen_glyph_at(screen, pos, make_glyph(str[i],fg,bg));
+        pos.x++;
     }
 }
 

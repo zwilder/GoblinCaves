@@ -24,10 +24,17 @@ typedef enum {
     ART_NONE        = 0,
     ART_TOMBSTONE,
     ART_HELLO_WORLD,
-    ART_TITLE
+    ART_TITLE,
+    ART_HELP
 } ART_TYPES;
 
 void draw_art(int art);
+void open_art(Glyph *screen, int id);
+void process_art(Glyph *screen, SList *art);
+
+int hex2d_to_int(char a, char b);
+int hexchar_to_color(char c);
+
 void draw_tombstone(Glyph *screen);
 void draw_hello_world(Glyph *screen);
 void draw_title_screen(Glyph *screen);
