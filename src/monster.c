@@ -215,7 +215,7 @@ void kill_monster(Monster *target) {
     char *msg = malloc(80 * sizeof(char));
     if(check_flag(target->flags, MF_PLAYER)) {
         snprintf(msg,80,"Everything goes dark... you die.");
-        g_gamestate = ST_GAMEOVER;
+        g_events |= EV_CHST_GAMEOVER;
     } else if (is_alive(target)) {
         snprintf(msg, 80, "The %s collapses in a bloody heap!", target->name);
     }

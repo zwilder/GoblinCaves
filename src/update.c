@@ -20,6 +20,8 @@
 #include <goblincaves.h>
 
 int update(int events) {
+    /* This code is dumb and I should probably figure out a better way to handle
+     * this */
     if(check_flag(events, EV_CHST_NWPL)) {
         g_gamestate = ST_NWPL;
         events = remove_flag(events, EV_CHST_NWPL);
@@ -43,6 +45,10 @@ int update(int events) {
     if(check_flag(events, EV_CHST_INV)) {
         g_gamestate = ST_INV;
         events = remove_flag(events, EV_CHST_INV);
+    }
+    if(check_flag(events, EV_CHST_GAMEOVER)) {
+        g_gamestate = ST_GAMEOVER;
+        events = remove_flag(events, EV_CHST_GAMEOVER);
     }
     /*
      * IDEA! What if... each update loop we only update ONE monster, then

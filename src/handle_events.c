@@ -19,13 +19,16 @@
 */
 #include <goblincaves.h>
 
+int g_events = 0;
+
 int handle_events(void) {
     MList *tmp = NULL;
-    int events = EV_NONE;
+    int events = g_events;
+    g_events = EV_NONE;
     switch(g_gamestate) {
         case ST_GAME:
             //if(check_flag(g_player->flags, MF_HAS_TURN)) {
-                events = handle_keyboard(get_input());
+                events |= handle_keyboard(get_input());
             //}
             for(tmp = g_mlist; tmp; tmp = tmp->next) {
                 if(!tmp) {
@@ -41,7 +44,7 @@ int handle_events(void) {
             }
             break;
         default:
-            events = handle_keyboard(get_input());
+            events |= handle_keyboard(get_input());
             break;
     }
     return events;

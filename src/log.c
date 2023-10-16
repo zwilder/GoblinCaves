@@ -85,6 +85,9 @@ void log_rect(Rect a) {
 }
 
 void write_memorial(void) {
+    /* This function completely ignores the "A function should do one specific
+     * thing" ethos, but it works. Create a text file "memorial" of a character,
+     * as an option when they die. It may be cool, eventually.*/
     if(!g_player) return;
     FILE *f;
     char fname[80];
@@ -97,6 +100,7 @@ void write_memorial(void) {
     Msg *msgit = NULL;
     time_t t = time(NULL);
     struct tm now = *localtime(&t);
+    MList *monsterit = NULL;
 
     /* Make a filename and open it */
     snprintf(fname,80,"RIP_%s.txt",g_player->name);
@@ -136,27 +140,62 @@ void write_memorial(void) {
     for(y = 0; y < h; y++) {
         for(x = 0; x < w; x++) {
             index = get_screen_index(x,y);
-            fputc(screen[index].ch,f);
+            if(screen[index].ch != '\0') {
+                fputc(screen[index].ch,f);
+            }
         }
         fputc('\n',f);
     }
 
-    /* Write the message log to the file - Incomplete*/
+    free(screen);
+    /* Write the message log to the file*/
     fputs("\n**********\nFinal Messages\n**********\n",f);
     msgit = g_msgloghead;
-    fputs(g_msghead->str,f);
     while(msgit) {
         fputs(msgit->str,f);
         fputs("\n",f);
         msgit = msgit->next;
     }
 
-    /* Write the map to the file, with the player and goblins - Incomplete */
+    /* Write the map to the file, with the player and goblins */
+    screen = create_full_screen();
     fputs("\n**********\nLast Level\n**********\n",f);
+    if(NULL != g_tilemap) {
+        for(y=0; y < MAP_HEIGHT; y++){
+            for(x = 0; x < MAP_WIDTH; x++){
+                index = get_screen_index(x,y);
+                screen[index].ch = g_tilemap[get_map_index(x,y)].glyph.ch;
+            }
+        }
+    }
+    monsterit = g_mlist;
+    lvl = g_mapcur->lvl;
+    i = g_player->locID;
+    while(monsterit) {
+        if(monsterit->data) {
+            if(monsterit->data->locID == i) {
+                index = get_screen_index(monsterit->data->pos.x, monsterit->data->pos.y);
+                screen[index].ch = monsterit->data->glyph.ch;
+            }
+        }
+        monsterit = monsterit->next;
+    }
+    for(y = 0; y < h; y++) {
+        for(x = 0; x < w; x++) {
+            index = get_screen_index(x,y);
+            if(screen[index].ch != '\0') {
+                fputc(screen[index].ch,f);
+            }
+        }
+        fputc('\n',f);
+    }
+    free(screen);
 
-    /* Draw a message on the screen, "Memorial written to %s",fname - Incomplete */
+    /* Draw a message on the screen, "Memorial written to %s",fname */
     snprintf(successmsg,180,"Memorial written to %s", fname);
-    curses_draw_msg(0,0,successmsg);
+    write_log(successmsg);
+    msg_box(successmsg, WHITE, GREEN);
+    get_input(); // ask for input to show the msgbox.
     /* Close the file */
     fclose(f);
 }
