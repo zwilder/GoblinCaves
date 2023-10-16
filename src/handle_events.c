@@ -66,6 +66,7 @@ int handle_keyboard(int input) {
             output = handle_keyboard_log(input);
             break;
         case ST_GAMEOVER:
+            output = handle_keyboard_gameover(input);
             break;
         default: break;
     }
@@ -111,6 +112,26 @@ int handle_keyboard_help(int input) {
     int output = EV_NONE; 
     if(input) {
         output = EV_CHST_GAME;
+    }
+    return output;
+}
+
+int handle_keyboard_gameover(int input) {
+    int output = EV_NONE;
+    if(input) {
+        switch(input) {
+            case 'q': 
+                output = EV_CHST_MENU;
+                if(g_player) {
+                    destroy_mlist_monster(&g_mlist, g_player);
+                    g_player = NULL;
+                }
+                break;
+            case 's':
+                write_memorial();
+                break;
+            default: break;
+        }
     }
     return output;
 }

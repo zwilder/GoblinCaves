@@ -29,5 +29,6 @@ void log_tilemap(Tile *tilemap, int lvl);
 void log_time(void);
 void log_vec(Vec2i a);
 void log_rect(Rect a);
+void write_memorial(void);
 
 #endif 

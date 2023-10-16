@@ -220,11 +220,15 @@ void kill_monster(Monster *target) {
         snprintf(msg, 80, "The %s collapses in a bloody heap!", target->name);
     }
     push_msg(&g_msghead, msg);
-    //push_mlist(&g_mlist, create_monster_at(target->pos, M_CORPSE));
+    if(target != g_player) {
+        destroy_mlist_monster(&g_mlist, target);
+    }
+    /*
     destroy_mlist_monster(&g_mlist, target);
     if(target == g_player) {
         g_player = NULL;
     }
+    */
     free(msg);
 }
 

@@ -27,6 +27,7 @@ void draw_game(void);
 void draw_gui(void);
 void draw_msg(void);
 void draw_msg_log(void);
+void draw_gameover(void);
 Vec2i get_camera(void);
 Glyph* create_full_screen(void);
 

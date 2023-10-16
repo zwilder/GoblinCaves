@@ -83,3 +83,80 @@ void log_rect(Rect a) {
             a.pos.x, a.pos.y, a.dim.x, a.dim.y);
     fclose(fp);
 }
+
+void write_memorial(void) {
+    if(!g_player) return;
+    FILE *f;
+    char fname[80];
+    Glyph *screen = NULL;
+    int w,h;
+    int x,y,index;
+    int lvl, xoff, i;
+    char depth[10];
+    char successmsg[180];
+    Msg *msgit = NULL;
+    time_t t = time(NULL);
+    struct tm now = *localtime(&t);
+
+    /* Make a filename and open it */
+    snprintf(fname,80,"RIP_%s.txt",g_player->name);
+    f = fopen(fname, "w+");
+    if(!f) return;
+    /* Write time to fnam */
+    fprintf(f, "Memorial written: %d-%02d-%02d %02d:%02d:%02d\n**********\n",
+            now.tm_year + 1900, now.tm_mon + 1, now.tm_mday,
+            now.tm_hour, now.tm_min, now.tm_sec);
+
+    /* Create a screen to draw the tombstone graphic on */
+    screen = create_full_screen();
+    w = SCREEN_WIDTH;
+    h = SCREEN_HEIGHT + GUI_HEIGHT + MSG_HEIGHT;
+    open_art(screen, ART_TOMBSTONE);
+    xoff = strlen(g_player->name) / 2;
+    i = 0;
+    y = 11;
+    for(x = 28 - xoff; x <= 28 + xoff; x++) {
+        index = get_screen_index(x,y);
+        if(g_player->name[i] == '\0') break;
+        screen[index].ch = g_player->name[i];
+        i++;
+    }
+    lvl = (g_mapcur->lvl + 1) * 10;
+    snprintf(depth,10,"%dft",lvl);
+    i = 0;
+    y = 13;
+    for(x = 28; x <= 28 + strlen(depth); x++) {
+        if(depth[i] == '\0') break;
+        index = get_screen_index(x,y);
+        screen[index].ch = depth[i];
+        i++;
+    }
+
+    /* Write the tombstone to the file */
+    for(y = 0; y < h; y++) {
+        for(x = 0; x < w; x++) {
+            index = get_screen_index(x,y);
+            fputc(screen[index].ch,f);
+        }
+        fputc('\n',f);
+    }
+
+    /* Write the message log to the file - Incomplete*/
+    fputs("\n**********\nFinal Messages\n**********\n",f);
+    msgit = g_msgloghead;
+    fputs(g_msghead->str,f);
+    while(msgit) {
+        fputs(msgit->str,f);
+        fputs("\n",f);
+        msgit = msgit->next;
+    }
+
+    /* Write the map to the file, with the player and goblins - Incomplete */
+    fputs("\n**********\nLast Level\n**********\n",f);
+
+    /* Draw a message on the screen, "Memorial written to %s",fname - Incomplete */
+    snprintf(successmsg,180,"Memorial written to %s", fname);
+    curses_draw_msg(0,0,successmsg);
+    /* Close the file */
+    fclose(f);
+}

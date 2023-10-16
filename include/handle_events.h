@@ -27,6 +27,7 @@ int handle_events(void);
 int handle_keyboard(int input);
 int handle_keyboard_menu(int input);
 int handle_keyboard_help(int input);
+int handle_keyboard_gameover(int input);
 int handle_keyboard_game(int input);
 int handle_keyboard_newpl(int input);
 int handle_keyboard_log(int input);

@@ -209,53 +209,6 @@ void error_msg_box(char* msg, Color fg, Color bg) {
     getch();
 }
 
-void draw_help(void) {
-    /* Displays the "help" screen. Like the main menu function above,
-     * there is probably a better, cleaner way to do this...
-     * But this works for now */
-    /*
-    int artWidth = 80;
-    int artHeight = 24;
-    int xoff = (COLS / 2) - (artWidth / 2);
-    int yoff = (LINES / 2) - (artHeight / 2);
-    setcolor(BLACK,WHITE);
-    mvprintw(yoff,xoff,"                                                                               ");
-    mvprintw(yoff + 1,xoff,"                                   - Help -                                    ");
-    mvprintw(yoff + 2,xoff,"                                                                               ");
-    unsetcolor(BLACK,WHITE);
-    setcolor(WHITE,BLACK);
-    mvprintw(yoff + 4,xoff,"q : Quit                        ? : Show help screen");
-    mvprintw(yoff + 5,xoff,"o : Open                        L : Show message log");
-    mvprintw(yoff + 6,xoff,"c : Close");
-    mvprintw(yoff + 7,xoff,"< : Move up stairs");
-    mvprintw(yoff + 8,xoff,"> : move down stairs");
-
-    mvprintw(yoff + 10,xoff,"y k u");
-    mvprintw(yoff + 11,xoff," \\|/");
-    mvprintw(yoff + 12,xoff,"h-.-l    : Movement, vi keys");
-    mvprintw(yoff + 13,xoff," /|\\");
-    mvprintw(yoff + 14,xoff,"b j n");
-
-    mvprintw(yoff + 16,xoff,"   ^");
-    mvprintw(yoff + 17,xoff,"<- v ->  : Movement, arrow keys");
-    mvprintw(yoff + 22,xoff,"                           - Press any key to exit -                            ");
-    unsetcolor(WHITE,BLACK);
-    */
-    //draw_art(ART_HELLO_WORLD);
-    draw_art(ART_TOMBSTONE);
-    
-    int lvl = (g_mapcur->lvl + 1) * 10;
-    // Player name at 18,11 - 38-11
-    // Level at 28,13
-    int xoff = 28 - (strlen(g_player->name) / 2);
-    char *depth = malloc(10 * sizeof(char));
-    snprintf(depth,40, "%dft", lvl);
-    curses_draw_msg(xoff,11,g_player->name);
-    curses_draw_msg(28,13,depth);
-    free(depth);
-    
-}
-
 void draw_nwpl(void) {
     /* This function displays the "New player" screen, which currently just asks
      * for the player to enter a name for their adventurer. If they enter

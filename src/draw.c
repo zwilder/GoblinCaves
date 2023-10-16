@@ -258,6 +258,20 @@ void draw_msg_log(void) {
     curses_draw_msg(contx, i+2, "[Press any key to continue]");
 }
 
+void draw_gameover(void) {
+    int lvl = (g_mapcur->lvl + 1) * 10;
+    // Player name at 18,11 - 38-11
+    // Level at 28,13
+    int xoff = 28 - (strlen(g_player->name) / 2);
+    char *depth = malloc(10 * sizeof(char));
+    snprintf(depth,40, "%dft", lvl);
+    curses_draw_msg(xoff,11,g_player->name);
+    curses_draw_msg(28,13,depth);
+    draw_art(ART_TOMBSTONE);
+    // Final messages need to be drawn at 52,7 - 78,22
+    free(depth);
+}
+
 Vec2i get_camera(void) {
     /* This nifty function allows the map where the player is to be bigger than
      * the screen. It finds and returns a "camera" which is just a set of
