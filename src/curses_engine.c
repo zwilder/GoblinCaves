@@ -243,17 +243,17 @@ void draw_help(void) {
     */
     //draw_art(ART_HELLO_WORLD);
     draw_art(ART_TOMBSTONE);
-    /*
+    
     int lvl = (g_mapcur->lvl + 1) * 10;
-    // Player name at 20,12 - 38-12
-    // Level at 29,14
-    int xoff = 29 - (strlen(g_player->name) / 2);
-    char *depth = malloc(40 * sizeof(char));
+    // Player name at 18,11 - 38-11
+    // Level at 28,13
+    int xoff = 28 - (strlen(g_player->name) / 2);
+    char *depth = malloc(10 * sizeof(char));
     snprintf(depth,40, "%dft", lvl);
-    curses_draw_msg(xoff,12,g_player->name);
-    curses_draw_msg(29,14,depth);
+    curses_draw_msg(xoff,11,g_player->name);
+    curses_draw_msg(28,13,depth);
     free(depth);
-    */
+    
 }
 
 void draw_nwpl(void) {
