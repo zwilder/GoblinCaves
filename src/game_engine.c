@@ -60,12 +60,7 @@ void engine_draw(void) {
         case ST_HELP: draw_art(ART_HELP); break;
         case ST_NWPL: draw_nwpl(); break;
         case ST_LOG:  draw_msg_log(); break;
-        case ST_GAMEOVER:
-            //draw_msg();
-            draw_gameover();
-            //draw_art(ART_TOMBSTONE);
-            //g_gamestate = ST_MENU;
-            break;
+        case ST_GAMEOVER: draw_gameover(); break;
         case ST_INV:
             //draw_inv();
             break;

@@ -45,6 +45,7 @@ Major Goal: Inventory management, items should be able to be:
 - Put in a container
 - Broken
 - Transformed
+- Applied
 
 Major Goal: Saving and loading
 
@@ -118,3 +119,25 @@ as possible.
 bash an enemy with such force it sends them flying in to a wall with force,
 causing further damage to them. 
 """
+
+Minor goal: Random flora to populate the caves, characteristics of the flora add
+different effects depending on use. Procgen mushrooms? Or maybe a set series of
+mushrooms with certain effects that start unidentified (ADOM potions, "Thick
+blue potion" is different from game to game). Since each mushroom can be eaten,
+thrown, applied etc (like all items, see the major goal above) there is lots of
+fun things that could be done here. What happens if you apply an inkcap to a
+scroll you found? Apply the milky fluid from a mushroom to your sword? Eat the
+spotted mushroom? Maybe the player can "forage" a tile (and only once per tile,
+it would be easy to add a "foraged" flag like "explored"), and certain tiles
+have a higher chance of producing forageable items. 
+
+Idea: Experience points are spent to upgrade skills: eg Weapon (offensive power), Armor
+(defensive power), or Luck (bonuses?). Player doesn't find new weapons in the
+game, they have one weapon with a generated name. Their base stats are based on
+the name of the weapon. Message at the beginning of the adventure: "Player
+wields the legendary battlaxe Gladys!". Type of weapon maybe is chosen
+(Battleaxe, Greatsword, Sword/Shield combo, Longbow?) at beginning of game and
+determines the skills player can use as they gain experience (replacing the idea
+of a "class). More skills in their weapon means new abilities - maybe the
+abilities gained are in a random order, so there is no guarantee that leveling
+up Gladys will get you cleave, maybe you'll get leap. 
