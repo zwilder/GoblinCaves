@@ -47,6 +47,27 @@ typedef struct {
     int vit;
     int curhp;
 } Monster;
+
+ * I'm going to start reworking the way the game handles Monster turns - which
+ * is going to require me to dismantle a lot of what I have working here
+ * temporarily. My latest idea (in my goal to have a functioning time management
+ * system) is to: 
+ * - Store all the monsters in a fat list. Monsters keep track of where they
+ *   are (locID).
+ * - Each monster has an energy pool that is added to every "tick" of the game.
+ * - When a monster has enough energy to take an action (based on the monster's
+ *   speed?) a pointer to that monster is added to an "action" list.
+ *
+ * So each update() the following should happen:
+ * - Every monster in the action list takes an action, is removed from the list, and the speed for the
+ *   action is deducted from their energy. Maybe the list is just cleared when
+ *   it reaches the end? 
+ * - Game loops through monsters, adds energy to their pool, and if their pool
+ *   is high enough for them to take an action (pool > speed) add them to the
+ *   action list. 
+ *
+ * It seems simple enough that it should work? I'll try a simplified version in
+ * scratch_turns.c 
  *****/  
 
 Monster* g_player;

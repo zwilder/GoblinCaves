@@ -17,26 +17,32 @@
 * You should have received a copy of the GNU General Public License
 * along with Toolbox.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TOOLBOX_H
-#define TOOLBOX_H
 
-/*****
- * System includes
- *****/
-#include <stdio.h>
-#include <stdlib.h> 
-#include <stdbool.h>
-#include <limits.h>
-#include <string.h>
+#ifndef LLIST_H
+#define LLIST_H
 
-/*****
- * Toolbox
- *****/
-#include <mt19937.h> /* Random number generator */
-#include <vec2i.h> /* Integer pair container and lists */
-#include <rect.h> /* Rectangle container and list */
-#include <slist.h> /* String list */
-#include <glyph.h> /* Character/color container and screen functions */
-#include <llist.h> /* Fancy generic linked list, will probably replace above lists */
+typedef void(*CleanupFunc)(void *);
+typedef struct Node Node;
+struct Node {
+    void *data;
+    Node *next;
+    Node *prev;
+};
 
-#endif //TOOLBOX_H
+typedef struct LList LList;
+struct LList {
+    Node *head;
+    Node *tail;
+    int datasize;
+    CleanupFunc cleanupfunc;
+};
+
+Node* create_node(void *data, int size); 
+void add_node_llist(LList *list, void *data);
+Node* pop_llist(LList *list);
+LList* create_llist(int datasize, CleanupFunc cleanup); 
+void destroy_node(CleanupFunc cleanup, void *data);
+void destroy_llist(LList *list);
+int count_llist(LList *list);
+
+#endif //LLIST_H
