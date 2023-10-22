@@ -38,7 +38,7 @@ Node* create_node(void *data, int size) {
     }
     newnode->data = data;
     newnode->next = NULL;
-    newnode->prev = NULL;
+    newnode->prev = NULL; 
     return newnode;
 }
 
@@ -52,6 +52,7 @@ void add_node_llist(LList *list, void *data) {
         list->tail = newnode;
     }
     newnode->next = list->head;
+    list->head->prev = newnode;
     list->head = newnode;
 }
 
@@ -61,6 +62,7 @@ Node* pop_llist(LList *list) {
     Node *result = list->head;
     if(result) {
         list->head = list->head->next;
+        list->head->prev = NULL;
     }
     if(!list->head) list->tail = NULL; // No head, no tail
     return result;
