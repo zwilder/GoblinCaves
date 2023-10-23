@@ -19,7 +19,144 @@
 */
 #include <goblincaves.h>
 
+/* Newest attempt */
 int update(int events) {
+    MList *mlistit = g_mlist;
+    bool playerbreak = false;
+    
+    switch(check_event(events)) {
+        case EV_CHST_NWPL: g_gamestate = ST_NWPL; break;
+        case EV_CHST_GAME: g_gamestate = ST_GAME; break;
+        case EV_CHST_MENU: g_gamestate = ST_MENU; break;
+        case EV_CHST_HELP: g_gamestate = ST_HELP; break;
+        case EV_CHST_LOG: g_gamestate = ST_LOG; break;
+        case EV_CHST_INV: g_gamestate = ST_INV; break;
+        case EV_CHST_GAMEOVER: g_gamestate = ST_GAMEOVER; break;
+    }
+    events = remove_flag(events, check_event(events));
+    /*
+    if(check_flag(events, EV_CHST_NWPL)) {
+        g_gamestate = ST_NWPL;
+        events = remove_flag(events, EV_CHST_NWPL);
+    }
+    if(check_flag(events, EV_CHST_GAME)) {
+        g_gamestate = ST_GAME;
+        events = remove_flag(events, EV_CHST_GAME);
+    }
+    if(check_flag(events, EV_CHST_MENU)) {
+        g_gamestate = ST_MENU;
+        events = remove_flag(events, EV_CHST_MENU);
+    }
+    if(check_flag(events, EV_CHST_HELP)) {
+        g_gamestate = ST_HELP;
+        events = remove_flag(events, EV_CHST_HELP);
+    }
+    if(check_flag(events, EV_CHST_LOG)) {
+        g_gamestate = ST_LOG;
+        events = remove_flag(events, EV_CHST_LOG);
+    }
+    if(check_flag(events, EV_CHST_INV)) {
+        g_gamestate = ST_INV;
+        events = remove_flag(events, EV_CHST_INV);
+    }
+    if(check_flag(events, EV_CHST_GAMEOVER)) {
+        g_gamestate = ST_GAMEOVER;
+        events = remove_flag(events, EV_CHST_GAMEOVER);
+    }
+    */
+    if(g_gamestate == ST_GAME) {
+        while(!playerbreak) {
+            /* Need to keep looping through the mlist until the player can take
+             * their turn */
+            if(!check_flag(g_player->flags, MF_ALIVE)) playerbreak = true;
+            if(mlistit->data == g_player) {
+                if(can_take_turn(g_player)) {
+                    update_player();
+                    playerbreak = true;
+                } else {
+                    grant_energy(g_player);
+                }
+            } else {
+                if(can_take_turn(mlistit->data)) {
+                    take_turn(mlistit->data);
+                    update_monster(mlistit->data);
+                } else {
+                    grant_energy(mlistit->data);
+                }
+            }
+            mlistit = mlistit->next;
+            if(!mlistit) mlistit = g_mlist;
+        }
+    }
+    return events;
+}
+
+int check_event(int events) {
+    int result = EV_NONE;
+    check_flag(events, EV_CHST_NWPL) ? result = EV_CHST_NWPL : result;
+    check_flag(events, EV_CHST_GAME) ? result = EV_CHST_GAME: result;
+    check_flag(events, EV_CHST_MENU) ? result = EV_CHST_MENU: result;
+    check_flag(events, EV_CHST_HELP) ? result = EV_CHST_HELP: result;
+    check_flag(events, EV_CHST_LOG) ? result = EV_CHST_LOG: result;
+    check_flag(events, EV_CHST_INV) ? result = EV_CHST_INV: result;
+    check_flag(events, EV_CHST_GAMEOVER) ? result = EV_CHST_GAMEOVER: result;
+    return result;
+}
+
+void grant_energy(Monster *monster) {
+    char *msg = malloc(sizeof(char) * 80);
+    monster->energy += 25;
+    //snprintf(msg, 80, "%s gains energy, %d", monster->name, monster->energy);
+    //write_log(msg);
+    free(msg);
+}
+
+void update_monster(Monster *monster) {
+    char *msg = malloc(sizeof(char) * 80);
+    Monster *target = NULL;
+    /* Move Flag */
+    if(check_flag(monster->flags, MF_MOVE)) {
+        target = monster_at_pos(g_mlist, monster->dpos,g_mapcur->lvl);
+        if(target == g_player) {
+            /*Moving into a target*/
+            melee_combat(monster, target);
+        } else if(is_cdoor(monster->dpos.x,monster->dpos.y)) {
+            /*Moving into a closed door, open it*/
+            place_tile(monster->dpos, TILE_ODOOR);
+            update_fov();
+            snprintf(msg,80,"The %s opens the door!", monster->name);
+            push_msg(&g_msghead, msg);
+        } else {
+            /*Moving into an open space*/
+            monster->pos = monster->dpos;
+        }
+        monster->flags = remove_flag(monster->flags, MF_MOVE);
+    }
+    /* Open/Close door flags */
+    if(check_flag(monster->flags, MF_OPENDOOR)) {
+        if(is_cdoor(monster->dpos.x,monster->dpos.y)) {
+            place_tile(monster->dpos, TILE_ODOOR);
+        }
+        monster->flags = remove_flag(monster->flags, MF_OPENDOOR);
+    }
+    if(check_flag(monster->flags, MF_CLOSEDOOR)) {
+        if(is_odoor(monster->dpos.x,monster->dpos.y)) {
+            place_tile(monster->dpos, TILE_CDOOR);
+        }
+        monster->flags = remove_flag(monster->flags, MF_CLOSEDOOR);
+    }
+
+    /* End turn */
+    monster->energy -= monster->spd;
+    //snprintf(msg, 80, "%s updated!", monster->name);
+    //write_log(msg);
+ 
+    free(msg);
+}
+
+
+/* Old stuff */
+int old_update(int events) {
     /* This code is dumb and I should probably figure out a better way to handle
      * this */
     if(check_flag(events, EV_CHST_NWPL)) {
@@ -75,6 +212,7 @@ int update(int events) {
     return events;
 }
 
+/*
 void update_energy(void) {
     MList *tmp = NULL;
     char *msg = malloc(80 * sizeof(char));
@@ -102,8 +240,10 @@ void update_energy(void) {
     }
     free(msg);
 }
+*/
 
 void update_monsters(void) {
+    /* Update monsters should only do things added by flags in take_turn */
     MList *tmp = NULL;
     Monster *target = NULL;
     Monster *monster = NULL;
@@ -113,7 +253,10 @@ void update_monsters(void) {
             continue; //Skip player
         } 
         monster = tmp->data;
+        /* Check if monster can take it's turn - if yes do the thing, if no give
+         * energy and continue to next monster */
         /* If monster moved, update it's position here */
+        if(!check_flag(monster->flags, MF_HAS_TURN)) continue;
         if(check_flag(monster->flags, MF_MOVE)) {
             target = monster_at_pos(g_mlist, monster->dpos,g_mapcur->lvl);
             /*
@@ -151,18 +294,21 @@ void update_monsters(void) {
         }
 
         /* End turn */
-        //monster->flags = remove_flag(monster->flags, MF_HAS_TURN);
+        monster->flags = remove_flag(monster->flags, MF_HAS_TURN);
         //monster->energy -= monster->spd;
+        snprintf(msg, 80, "%s updated!", monster->name);
+        write_log(msg);
     }
     free(msg);
 }
 
 void update_player(void) {
-    if(!g_player) {
-        return;
-    }
+    /* Update player should only do things added by flags in take_turn */
+    if(!g_player) return;
     bool success = false;
     int pflags = g_player->flags;
+    Vec2i mpos;
+    Monster *mons = NULL;
     char *msg = malloc(80 * sizeof(char));
     if(check_flag(pflags, MF_MOVE)) {
         success = player_move();
@@ -194,11 +340,13 @@ void update_player(void) {
             change_level(-1);
         } else {
             if(mt_chance(10)) {
-                push_msg(&g_msghead, "You look up into the darkness... Hey a bat!");
                 /* Spawn bat at location lol */
-                push_mlist(&g_mlist,
-                        create_monster_at(subtract_vec(g_player->dpos,
-                                make_vec(mt_rand(-1,1),mt_rand(-1,1))), M_BAT));
+                mpos = make_vec(mt_rand(-1,1),mt_rand(-1,1));
+                mpos = subtract_vec(g_player->dpos, mpos);
+                mons = create_monster_at(mpos,M_BAT);
+                push_msg(&g_msghead, "You look up into the darkness... Hey a bat!");
+                push_mlist(&g_mlist, mons);
+                mons->flags |= MF_SEENPLAYER;
             } else if(mt_bool()) {
                 push_msg(&g_msghead, "You look up into the darkness.");
             } else {
@@ -210,13 +358,16 @@ void update_player(void) {
     }
     g_player->flags = pflags;
     if(success){
-        //g_player->energy -= g_player->spd;
+        g_player->energy -= g_player->spd;
+        //snprintf(msg, 80, "%s took their turn!", g_player->name);
         //g_player->flags = remove_flag(g_player->flags, MF_HAS_TURN);
         //snprintf(msg,80,"%s took a turn, now has %d energy.", g_player->name,
         //        g_player->energy);
-        //snprintf(msg,80,"%s took a turn.", g_player->name);
+        //snprintf(msg,80,"%s took turn! Energy %d", g_player->name, g_player->energy);
         //write_log(msg);
     }
+    //snprintf(msg,80,"%s updated! Energy %d", g_player->name, g_player->energy);
+    //write_log(msg);
     free(msg);
 }
 

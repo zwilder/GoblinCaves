@@ -24,12 +24,17 @@
  * update.c functions
  ********************/
 int update(int events);
-void update_energy(void); 
-void update_monsters(void);
+int check_event(int events);
+void update_monster(Monster *monster);
+void grant_energy(Monster *monster);
 void update_player(void);
 bool player_move(void);
 bool open_door(Vec2i pos);
 bool close_door(Vec2i pos);
 void change_level(int shift);
+
+/* Old shiz */
+void update_energy(void); 
+void update_monsters(void);
 
 #endif

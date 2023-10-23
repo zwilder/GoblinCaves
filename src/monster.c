@@ -67,7 +67,27 @@ typedef struct {
  *   action list. 
  *
  * It seems simple enough that it should work? I'll try a simplified version in
- * scratch_turns.c 
+ * scratch_turns.c. UPDATE: This 100% worked in the sample program, the
+ * important part of that progam is:
+        listit = mlist->head;
+        while(listit) {
+            // This loop is the money right here. The GC update loop should look
+            // something like this:
+            // Loop through the animation list, play animations in order
+            // (wishlist item)
+            // Loop through the monster list
+            // If the monster is on the current level then...
+            // - Can take turn? do it. Cant? gain energy
+            //
+            tmp = (Monster*)listit->data;
+            if(can_take_turn(tmp)) {
+                monster_turn(tmp);
+            } else {
+                grant_energy(tmp);
+            }
+            listit = listit->next;
+        }
+ 
  *****/  
 
 Monster* g_player;
@@ -241,6 +261,7 @@ void kill_monster(Monster *target) {
         snprintf(msg, 80, "The %s collapses in a bloody heap!", target->name);
     }
     push_msg(&g_msghead, msg);
+    target->energy = 0;
     if(target != g_player) {
         destroy_mlist_monster(&g_mlist, target);
     }
@@ -268,16 +289,12 @@ void change_state(Monster *monster, int mflagcur, int mflagnext) {
 void take_turn(Monster *monster) {
     /* Messy function that enables a Monster to take it's turn.
      *
-     * TODO: Fix take_turn()
      */
     /* Take turn should add FLAGS not actually do things! 
      * Then, the things are done when the update_monster() function is called. 
      * Should work! */
     char *msg = malloc(80 * sizeof(char));
-    //if(!check_flag(monster->flags, MF_HAS_TURN)) {
-    //    return; //Monster doesn't have turn
-    //}
-
+    monster->flags |= MF_HAS_TURN;
     if(check_flag(monster->flags, MF_SLEEP)) {
         // Monster is asleep, is player within sight? 
         if(is_explored(monster->pos.x, monster->pos.y)) {
@@ -290,9 +307,6 @@ void take_turn(Monster *monster) {
             change_state(monster, MF_SEENPLAYER, MF_EXPLORING);
         }
         monster->dpos = astar_step(monster->pos, g_player->pos, false);
-        //monster->dpos = monster->pos;
-        //monster->dpos.x -= mt_rand(-1,1);
-        //monster->dpos.y -= mt_rand(-1,1);
         if(vec_null(monster->dpos)) {
             snprintf(msg,80,"The %s howls in fury!", monster->name);
             push_msg(&g_msghead, msg);
@@ -304,11 +318,11 @@ void take_turn(Monster *monster) {
             change_state(monster, MF_EXPLORING, MF_SEENPLAYER);
         }
     }
-    //monster->flags = remove_flag(monster->flags, MF_HAS_TURN);
-    //monster->energy -= monster->spd;
-    //snprintf(msg,80,"%s took a turn, now has %d energy.", g_player->name,
-    //        g_player->energy);
-    //snprintf(msg,80,"%s took a turn.",monster->name);
-    //write_log(msg);
+    snprintf(msg,80,"%s took a turn.",monster->name);
+    write_log(msg);
     free(msg);
+}
+
+bool can_take_turn(Monster *monster) {
+    return(monster->energy >= monster->spd);
 }

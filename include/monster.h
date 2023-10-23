@@ -73,4 +73,5 @@ bool is_alive(Monster *target);
 
 void change_state(Monster *monster, int mflagcur, int mflagnext);
 void take_turn(Monster *monster); 
+bool can_take_turn(Monster *monster);
 #endif 

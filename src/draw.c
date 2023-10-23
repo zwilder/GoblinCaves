@@ -259,6 +259,7 @@ void draw_msg_log(void) {
 }
 
 void draw_gameover(void) {
+    if(!g_player) return;
     int lvl = (g_mapcur->lvl + 1) * 10;
     // Player name at 18,11 - 38-11
     // Level at 28,13

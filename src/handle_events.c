@@ -21,9 +21,10 @@
 
 int g_events = 0;
 
-int handle_events(void) {
+int old_handle_events(void) {
     MList *tmp = NULL;
     int events = g_events;
+    char *msg = malloc(sizeof(char) * 80);
     g_events = EV_NONE;
     switch(g_gamestate) {
         case ST_GAME:
@@ -35,6 +36,19 @@ int handle_events(void) {
                     break; //for loops run at least once
                 }
                 if(tmp->data == g_player) {
+                    if(can_take_turn(g_player)) {
+                        g_player->flags |= MF_HAS_TURN;
+                        while(!check_flag(events, EV_PLAYER_KP)) {
+                            events |= handle_keyboard(get_input());
+                        }
+                        g_player->energy -= g_player->spd;
+                        snprintf(msg,80,"%s took turn, energy %d", g_player->name, g_player->energy);
+                        write_log(msg);
+                    } else {
+                        g_player->energy += 25;
+                        snprintf(msg,80,"%s gains energy, %d", g_player->name, g_player->energy);
+                        write_log(msg);
+                    }
                     continue; //Skip player
                 } 
                 if(tmp->data->locID == g_mapcur->lvl) {
@@ -46,6 +60,40 @@ int handle_events(void) {
         default:
             events |= handle_keyboard(get_input());
             break;
+    }
+    free(msg);
+    return events;
+}
+
+int handle_events(void) {
+    /* The handle events/update loop isn't working as is, so I'm going to
+     * gut it and rewrite it */
+    int events = g_events;
+    g_events = EV_NONE;
+    if(g_gamestate == ST_GAME) {
+        /* This loop is the money right here. The GC update loop should look
+         * something like this:
+         * Loop through the animation list, play animations in order
+         * (wishlist item)
+         * Loop through the monster list
+         * If the monster is on the current level then...
+         * - Can take turn? do it. Cant? gain energy
+         */
+        /* Each loop:
+         * Wait for player input (handle_events)
+         * Loop through all monsters UNTIL player can take turn (update)
+         *   - if can take turn
+         *      - Call appropriate update routine
+         *      - Deduct energy if turn was successful
+         *   - if cant take turn
+         *      - Grant energy
+         * Draw the screen.
+         */
+        while(!check_flag(events, EV_PLAYER_KP)) {
+            events |= handle_keyboard(get_input());
+        }
+    } else {
+        events |= handle_keyboard(get_input());
     }
     return events;
 }
@@ -147,65 +195,77 @@ int handle_keyboard_game(int input) {
         case 'k':
             /* up */
             newPos.y--;
+            output |= EV_PLAYER_KP;
             break;
         case KEY_DOWN:
         case 'j':
             /* down */
             newPos.y++;
+            output |= EV_PLAYER_KP;
             break;
         case KEY_LEFT:
         case 'h':
             /* left */
             newPos.x--;
+            output |= EV_PLAYER_KP;
             break;
         case KEY_RIGHT:
         case 'l':
             /* right */
             newPos.x++;
+            output |= EV_PLAYER_KP;
             break;
         case 'y':
             newPos.x--;
             newPos.y--;
+            output |= EV_PLAYER_KP;
             break;
         case 'u':
             newPos.x++;
             newPos.y--;
+            output |= EV_PLAYER_KP;
             break;
         case 'b':
             newPos.x--;
             newPos.y++;
+            output |= EV_PLAYER_KP;
             break;
         case 'n':
             newPos.x++;
             newPos.y++;
+            output |= EV_PLAYER_KP;
             break;
         case 'o':
             g_player->flags = engage_flag(g_player->flags, MF_OPENDOOR);
+            output |= EV_PLAYER_KP;
             break;
         case 'c':
             g_player->flags = engage_flag(g_player->flags, MF_CLOSEDOOR);
+            output |= EV_PLAYER_KP;
             break;
         case '>':
             g_player->flags = engage_flag(g_player->flags, MF_MVDNSTAIRS);
+            output |= EV_PLAYER_KP;
             break;
         case '<':
             g_player->flags = engage_flag(g_player->flags, MF_MVUPSTAIRS);
+            output |= EV_PLAYER_KP;
             break;
         case 'L':
-            output = EV_CHST_LOG;
+            output |= EV_CHST_LOG | EV_PLAYER_KP;
             break;
         case 'S':
             if(yn_prompt("Save and quit?", BLACK, WHITE)) {
                 save_game();
-                output = EV_QUIT;
+                output |= EV_QUIT | EV_PLAYER_KP;
             }
             break;
         case '?':
-            output = EV_CHST_HELP;
+            output |= EV_CHST_HELP | EV_PLAYER_KP;
             break;
         case 'q':
             if(yn_prompt("Are you sure you want to quit?", BLACK, WHITE)) {
-                output = EV_QUIT; 
+                output |= EV_QUIT | EV_PLAYER_KP; 
             }
             break;
         default:
