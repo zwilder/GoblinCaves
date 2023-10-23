@@ -21,53 +21,7 @@
 
 int g_events = 0;
 
-int old_handle_events(void) {
-    MList *tmp = NULL;
-    int events = g_events;
-    char *msg = malloc(sizeof(char) * 80);
-    g_events = EV_NONE;
-    switch(g_gamestate) {
-        case ST_GAME:
-            //if(check_flag(g_player->flags, MF_HAS_TURN)) {
-                events |= handle_keyboard(get_input());
-            //}
-            for(tmp = g_mlist; tmp; tmp = tmp->next) {
-                if(!tmp) {
-                    break; //for loops run at least once
-                }
-                if(tmp->data == g_player) {
-                    if(can_take_turn(g_player)) {
-                        g_player->flags |= MF_HAS_TURN;
-                        while(!check_flag(events, EV_PLAYER_KP)) {
-                            events |= handle_keyboard(get_input());
-                        }
-                        g_player->energy -= g_player->spd;
-                        snprintf(msg,80,"%s took turn, energy %d", g_player->name, g_player->energy);
-                        write_log(msg);
-                    } else {
-                        g_player->energy += 25;
-                        snprintf(msg,80,"%s gains energy, %d", g_player->name, g_player->energy);
-                        write_log(msg);
-                    }
-                    continue; //Skip player
-                } 
-                if(tmp->data->locID == g_mapcur->lvl) {
-                    // ONLY monsters on current level take turns
-                    take_turn(tmp->data);
-                }
-            }
-            break;
-        default:
-            events |= handle_keyboard(get_input());
-            break;
-    }
-    free(msg);
-    return events;
-}
-
 int handle_events(void) {
-    /* The handle events/update loop isn't working as is, so I'm going to
-     * gut it and rewrite it */
     int events = g_events;
     g_events = EV_NONE;
     if(g_gamestate == ST_GAME) {

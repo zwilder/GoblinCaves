@@ -288,7 +288,6 @@ void change_state(Monster *monster, int mflagcur, int mflagnext) {
 
 void take_turn(Monster *monster) {
     /* Messy function that enables a Monster to take it's turn.
-     *
      */
     /* Take turn should add FLAGS not actually do things! 
      * Then, the things are done when the update_monster() function is called. 
@@ -318,8 +317,8 @@ void take_turn(Monster *monster) {
             change_state(monster, MF_EXPLORING, MF_SEENPLAYER);
         }
     }
-    snprintf(msg,80,"%s took a turn.",monster->name);
-    write_log(msg);
+    //snprintf(msg,80,"%s took a turn.",monster->name);
+    //write_log(msg);
     free(msg);
 }
 

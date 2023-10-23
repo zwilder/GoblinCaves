@@ -21,8 +21,6 @@
 
 /* Newest attempt */
 int update(int events) {
-    MList *mlistit = g_mlist;
-    bool playerbreak = false;
     
     switch(check_event(events)) {
         case EV_CHST_NWPL: g_gamestate = ST_NWPL; break;
@@ -34,62 +32,43 @@ int update(int events) {
         case EV_CHST_GAMEOVER: g_gamestate = ST_GAMEOVER; break;
     }
     events = remove_flag(events, check_event(events));
-    /*
-    if(check_flag(events, EV_CHST_NWPL)) {
-        g_gamestate = ST_NWPL;
-        events = remove_flag(events, EV_CHST_NWPL);
-    }
-    if(check_flag(events, EV_CHST_GAME)) {
-        g_gamestate = ST_GAME;
-        events = remove_flag(events, EV_CHST_GAME);
-    }
-    if(check_flag(events, EV_CHST_MENU)) {
-        g_gamestate = ST_MENU;
-        events = remove_flag(events, EV_CHST_MENU);
-    }
-    if(check_flag(events, EV_CHST_HELP)) {
-        g_gamestate = ST_HELP;
-        events = remove_flag(events, EV_CHST_HELP);
-    }
-    if(check_flag(events, EV_CHST_LOG)) {
-        g_gamestate = ST_LOG;
-        events = remove_flag(events, EV_CHST_LOG);
-    }
-    if(check_flag(events, EV_CHST_INV)) {
-        g_gamestate = ST_INV;
-        events = remove_flag(events, EV_CHST_INV);
-    }
-    if(check_flag(events, EV_CHST_GAMEOVER)) {
-        g_gamestate = ST_GAMEOVER;
-        events = remove_flag(events, EV_CHST_GAMEOVER);
-    }
-    */
     if(g_gamestate == ST_GAME) {
-        while(!playerbreak) {
-            /* Need to keep looping through the mlist until the player can take
-             * their turn */
-            if(!check_flag(g_player->flags, MF_ALIVE)) playerbreak = true;
-            if(mlistit->data == g_player) {
-                if(can_take_turn(g_player)) {
-                    update_player();
-                    playerbreak = true;
-                } else {
-                    grant_energy(g_player);
-                }
-            } else {
-                if(can_take_turn(mlistit->data)) {
-                    take_turn(mlistit->data);
-                    update_monster(mlistit->data);
-                } else {
-                    grant_energy(mlistit->data);
-                }
-            }
-            mlistit = mlistit->next;
-            if(!mlistit) mlistit = g_mlist;
-        }
+        events |= update_game(events);
     }
     return events;
 }
+
+int update_game(int events) {
+    MList *mlistit = g_mlist;
+    bool playerbreak = false;
+    while(!playerbreak) {
+        /* Need to keep looping through the mlist until the player can take
+         * their turn */
+        /* Any animations would go HERE. Ideally, there will be a global list of
+         * an animations, and if it's not empty, we'd pop them off the top of
+         * the list here and play them until the list is empty */
+        if(!check_flag(g_player->flags, MF_ALIVE)) playerbreak = true;
+        if(mlistit->data == g_player) {
+            if(can_take_turn(g_player)) {
+                update_player();
+                playerbreak = true;
+            } else {
+                grant_energy(g_player);
+            }
+        } else {
+            if(can_take_turn(mlistit->data)) {
+                take_turn(mlistit->data);
+                update_monster(mlistit->data);
+            } else {
+                grant_energy(mlistit->data);
+            }
+        }
+        mlistit = mlistit->next;
+        if(!mlistit) mlistit = g_mlist;
+    }
+    return events;
+}
+
 
 int check_event(int events) {
     int result = EV_NONE;
@@ -113,6 +92,7 @@ void grant_energy(Monster *monster) {
 
 void update_monster(Monster *monster) {
     char *msg = malloc(sizeof(char) * 80);
+    if(!check_flag(monster->flags, MF_ALIVE)) return;
     Monster *target = NULL;
     /* Move Flag */
     if(check_flag(monster->flags, MF_MOVE)) {
@@ -151,154 +131,6 @@ void update_monster(Monster *monster) {
     //snprintf(msg, 80, "%s updated!", monster->name);
     //write_log(msg);
  
-    free(msg);
-}
-
-
-/* Old stuff */
-int old_update(int events) {
-    /* This code is dumb and I should probably figure out a better way to handle
-     * this */
-    if(check_flag(events, EV_CHST_NWPL)) {
-        g_gamestate = ST_NWPL;
-        events = remove_flag(events, EV_CHST_NWPL);
-    }
-    if(check_flag(events, EV_CHST_GAME)) {
-        g_gamestate = ST_GAME;
-        events = remove_flag(events, EV_CHST_GAME);
-    }
-    if(check_flag(events, EV_CHST_MENU)) {
-        g_gamestate = ST_MENU;
-        events = remove_flag(events, EV_CHST_MENU);
-    }
-    if(check_flag(events, EV_CHST_HELP)) {
-        g_gamestate = ST_HELP;
-        events = remove_flag(events, EV_CHST_HELP);
-    }
-    if(check_flag(events, EV_CHST_LOG)) {
-        g_gamestate = ST_LOG;
-        events = remove_flag(events, EV_CHST_LOG);
-    }
-    if(check_flag(events, EV_CHST_INV)) {
-        g_gamestate = ST_INV;
-        events = remove_flag(events, EV_CHST_INV);
-    }
-    if(check_flag(events, EV_CHST_GAMEOVER)) {
-        g_gamestate = ST_GAMEOVER;
-        events = remove_flag(events, EV_CHST_GAMEOVER);
-    }
-    /*
-     * IDEA! What if... each update loop we only update ONE monster, then
-     * advance the turn counter to the next monster for the next loop? We could
-     * probably optimize draw if we do this by only drawing when it's the
-     * player's turn. We might need to make MList circular, so the last node's
-     * next points to the first node. Maybe improve MList by implementing it as
-     * a BST or skip list.
-     *
-     * ANOTHER IDEA: Have a PQ list of monster*, with the priority =
-     * monster->energy. check monsters when list is empty for monsters with
-     * energy > 0, grant energy to all monsters. Pop off highest priority here,
-     * take turn, update ends. */ 
-    /* Grant energy */
-    /* Take turns */
-    /* Pos = dpos */
-    if(g_gamestate == ST_GAME) {
-        //update_energy();
-        update_monsters();
-        //if(check_flag(g_player->flags, MF_HAS_TURN)) {
-            update_player();
-        //}
-    }
-    return events;
-}
-
-/*
-void update_energy(void) {
-    MList *tmp = NULL;
-    char *msg = malloc(80 * sizeof(char));
-    for(tmp = g_mlist; tmp; tmp = tmp->next) {
-        if(!tmp) {
-            break;
-        }
-        if(tmp->data->locID != g_mapcur->lvl) {
-            continue;
-        }
-        if(check_flag(tmp->data->flags, MF_ALIVE)) {
-            tmp->data->energy += 10;
-            if(tmp->data->energy > 0) {
-                tmp->data->flags = engage_flag(tmp->data->flags, MF_HAS_TURN);
-            }
-            snprintf(msg,80,"Granting energy to: %s - now has %d energy",
-                    tmp->data->name, tmp->data->energy);
-            write_log(msg);
-
-        } else {
-            tmp->data->energy = 0;
-            tmp->data->flags = remove_flag(tmp->data->flags,
-                    MF_HAS_TURN);
-        }
-    }
-    free(msg);
-}
-*/
-
-void update_monsters(void) {
-    /* Update monsters should only do things added by flags in take_turn */
-    MList *tmp = NULL;
-    Monster *target = NULL;
-    Monster *monster = NULL;
-    char *msg = malloc(80 * sizeof(char));
-    for(tmp = g_mlist; tmp; tmp = tmp->next) {
-        if(tmp->data == g_player) {
-            continue; //Skip player
-        } 
-        monster = tmp->data;
-        /* Check if monster can take it's turn - if yes do the thing, if no give
-         * energy and continue to next monster */
-        /* If monster moved, update it's position here */
-        if(!check_flag(monster->flags, MF_HAS_TURN)) continue;
-        if(check_flag(monster->flags, MF_MOVE)) {
-            target = monster_at_pos(g_mlist, monster->dpos,g_mapcur->lvl);
-            /*
-            snprintf(msg,80, "%s on DLvl %d is moving: %d,%d to %d,%d",
-                    monster->name, g_mapcur->lvl, monster->pos.x,
-                    monster->pos.y, monster->dpos.x, monster->dpos.y);
-            write_log(msg); 
-            */
-            if(target) {
-                /*Moving into a target*/
-                melee_combat(monster, target);
-            } else if(is_cdoor(monster->dpos.x,monster->dpos.y)) {
-                /*Moving into a closed door, open it*/
-                place_tile(monster->dpos, TILE_ODOOR);
-                update_fov();
-                snprintf(msg,80,"The %s opens the door!", monster->name);
-                push_msg(&g_msghead, msg);
-            } else {
-                /*Moving into an open space*/
-                monster->pos = monster->dpos;
-            }
-            monster->flags = remove_flag(monster->flags, MF_MOVE);
-        }
-        if(check_flag(monster->flags, MF_OPENDOOR)) {
-            if(is_cdoor(monster->dpos.x,monster->dpos.y)) {
-                place_tile(monster->dpos, TILE_ODOOR);
-            }
-            monster->flags = remove_flag(monster->flags, MF_OPENDOOR);
-        }
-        if(check_flag(monster->flags, MF_CLOSEDOOR)) {
-            if(is_odoor(monster->dpos.x,monster->dpos.y)) {
-                place_tile(monster->dpos, TILE_CDOOR);
-            }
-            monster->flags = remove_flag(monster->flags, MF_CLOSEDOOR);
-        }
-
-        /* End turn */
-        monster->flags = remove_flag(monster->flags, MF_HAS_TURN);
-        //monster->energy -= monster->spd;
-        snprintf(msg, 80, "%s updated!", monster->name);
-        write_log(msg);
-    }
     free(msg);
 }
 
