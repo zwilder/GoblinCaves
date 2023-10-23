@@ -35,7 +35,8 @@ typedef enum {
     TF_UP              = 1 << 7,
     TF_DN              = 1 << 8,
     TF_WATER           = 1 << 9,
-    TF_ALTAR           = 1 << 10
+    TF_ALTAR           = 1 << 10,
+    TF_BLOOD           = 1 << 11
 } TileFlags;
 
 typedef enum {

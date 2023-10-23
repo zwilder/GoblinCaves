@@ -141,3 +141,7 @@ determines the skills player can use as they gain experience (replacing the idea
 of a "class). More skills in their weapon means new abilities - maybe the
 abilities gained are in a random order, so there is no guarantee that leveling
 up Gladys will get you cleave, maybe you'll get leap. 
+
+Minor goal: All in game text (the flavor and spice) stored and loaded from an
+external file. Flavor text procedurally generated if appropriate. Advantage is
+that it can be easily added to, modified, and even translated to other languages

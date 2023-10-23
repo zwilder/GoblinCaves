@@ -150,6 +150,10 @@ int get_map_index(int x, int y) {
     return (x * MAP_HEIGHT + y);
 }
 
+int get_map_index_vec(Vec2i vec) {
+    return(get_map_index(vec.x,vec.y));
+}
+
 char get_glyphch_at(int x, int y) {
     if(!in_bounds(x,y)) {
         return ' ';
@@ -157,11 +161,30 @@ char get_glyphch_at(int x, int y) {
     return g_tilemap[get_map_index(x,y)].glyph.ch;
 }
 
+char get_glyphch_at_vec(Vec2i vec) {
+    return (get_glyphch_at(vec.x,vec.y));
+}
+
 int get_glyphbg_at(int x, int y) {
     if(!in_bounds(x,y)) {
         return BLACK;
     }
     return g_tilemap[get_map_index(x,y)].glyph.bg;
+}
+
+int get_glyphbg_at_vec(Vec2i vec) {
+    return(get_glyphbg_at(vec.x,vec.y));
+}
+
+void set_glyphbg_at(int x, int y, Color color) {
+    if(!in_bounds(x,y)) {
+        return;
+    }
+    g_tilemap[get_map_index(x,y)].glyph.bg = color;
+}
+
+void set_glyphbg_at_vec(Vec2i vec, Color color) {
+    set_glyphbg_at(vec.x,vec.y,color);
 }
 
 Glyph get_glyph_at(int x, int y) {
@@ -176,6 +199,19 @@ void set_glyphch_at(int x, int y, char ch) {
         return;
     }
     g_tilemap[get_map_index(x,y)].glyph.ch = ch;
+}
+
+void set_glyphch_at_vec(Vec2i vec, char ch) {
+    set_glyphch_at(vec.x,vec.y,ch);
+}
+
+void set_glyphfg_at(int x, int y, Color color) {
+    if(!in_bounds(x,y)) return;
+    g_tilemap[get_map_index(x,y)].glyph.fg = color;
+}
+
+void set_glyphfg_at_vec(Vec2i vec, Color color) {
+    set_glyphfg_at(vec.x,vec.y,color);
 }
 
 int get_tflags_at(int x, int y) {
@@ -199,11 +235,19 @@ void engage_tflags_at(int x, int y, int flags) {
     set_tflags_at(x,y, engage_flag(get_tflags_at(x,y), flags));
 }
 
+void engage_tflags_at_vec(Vec2i vec, int flags) {
+    engage_tflags_at(vec.x,vec.y,flags);
+}
+
 void set_tflags_at(int x, int y, int mask) {
     if(!in_bounds(x,y)) {
         return;
     }
     g_tilemap[get_map_index(x,y)].flags = mask;
+}
+
+void set_tflags_at_vec(Vec2i vec, int mask) {
+    set_tflags_at(vec.x,vec.y,mask);
 }
 
 bool check_tflags_at(int x, int y, int flags) {

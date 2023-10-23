@@ -69,6 +69,7 @@ int get_max_hp(Monster *monster);
 void set_player_pos(Vec2i pos);
 
 void melee_combat(Monster *atk, Monster *def);
+void blood_splatter(Vec2i a, Vec2i o);
 void kill_monster(Monster *target);
 bool is_alive(Monster *target);
 

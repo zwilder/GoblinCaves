@@ -229,8 +229,18 @@ bool player_move(void) {
             success = true;
         }
     }
+
+    target = corpse_at_pos(g_mlist, dpos, g_mapcur->lvl);
+    if(target) {
+        push_msg(&g_msghead, "You step over some mangled remains.");
+    }
+
     /* Check tile at location */
     dposMask = get_tflags_at(dpos.x,dpos.y);
+
+    if(check_flag(dposMask, TF_BLOOD) && mt_chance(5)) {
+        push_msg(&g_msghead, "Your boots leave tracks on the bloody ground.");
+    }
 
     if(check_flag(dposMask, TF_BLK_MV)){
         /* Tile blocks movment, is it a door? */

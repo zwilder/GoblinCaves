@@ -76,14 +76,24 @@ void destroy_tilemap(Tile *tilemap, int lvl);
  * Assistance functions
  **********************/
 int get_map_index(int x, int y);
+int get_map_index_vec(Vec2i vec);
 char get_glyphch_at(int x, int y);
+char get_glyphch_at_vec(Vec2i vec);
 Glyph get_glyph_at(int x, int y);
 void set_glyphch_at(int x, int y, char ch);
+void set_glyphch_at_vec(Vec2i vec, char ch);
+void set_glyphfg_at(int x, int y, Color color);
+void set_glyphfg_at_vec(Vec2i vec, Color color);
 int get_glyphbg_at(int x, int y);
+int get_glyphbg_at_vec(Vec2i vec);
+void set_glyphbg_at(int x, int y, Color color);
+void set_glyphbg_at_vec(Vec2i vec, Color color);
 int get_tflags_at(int x, int y);
 void set_tflags_at(int x, int y, int mask); 
+void set_tflags_at_vec(Vec2i vec, int mask);
 void remove_tflags_at(int x, int y, int flags);
 void engage_tflags_at(int x, int y, int flags);
+void engage_tflags_at_vec(Vec2i vec, int flags);
 bool check_tflags_at(int x, int y, int flags);
 bool is_visible(int x, int y);
 bool is_explored(int x, int y);

@@ -263,6 +263,7 @@ void melee_combat(Monster *atk, Monster *def) {
         def->curhp -= mt_rand(atk->str, atk->str + wpndmg);
         push_msg(&g_msghead, msg);
         if(def->curhp <= 0) {
+            blood_splatter(atk->pos, def->pos);
             kill_monster(def);
         }
     } else {
@@ -270,6 +271,77 @@ void melee_combat(Monster *atk, Monster *def) {
         push_msg(&g_msghead, msg);
     }
     free(msg);
+}
+
+void blood_splatter(Vec2i a, Vec2i o) {
+    /* Blood splatter - gives the player a sense of agency, and it looks fun.
+     *
+     * I tried this a couple of different ways, first with a direction (away
+     * from the attacker), around spots occupied by the origin but excluding
+     * spots around the attacker, and finally just around the origin. Honestly,
+     * it looks best just doing a random chance around the origin. I might add a
+     * small chance of going one spot further so it looks like things REALLY
+     * splatter sometimes.
+     */
+    Vec2iList *splatterpos = NULL;
+    Vec2iList *listit = NULL;
+    //Vec2iList *listitprev= NULL;
+    int x,y,i;
+
+    write_log("Making splatter at:");
+    for (x = -1; x <= 1; x++) {
+        for(y = -1; y <= 1; y++) {
+            // add all the origin points
+            push_Vec2i_list(&splatterpos, make_vec(o.x+x, o.y+y));
+            log_vec(splatterpos->item);
+            if(mt_chance(5)) {
+                push_Vec2i_list(&splatterpos, make_vec(o.x+x+x, o.y+y+y));
+            }
+        }
+    }
+    /*
+    listit = splatterpos;
+    while(listit) {
+        // Remove attacker pos from list
+        if(eq_vec(listit->item, a)) {
+            listitprev->next = listit->next;
+            //Destroy listit node, why have I not wrote a destroy node function
+            //for Vec2iList?! Why have I not written a remove node that contains
+            //function for Vec2iList? TODO Fix this, code here segfaults
+            free(listit);
+            break;
+        }
+        listitprev = listit;
+        listit = listit->next;
+    }
+    */
+    // For each spot in the splatterpos list, random chance of turning the
+    // foreground for that character red/bright red
+    listit = splatterpos;
+    while(listit) {
+        i = (mt_chance(33) ? BRIGHT_RED : RED);
+        if(mt_chance(40)) {
+            if(get_glyphbg_at_vec(listit->item) != BLACK) {
+                set_glyphbg_at_vec(listit->item, RED);
+                set_glyphfg_at_vec(listit->item, BRIGHT_RED);
+            } else {
+                set_glyphfg_at_vec(listit->item, i);
+            }
+            // Gore lol
+            if(mt_chance(50)) {
+                if(get_glyphch_at_vec(listit->item) == '.') {
+                    set_glyphch_at_vec(listit->item, 
+                            (mt_chance(33) ? ';' : ','));
+                }
+            }
+            //write_log("Splattered at:");
+            //log_vec(listit->item);
+            engage_tflags_at_vec(listit->item, TF_BLOOD);
+        }
+        listit = listit->next;
+    }
+
+    destroy_Vec2i_list(&splatterpos);
 }
 
 void kill_monster(Monster *target) {
@@ -281,7 +353,11 @@ void kill_monster(Monster *target) {
     } else if (is_alive(target)) {
         snprintf(msg, 80, "The %s collapses in a bloody heap!", target->name);
     }
-    push_mlist(&g_mlist, create_monster_at(target->pos, M_CORPSE));
+    if(mt_chance(33)) {
+        push_mlist(&g_mlist, create_monster_at(target->pos, M_CORPSE));
+    } else {
+        set_glyphfg_at_vec(target->pos, RED);
+    }
     push_msg(&g_msghead, msg);
     target->energy = 0;
     if(target != g_player) {
