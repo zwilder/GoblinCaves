@@ -36,6 +36,8 @@ MList* create_mlist(Monster *data);
 void push_mlist(MList **head, Monster *data);
 Monster* find_mlist(MList *head, int flags);
 Monster* monster_at_pos(MList *head, Vec2i pos, int locID);
+Monster* living_monster_at_pos(MList *head, Vec2i pos, int locID);
+Monster* corpse_at_pos(MList *head, Vec2i pos, int locID);
 int count_mlist(MList *head);
 void destroy_mlist(MList **head);
 void destroy_mlist_node(MList **head, MList *del);

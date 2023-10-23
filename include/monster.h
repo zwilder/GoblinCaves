@@ -50,6 +50,7 @@ typedef enum {
     M_GOBLIN,
     M_GARCHER,
     M_BAT,
+    M_RASCAL,
     M_GPRIEST,
     NUM_MON
 } MonsterTypes;

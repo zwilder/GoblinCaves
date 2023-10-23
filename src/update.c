@@ -47,7 +47,14 @@ int update_game(int events) {
         /* Any animations would go HERE. Ideally, there will be a global list of
          * an animations, and if it's not empty, we'd pop them off the top of
          * the list here and play them until the list is empty */
-        if(!check_flag(g_player->flags, MF_ALIVE)) playerbreak = true;
+        /* TODO: This needs to be fixed so that everyone who can update updates
+         * before they take their turn. Possibly need to add them to another
+         * list or something? */
+        draw_game();
+        if(!check_flag(g_player->flags, MF_ALIVE)) {
+            playerbreak = true;
+            continue;
+        }
         if(mlistit->data == g_player) {
             if(can_take_turn(g_player)) {
                 update_player();
@@ -91,8 +98,8 @@ void grant_energy(Monster *monster) {
 }
 
 void update_monster(Monster *monster) {
-    char *msg = malloc(sizeof(char) * 80);
     if(!check_flag(monster->flags, MF_ALIVE)) return;
+    char *msg = malloc(sizeof(char) * 80);
     Monster *target = NULL;
     /* Move Flag */
     if(check_flag(monster->flags, MF_MOVE)) {
@@ -100,8 +107,9 @@ void update_monster(Monster *monster) {
         if(target == g_player) {
             /*Moving into a target*/
             melee_combat(monster, target);
-        } else if(is_cdoor(monster->dpos.x,monster->dpos.y)) {
-            /*Moving into a closed door, open it*/
+        } else if(is_cdoor(monster->dpos.x,monster->dpos.y) &&
+                check_flag(monster->flags, MF_HUMANOID)) {
+            /*Moving into a closed door, open it if monster has thumbs*/
             place_tile(monster->dpos, TILE_ODOOR);
             update_fov();
             snprintf(msg,80,"The %s opens the door!", monster->name);
@@ -208,7 +216,7 @@ bool player_move(void) {
     int dposMask = 0;
     bool success = false;
     /* Will check for entities at location here */
-    Monster *target = monster_at_pos(g_mlist, dpos, g_mapcur->lvl);
+    Monster *target = living_monster_at_pos(g_mlist, dpos, g_mapcur->lvl);
     if(target && (target != g_player)) {
         /* Attack target - temporary */
         //destroy_mlist_monster(&g_mlist, target);

@@ -133,6 +133,44 @@ Monster* monster_at_pos(MList *head, Vec2i pos, int locID) {
     return cur->data;
 }
 
+Monster* living_monster_at_pos(MList *head, Vec2i pos, int locID) {
+    /* Returns a pointer to a LIVING Monster that exists at a position (pos) in
+     * a specific location (locID) */
+    MList *cur = head;
+    while(cur) {
+        if(cur->data->locID == locID) {
+           if(eq_vec(cur->data->pos, pos) && check_flag(cur->data->flags, MF_ALIVE)) {
+                  break;
+           }
+        }
+        cur = cur->next;
+    }
+    if(!cur) {
+        return NULL;
+    }
+    return cur->data;
+}
+
+Monster* corpse_at_pos(MList *head, Vec2i pos, int locID) {
+    /* Returns a pointer to a corpse at a pos in a specific location (locID),
+     * not useful yet.. but when the shamans finally exist it will be used to
+     * find the corpses to be made into skeletons. */
+    MList *cur = head;
+    while(cur) {
+        if(cur->data->locID == locID) {
+            if(!check_flag(cur->data->flags, MF_ALIVE) && 
+                    cur->data->glyph.ch == '%') {
+                if(eq_vec(cur->data->pos, pos)) {
+                    break;
+                }
+            }
+        }
+        cur = cur->next;
+    }
+    if(!cur) return NULL;
+    return cur->data;
+}
+
 int count_mlist(MList *head) {
     /* Counts and returns the total number of nodes in an MList */
     if(head) {

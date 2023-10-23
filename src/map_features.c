@@ -329,8 +329,17 @@ void place_monsters(Rect room) {
         pos = random_point_in_rect(room);
         if(!monster_at_pos(g_mlist, pos, g_mapcur->lvl) &&
                 !is_blocked(pos.x,pos.y)) {
-            newMonster = create_monster_at(pos, M_GOBLIN);
+            /* Eventually the monster choice will be a roll on a table or
+             * something much more betterer then this nonsense */
+            if(mt_bool()) {
+                newMonster = create_monster_at(pos, M_RASCAL);
+            } else if (mt_bool()) { 
+                newMonster = create_monster_at(pos, M_BAT);
+            } else {
+                newMonster = create_monster_at(pos, M_GOBLIN);
+            }
             //if(mt_bool()) {
+            //
                 newMonster->flags = engage_flag(newMonster->flags, MF_EXPLORING);
             //} else {
             //    newMonster->flags = engage_flag(newMonster->flags, MF_SLEEP);

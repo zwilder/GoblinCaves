@@ -76,7 +76,8 @@ typedef enum {
     MF_OPENDOOR        = 1 << 13,
     MF_CLOSEDOOR       = 1 << 14,
     MF_MVDNSTAIRS      = 1 << 15,
-    MF_MVUPSTAIRS      = 1 << 16
+    MF_MVUPSTAIRS      = 1 << 16,
+    MF_HUMANOID        = 1 << 17
 } MonsterFlags;
 
 typedef enum {

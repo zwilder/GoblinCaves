@@ -96,18 +96,39 @@ Monster monsterTable[NUM_MON] =
 {
     /* To help keep make monster creation easier, there is an enum MonsterTypes
      * (int) that can be passed in to create_monster_at(...) - that number
-     * corresponds to a listing in this table.
+     * corresponds to a listing in this table. I kinda hate it. 
      *
      * I liked how in Barbarian I could edit (and create) monsters in a .config
      * file, and will most likely to something similar in the future for Goblin
      * Caves.
      */
-    /* pos  dpos  glyph                        name            st,dx,pe,vi,sp, flags,            locID,curHP,en */
-    { {0,0},{0,0},{'%',RED,BLACK},           "Corpse"          ,0,0,0,0,0,   MF_NONE,                     0,0,0},
-    { {0,0},{0,0},{'g',GREEN,BLACK},         "Goblin"          ,2,3,2,2,100, MF_ALIVE,                    0,0,0},
-    { {0,0},{0,0},{'g',BRIGHT_GREEN,BLACK},  "Goblin Archer"   ,2,3,3,1,100, MF_ALIVE | MF_RANGED,        0,0,0},
-    { {0,0},{0,0},{'B',BROWN,BLACK},         "Bat"             ,1,3,1,2,50, MF_ALIVE | MF_SKIRMISH,       0,0,0},
-    { {0,0},{0,0},{'g',BRIGHT_MAGENTA,BLACK},"Goblin Priest"   ,2,3,4,3,100, MF_ALIVE | MF_NECRO,         0,0,0}
+    /* pos  dpos  glyph, name            
+     * st,dx,pe,vi,sp, 
+     * flags, locID,curHP,en */
+    /* Corpse */
+    { {0,0},{0,0},{'%',RED,BLACK},           "Corpse",
+        0,0,0,0,0,   
+        MF_NONE, 0,0,0},
+    /* Goblin */
+    { {0,0},{0,0},{'g',GREEN,BLACK},         "Goblin",
+        2,3,2,2,100,
+        MF_ALIVE | MF_HUMANOID, 0,0,0},
+    /* Goblin Archer */
+    { {0,0},{0,0},{'g',BRIGHT_GREEN,BLACK},  "Goblin Archer",
+        2,3,3,1,100,
+        MF_ALIVE | MF_RANGED | MF_HUMANOID, 0,0,0},
+    /* Bat */
+    { {0,0},{0,0},{'B',BROWN,BLACK},         "Bat",
+        1,3,1,2,25,  
+        MF_ALIVE | MF_SKIRMISH, 0,0,0},
+    /* Goblin Rascal */
+    { {0,0},{0,0},{'g',BRIGHT_BLACK,BLACK},  "Goblin Rascal",
+        2,3,2,2,50,
+        MF_ALIVE | MF_SKIRMISH | MF_HUMANOID, 0,0,0},
+    /* Goblin Priest */
+    { {0,0},{0,0},{'g',BRIGHT_MAGENTA,BLACK},"Goblin Priest",
+        2,3,4,3,100,
+        MF_ALIVE | MF_NECRO | MF_HUMANOID, 0,0,0}
 };
 
 Monster* create_monster_at(Vec2i pos, int type) {
@@ -260,6 +281,7 @@ void kill_monster(Monster *target) {
     } else if (is_alive(target)) {
         snprintf(msg, 80, "The %s collapses in a bloody heap!", target->name);
     }
+    push_mlist(&g_mlist, create_monster_at(target->pos, M_CORPSE));
     push_msg(&g_msghead, msg);
     target->energy = 0;
     if(target != g_player) {
