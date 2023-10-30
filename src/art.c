@@ -40,17 +40,8 @@ void draw_art(int art) {
     int w,h;
     int x,y,index;
     w = SCREEN_WIDTH;
-    h = SCREEN_HEIGHT + GUI_HEIGHT + MSG_HEIGHT;
+    h = SCREEN_HEIGHT;
 
-    /*
-    switch(art) {
-        //case ART_TOMBSTONE: draw_tombstone(screen); break;
-        case ART_TOMBSTONE: open_art(screen,ART_TITLE); break;
-        case ART_HELLO_WORLD: draw_hello_world(screen); break;
-        case ART_TITLE: draw_title_screen(screen); break;
-        default: break;
-    }
-    */
     open_art(screen,art);
 
     for(x = 0; x < w; x++) {
@@ -60,7 +51,7 @@ void draw_art(int art) {
                 break;
             }
             if(screen[index].ch != ' ') {
-                curses_draw_main(x,y-2, screen[index]);
+                curses_draw_main(x,y, screen[index]);
             }
         }
     }

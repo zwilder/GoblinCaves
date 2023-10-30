@@ -76,21 +76,15 @@ void curses_draw_main(int x, int y, Glyph glyph) {
     unsetcolor(glyph.fg, glyph.bg);
 }
 
-void curses_draw_ui(int x, int y, char *msg) {
-    /* Draws a message (msg) at the BOTTOM of the screen given x,y (UI row)
-     * coordinates with white text on a black background */ 
-    int xoffset = COLS / 2;
-    int yoffset = LINES / 2;
-    xoffset -= SCREEN_WIDTH / 2;
-    yoffset += SCREEN_HEIGHT / 2;
-    /*
-    yoffset -= GUI_HEIGHT;
-    */
-
-    setcolor(WHITE, BLACK);
-    mvprintw(y + yoffset, x + xoffset, msg);
-    unsetcolor(WHITE, BLACK);
+void curses_close(void) {
+    /* Stupid function for now, but there may be other cleanup added later */
+    endwin();
 }
+
+/*****
+ * Everything below should be rewritten as a function in draw.c to draw to the
+ * screen buffer
+ *****/
 
 void curses_draw_msg(int x, int y, char *msg) {
     /* Draws a message (msg) at the given x,y coordinates */
@@ -243,7 +237,3 @@ void draw_nwpl(void) {
     //strcpy(g_player->name, str);
 }
 
-void curses_close(void) {
-    /* Stupid function for now, but there may be other cleanup added later */
-    endwin();
-}

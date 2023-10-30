@@ -23,6 +23,7 @@
 /******************
  * draw.c functions
  ******************/
+void init_screenbuf(void);
 void draw_game(void);
 void draw_gui(void);
 void draw_msg(void);
@@ -30,5 +31,9 @@ void draw_msg_log(void);
 void draw_gameover(void);
 Vec2i get_camera(void);
 Glyph* create_full_screen(void);
+
+void draw_str(int x, int y, char *str);
+void draw_str_vec(Vec2i a, char *str);
+void draw_screenbuf(void);
 
 #endif

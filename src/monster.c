@@ -282,13 +282,15 @@ void blood_splatter(Vec2i a, Vec2i o) {
      * it looks best just doing a random chance around the origin. I might add a
      * small chance of going one spot further so it looks like things REALLY
      * splatter sometimes.
+     *
+     * TODO: Awesome idea... what if when blood hits an altar it spawns imps or
+     * something obnoxious? 
      */
     Vec2iList *splatterpos = NULL;
     Vec2iList *listit = NULL;
     //Vec2iList *listitprev= NULL;
     int x,y,i;
 
-    write_log("Making splatter at:");
     for (x = -1; x <= 1; x++) {
         for(y = -1; y <= 1; y++) {
             // add all the origin points
@@ -299,22 +301,6 @@ void blood_splatter(Vec2i a, Vec2i o) {
             }
         }
     }
-    /*
-    listit = splatterpos;
-    while(listit) {
-        // Remove attacker pos from list
-        if(eq_vec(listit->item, a)) {
-            listitprev->next = listit->next;
-            //Destroy listit node, why have I not wrote a destroy node function
-            //for Vec2iList?! Why have I not written a remove node that contains
-            //function for Vec2iList? TODO Fix this, code here segfaults
-            free(listit);
-            break;
-        }
-        listitprev = listit;
-        listit = listit->next;
-    }
-    */
     // For each spot in the splatterpos list, random chance of turning the
     // foreground for that character red/bright red
     listit = splatterpos;
@@ -331,11 +317,9 @@ void blood_splatter(Vec2i a, Vec2i o) {
             if(mt_chance(50)) {
                 if(get_glyphch_at_vec(listit->item) == '.') {
                     set_glyphch_at_vec(listit->item, 
-                            (mt_chance(33) ? ';' : ','));
+                            (mt_chance(10) ? ';' : ','));
                 }
             }
-            //write_log("Splattered at:");
-            //log_vec(listit->item);
             engage_tflags_at_vec(listit->item, TF_BLOOD);
         }
         listit = listit->next;

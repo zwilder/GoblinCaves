@@ -50,7 +50,21 @@ int update_game(int events) {
         /* TODO: This needs to be fixed so that everyone who can update updates
          * before they take their turn. Possibly need to add them to another
          * list or something? */
-        draw_game();
+        /* Engine draw fixes not drawing things where they are when the player
+         * sees them, but breaks the message drawing and GUI display... 
+         * 
+         * The problem here is that things are drawing directly to the screen
+         * (of course it can't be a simple fix haha) - Everything SHOULD be
+         * drawing to a buffer (eg Tile *g_screenbuf) and the draw routines
+         * should be ONLY drawing whats on the buffer. Currently, the drawing
+         * routines also clear messages off the message list and put them on the
+         * message head AND draw the messages directly on the screen. I should
+         * be able to call engine_draw directly here to "refresh" what the
+         * player sees (by drawing the damn buffer). This needs to be fixed
+         * before animations are added.
+         *
+         * */
+        //engine_draw();
         if(!check_flag(g_player->flags, MF_ALIVE)) {
             playerbreak = true;
             continue;

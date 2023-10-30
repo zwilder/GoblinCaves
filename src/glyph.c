@@ -38,7 +38,7 @@
  *
  *****/
 const int SCREEN_WIDTH = 80;
-const int SCREEN_HEIGHT = 20; 
+const int SCREEN_HEIGHT = 24; 
 
 Glyph make_glyph(char ch, int fg, int bg) {
     /* Returns a Glyph with char ch, int fg foreground, int bg background */

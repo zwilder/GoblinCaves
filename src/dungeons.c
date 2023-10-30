@@ -130,7 +130,7 @@ void build_basic_dungeon(void) {
     while(tmp) {
         place_doors(tmp->data);
         if(tmp != rooms) {
-            place_monsters(tmp->data);
+            //place_monsters(tmp->data);
         }
         tmp = tmp->next;
     }

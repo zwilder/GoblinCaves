@@ -19,109 +19,71 @@
 */
 #include <goblincaves.h>
 
-/* SREEN HEIGHT + GUI_HEIGHT + MSG_HEIGHT should equal 24, game screen should
- * fill standard term dimensions 80x24 */
+/*****
+ * draw.c
+ *
+ * This file contains all the "drawing" functions. The game (should) draw
+ * everything to the screen buffer (g_screenbuf), and then draw the screenbuf on
+ * the screen by calling the appropriate backend calls (ncurses, SDL, whatev).
+ *
+ * It might be a good idea to split this file into a couple smaller files:
+ * draw_game.c, draw.c
+ *****/
+
 const int GUI_HEIGHT = 2;
 const int MSG_HEIGHT = 2; 
 
-void draw_game(void) {
-    /* This function creates an array of glyphs (char ch, color fg, color bg)
-     * representing the screen, then draws to the screen array in the following
-     * order (so that the lower items are drawn on "top" of/over the higher
-     * items):
-     * 1 - Map (tiles)
-     * 2 - Pickups (items)
-     * 3 - Enemies
-     * 4 - Player
-     *
-     * Then, each glyph in the screen array is actually drawn to the screen by
-     * calling curses_draw_main(...). Finally, the screen array is freed from
-     * memory.
-     */
-    int x, y, index, mapIndex;
-    MList *tmp;
-    Vec2i screenpos, mappos;
-    Vec2i camera = get_camera();
+Glyph *g_screenbuf = NULL;
 
-    Glyph *screen = create_screen();
-    
-    /* draw the map (tiles) on the screen */
-    for(x = 0; x < MAP_WIDTH; x++) {
-        for(y = 0; y < MAP_HEIGHT; y++) {
-            mappos.x = x;
-            mappos.y = y;
-            screenpos = subtract_vec(mappos, camera);
-            if(screenpos.x < 0 || screenpos.y < 0) {
-                continue;
-            }
-            index = get_screen_index(screenpos.x, screenpos.y);
-            mapIndex = get_map_index(x, y);
-            if(index > (SCREEN_WIDTH * SCREEN_HEIGHT - 1) ||
-               mapIndex > (MAP_WIDTH * MAP_HEIGHT - 1)) {
-                /* Unsure why this is necessary, but draw_screen will cause
-                 * segfaults without it */
-                break;
-            }
-            if(is_visible(x,y)) {
-                mark_explored(x,y);
-                screen[index] = get_glyph_at(x,y);
-            } else if(is_explored(x,y)) {
-                screen[index] = get_glyph_at(x,y);
-                if(check_flag(get_tflags_at(x,y), TF_BLK_MV) ||
-                        check_flag(get_tflags_at(x,y), TF_UP) ||
-                        check_flag(get_tflags_at(x,y), TF_DN)) {
-                    screen[index].fg = BLUE;
-                } else {
-                    screen[index].fg = BLACK;
-                }
-                screen[index].bg = BLACK;
-            }
-        }
+void init_screenbuf(void) {
+    int h = SCREEN_HEIGHT;
+    int i;
+    g_screenbuf = malloc(SCREEN_WIDTH * h * sizeof(Glyph));
+    for(i = 0; i < (SCREEN_WIDTH * SCREEN_HEIGHT); i++) {
+        g_screenbuf[i].ch = ' ';
+        g_screenbuf[i].fg = BLACK;
+        g_screenbuf[i].bg = BLACK;
     }
-    /* draw the pickups on the screen */
-    
-    /* draw the enemies on the screen, corpses first (they don't block movement) */
-    tmp = g_mlist;
-    while(tmp) {
-        if(tmp->data->locID == g_mapcur->lvl) {
-            mappos = tmp->data->pos;
-            if(is_visible(mappos.x,mappos.y) && !is_alive(tmp->data)) {
-                set_screen_glyph_at(screen, subtract_vec(mappos,camera),
-                        tmp->data->glyph);
-            }
-        }
-        tmp = tmp->next;
-    }
-    tmp = g_mlist;
-    while(tmp) {
-        if(tmp->data->locID == g_mapcur->lvl) {
-            mappos = tmp->data->pos;
-            if(is_visible(mappos.x,mappos.y) && is_alive(tmp->data)) {
-                set_screen_glyph_at(screen, subtract_vec(mappos,camera),
-                        tmp->data->glyph);
-            }
-        }
-        tmp = tmp->next;
-    }
-    
-    /* draw the player on the screen, so the player is on top of everything else */
-    if(g_player) {
-        set_screen_glyph_at(screen, subtract_vec(g_player->pos, camera),
-                            g_player->glyph);
-    }
+}
 
+void clear_screenbuf(void) {
+    /* Temporary to test drawing - probably temporary*/
+    int i;
+    for(i = 0; i < (SCREEN_WIDTH * SCREEN_HEIGHT); i++) {
+        g_screenbuf[i].ch = ' ';
+        g_screenbuf[i].fg = WHITE;
+        g_screenbuf[i].bg = BLACK;
+    }
+}
+
+void draw_screenbuf(void) {
+    int x, y,i;
     for(x = 0; x < SCREEN_WIDTH; x++) {
         for(y = 0; y < SCREEN_HEIGHT; y++) {
-            index = get_screen_index(x,y);
-            if(index > (SCREEN_WIDTH * SCREEN_HEIGHT - 1)) {
+            i = get_screen_index(x,y);
+            if(i > (SCREEN_WIDTH * SCREEN_HEIGHT - 1)) {
                 break;
             }
-            if(screen[index].ch != ' ') {
-                curses_draw_main(x,y, screen[index]);
+            if(g_screenbuf[i].ch != ' ') {
+                curses_draw_main(x,y, g_screenbuf[i]);
             }
         }
     }
-    free(screen);
+}
+
+void draw_str(int x, int y, char *str) {
+    if(!str) return;
+    int i,j,k;
+    k=0;
+    for(i = x; i < x + strlen(str); i++) {
+        j = get_screen_index(i,y);
+        g_screenbuf[j].ch = str[k];
+        k++;
+    }
+}
+
+void draw_str_vec(Vec2i a, char *str) {
+    draw_str(a.x,a.y,str); 
 }
 
 void draw_gui(void) {
@@ -131,29 +93,196 @@ void draw_gui(void) {
 Player Name                                                             Depth:xx
 HP: xxx/xxx    stat                                      St:xx Dx:xx Pe:xx Vi:xx 
                                                                                
-     * Then calls curses_draw_ui(int x, int uirow, char *msg) to draw the
-     * strings in the appropriate place.
+     * and then draws them to the screen buffer.
      */
     char *depth = malloc(40 * sizeof(char));
     char *hpstr = malloc(40 * sizeof(char));
     char *statstr = malloc(40 * sizeof(char));
     int lvl = (g_mapcur->lvl + 1) * 10;
-    curses_draw_ui(0, 0, g_player->name);
+    int y;
     snprintf(depth,40, "Depth: -%d", lvl);
-    curses_draw_ui(SCREEN_WIDTH - strlen(depth),0, depth);
-
     snprintf(hpstr,40, "HP: %d/%d", g_player->curhp, get_max_hp(g_player));
-    curses_draw_ui(0,1, hpstr);
-
     snprintf(statstr,40,"Spd:%d St:%d Dx:%d Pe:%d Vi:%d",
             g_player->spd, g_player->str, g_player->dex, 
             g_player->per, g_player->vit);
-    curses_draw_ui(SCREEN_WIDTH - strlen(statstr),1,statstr);
-
+    
+    // Draw on Buffer
+    y = SCREEN_HEIGHT - GUI_HEIGHT;
+    draw_str(0,y, g_player->name);
+    draw_str(SCREEN_WIDTH - strlen(depth), y, depth);
+    y++; //Next line
+    draw_str(0,y, hpstr);
+    draw_str(SCREEN_WIDTH - strlen(statstr),y, statstr);
     free(depth);
     free(hpstr);
     free(statstr);
 }
+
+void draw_game(void) {
+    int x,y, i, mapIndex, tflags;
+    MList *mlistit;
+    Vec2i screenpos, mappos;
+    Vec2i camera = get_camera();
+    
+    // Clear the screen buffer
+    clear_screenbuf();
+    
+    /* Draw the map tiles on the buffer */
+    for(x = 0; x < MAP_WIDTH; x++) {
+        for(y = 0; y < MAP_HEIGHT; y++) {
+            mappos.x = x;
+            mappos.y = y;
+            
+            // Subtract camera position from map position to get screen position
+            screenpos = subtract_vec(mappos, camera);
+            if((screenpos.x < 0) || (screenpos.y < 0)) {
+                //If something is outside the range, continue
+                continue;
+            }
+            
+            // index in g_screenbuf
+            i = get_screen_index(screenpos.x, screenpos.y);
+
+            // index in g_tilemap
+            mapIndex = get_map_index(x, y);
+            if((i > (SCREEN_WIDTH * SCREEN_HEIGHT - 1)) ||
+               (mapIndex > (MAP_WIDTH * MAP_HEIGHT - 1))) {
+                //if either are out of bounds, break loop
+                break;
+            }
+
+            if(is_visible(x,y)) {
+                mark_explored(x,y);
+                g_screenbuf[i] = get_glyph_at(x,y);
+            } else if(is_explored(x,y)) {
+                g_screenbuf[i] = get_glyph_at(x,y);
+                tflags = get_tflags_at(x,y);
+                if(check_flag(tflags, TF_BLK_MV) || check_flag(tflags, TF_UP) ||
+                        check_flag(tflags, TF_DN)) {
+                    g_screenbuf[i].fg = BLUE;
+                } else {
+                    g_screenbuf[i].fg = BLACK;
+                }
+                g_screenbuf[i].bg = BLACK;
+            }
+        }
+    }
+    /* draw the pickups on the buffer */
+    
+    /* draw the enemies on the buffer, corpses first (they don't block movement) */
+    mlistit = g_mlist;
+    while(mlistit) {
+        if(mlistit->data->locID == g_mapcur->lvl) {
+            mappos = mlistit->data->pos;
+            if(is_visible(mappos.x,mappos.y) && !is_alive(mlistit->data)) {
+                set_screen_glyph_at(g_screenbuf, subtract_vec(mappos,camera),
+                        mlistit->data->glyph);
+            }
+        }
+        mlistit = mlistit->next;
+    }
+    mlistit = g_mlist;
+    while(mlistit) {
+        if(mlistit->data->locID == g_mapcur->lvl) {
+            mappos = mlistit->data->pos;
+            if(is_visible(mappos.x,mappos.y) && is_alive(mlistit->data)) {
+                set_screen_glyph_at(g_screenbuf, subtract_vec(mappos,camera),
+                        mlistit->data->glyph);
+            }
+        }
+        mlistit = mlistit->next;
+    }
+
+    /* draw the player on the buffer, so the player is on top of everything else */
+    if(g_player) {
+        set_screen_glyph_at(g_screenbuf, subtract_vec(g_player->pos, camera),
+                            g_player->glyph);
+    }
+
+    /* Draw the Message buffer - Temporarily bright 0s to get drawing sorted */
+    for(x = 0; x < SCREEN_WIDTH; x++) {
+        for(y = 0; y < MSG_HEIGHT; y++) {
+            i = get_screen_index(x,y);
+            g_screenbuf[i].ch = ' ';
+            g_screenbuf[i].fg = WHITE;
+            g_screenbuf[i].bg = BLACK;
+        }
+    }
+    /* Draw the GUI (HUD) */
+    draw_gui();
+    
+    /* Draw the screen buffer */
+    draw_screenbuf();
+}
+
+Vec2i get_camera(void) {
+    /* This nifty function allows the map where the player is to be bigger than
+     * the screen. It finds and returns a "camera" which is just a set of
+     * x,y coordinates that centers the player on the screen.
+     *
+     *  Explanation from:
+     *  https://roguebasin.com/index.php/Scrolling_map
+     *
+     *  A scrolling map is a term used in graphical 2D games, including roguelikes, for
+     *  a map with a "camera" that follows the player. It is used for maps that are
+     *  larger than that can be displayed on a single screen.
+
+     *  Implementing scrolling maps is mathematically very simple. Let s be the
+     *  dimensions of the screen, p be the player coordinates, and c be the coordinates
+     *  of the upper left of the camera:
+
+     *  camera := player - (screen / 2) 
+     *
+     *  All this means is that the camera location is the same as the
+     *  player location, except offset by half the screen dimensions so that the player
+     *  is nicely centered in the viewport.
+
+     *  If the player is near the edge of the map, then the blank area outside the map
+     *  might become visible. If you don't want this area to be displayed, and instead
+     *  have the camera dock to the edge of the map, then the formula is revised to
+     *  this, where m is the map size:
+
+     *  If player < screen / 2, then camera := 0.  
+     *  If player >= map - (screen / 2), then camera := map - screen.  
+     *  Otherwise, camera := player - (screen / 2).  
+     *
+     *  Apply this procedure to each of the individual coordinates—first the x
+     *  coordinates, and then the y ones.
+     *
+     */
+    Vec2i camera;
+    /* Visible area for the camera is NOT full screen, top and bottom of screen
+     * are reserved for the GUI (which is more a HUD) and the message log. */
+    int scrw = SCREEN_WIDTH;
+    int scrh = SCREEN_HEIGHT - GUI_HEIGHT - MSG_HEIGHT;
+
+    /* Get the camera */
+    camera.x = g_player->pos.x - (scrw / 2);
+    camera.y = g_player->pos.y - (scrh / 2);
+
+    /* Adjust the camera if the player is too close to the edge */
+    if(g_player->pos.x < (scrw / 2)) {
+        camera.x = 0;
+    } else if (g_player->pos.x >= MAP_WIDTH - (scrw / 2)) {
+        camera.x = 1 + MAP_WIDTH - scrw;
+    } else {
+        camera.x = g_player->pos.x - (scrw / 2);
+    }
+
+    if(g_player->pos.y < (scrh / 2)) {
+        camera.y = 0;
+    } else if (g_player->pos.y >= MAP_HEIGHT - (scrh / 2)) {
+        camera.y = 1 + MAP_HEIGHT - scrh;
+    } else {
+        camera.y = g_player->pos.y - (scrh / 2);
+    }
+
+    return camera;
+}
+
+/*****
+ * Old stuff below
+ *****/
 
 void draw_msg(void) {
     /* This function loops through the messages list, clearing entries by:
@@ -163,6 +292,10 @@ void draw_msg(void) {
      * 3) Pushing the message into the message log linked list.
      * 4) Drawing the messages to the top of the screen by calling
      *    curses_draw_msg(...)
+     *
+     * TODO: This function breaks design. It should only DRAW the messages, not
+     * update the messages at the same time. There needs to be a function added
+     * to update the message list. 
      */
     SList *msgwords = NULL;
     SList *tmp = NULL;
@@ -189,25 +322,6 @@ void draw_msg(void) {
         i = 0;
         tmp = msgwords;
         while(tmp) {
-            /*
-            if(line > 1) {
-                setcolor(BLACK, WHITE);
-                memset(msg,' ',80);
-                msg[81] = '\0';
-                curses_draw_msg(0,line,msg);
-                curses_draw_msg(23,line,"[More - Press any key to continue]");
-                unsetcolor(BLACK, WHITE);
-                get_input();
-                draw_screen();
-                memset(msg,' ',80);
-                msg[81] = '\0';
-                curses_draw_msg(0,0, msg);
-                curses_draw_msg(0,1, msg);
-                memset(msg,0,500);
-                line = 0;
-                i = 0;
-            }
-            */
             if((line == 1) && ((i + tmp->length + 7) > 80)) {
                 curses_draw_msg(0,line,msg);
                 setcolor(BLACK, WHITE);
@@ -264,44 +378,13 @@ void draw_gameover(void) {
     // Player name at 18,11 - 38-11
     // Level at 28,13
     int xoff = 28 - (strlen(g_player->name) / 2);
-    char *depth = malloc(10 * sizeof(char));
+    char *depth = malloc(40 * sizeof(char));
     snprintf(depth,40, "%dft", lvl);
     curses_draw_msg(xoff,11,g_player->name);
     curses_draw_msg(28,13,depth);
     draw_art(ART_TOMBSTONE);
     // Final messages need to be drawn at 52,7 - 78,22
     free(depth);
-}
-
-Vec2i get_camera(void) {
-    /* This nifty function allows the map where the player is to be bigger than
-     * the screen. It finds and returns a "camera" which is just a set of
-     * x,y coordinates that centers the player on the screen.
-     */
-    Vec2i camera;
-
-    /* Get the camera */
-    camera.x = g_player->pos.x - (SCREEN_WIDTH / 2);
-    camera.y = g_player->pos.y - (SCREEN_HEIGHT / 2);
-
-    /* Adjust the camera if the player is too close to the edge */
-    if(g_player->pos.x < (SCREEN_WIDTH / 2)) {
-        camera.x = 0;
-    } else if (g_player->pos.x >= MAP_WIDTH - (SCREEN_WIDTH / 2)) {
-        camera.x = 1 + MAP_WIDTH - SCREEN_WIDTH;
-    } else {
-        camera.x = g_player->pos.x - (SCREEN_WIDTH / 2);
-    }
-
-    if(g_player->pos.y < (SCREEN_HEIGHT / 2)) {
-        camera.y = 0;
-    } else if (g_player->pos.y >= MAP_HEIGHT - (SCREEN_HEIGHT / 2)) {
-        camera.y = 1 + MAP_HEIGHT - SCREEN_HEIGHT;
-    } else {
-        camera.y = g_player->pos.y - (SCREEN_HEIGHT / 2);
-    }
-
-    return camera;
 }
 
 Glyph* create_full_screen(void) {

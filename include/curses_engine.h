@@ -25,13 +25,15 @@
  ***************************/
 bool curses_setup(void);
 void curses_draw_main(int x, int y, Glyph glyph);
-void curses_draw_ui(int x, int y, char *msg);
+void curses_close(void);
+
+/* Every one of the following functions needs to be removed and replaced with a
+ * similar call in draw.c */
 void curses_draw_msg(int x, int y, char *msg);
 void curses_draw_titlebar(char *title, Color fg, Color bg);
 void msg_box(char* msg, Color fg, Color bg);
 void error_msg_box(char* msg, Color fg, Color bg);
 bool yn_prompt(char* msg, Color fg, Color bg);
 void draw_nwpl(void);
-void curses_close(void);
 
 #endif

@@ -24,7 +24,7 @@
  * point in this.
  */
 const int MAP_WIDTH = 79;
-const int MAP_HEIGHT = 24;
+const int MAP_HEIGHT = 23;
 const int MIN_ROOM_SIZE = 5;
 const int MAX_ROOM_SIZE = 10;
 const int MIN_NUM_ROOMS = 8;

@@ -28,6 +28,7 @@ extern Msg *g_msghead; /* Reference to message list head, msg.c */
 extern Msg *g_msgloghead; /* Reference to message log head, msg.c */
 extern MList *g_mlist; /* Reference to monster list mlist.c */
 extern int g_events; /* Global events, handle_events.c */
+extern Glyph *g_screenbuf; /* Screen buffer, draw.c */
 
 extern StateFlags g_gamestate; /* Simple int state flag game_engine.c */
 

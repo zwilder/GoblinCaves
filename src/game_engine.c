@@ -24,6 +24,7 @@ StateFlags g_gamestate = ST_MENU;
 void engine_init(void) {
     start_log();
     g_gamestate = ST_MENU;
+    init_screenbuf();
     engine_draw();
 }
 
@@ -53,8 +54,8 @@ void engine_draw(void) {
     switch(g_gamestate) {
         case ST_GAME:
             draw_game();
-            draw_gui();
-            draw_msg();
+            //draw_gui();
+            //draw_msg();
             break;
         case ST_MENU: draw_art(ART_TITLE); break;
         case ST_HELP: draw_art(ART_HELP); break;
@@ -106,6 +107,7 @@ void engine_close(void) {
     destroy_mlist(&g_mlist);
     destroy_msglist(&g_msghead);
     destroy_msglist(&g_msgloghead);
+    free(g_screenbuf);
 }
 
 /* integer to string functions from K&R C Book */
