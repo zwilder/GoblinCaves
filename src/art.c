@@ -35,27 +35,10 @@
  * as tedious. Oh well, it was a fun exercise.
  ******/
 void draw_art(int art) {
-    /* This makes a screen, and draws art of ART_TYPE art on it */
-    Glyph *screen = create_full_screen();
-    int w,h;
-    int x,y,index;
-    w = SCREEN_WIDTH;
-    h = SCREEN_HEIGHT;
-
-    open_art(screen,art);
-
-    for(x = 0; x < w; x++) {
-        for(y = 0; y < h; y++) {
-            index = get_screen_index(x,y);
-            if(index > (w * h - 1)) {
-                break;
-            }
-            if(screen[index].ch != ' ') {
-                curses_draw_main(x,y, screen[index]);
-            }
-        }
-    }
-    free(screen);
+    /* This clears the g_screenbuf and draws art of ART_TYPE art on it */
+    clear_screen(g_screenbuf);
+    open_art(g_screenbuf,art);
+    draw_screen(g_screenbuf);
 }
 
 void open_art(Glyph *screen, int id) {

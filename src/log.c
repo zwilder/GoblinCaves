@@ -112,9 +112,9 @@ void write_memorial(void) {
             now.tm_hour, now.tm_min, now.tm_sec);
 
     /* Create a screen to draw the tombstone graphic on */
-    screen = create_full_screen();
+    screen = create_screen();
     w = SCREEN_WIDTH;
-    h = SCREEN_HEIGHT + GUI_HEIGHT + MSG_HEIGHT;
+    h = SCREEN_HEIGHT;
     open_art(screen, ART_TOMBSTONE);
     xoff = strlen(g_player->name) / 2;
     i = 0;
@@ -158,7 +158,7 @@ void write_memorial(void) {
     }
 
     /* Write the map to the file, with the player and goblins */
-    screen = create_full_screen();
+    screen = create_screen();
     fputs("\n**********\nLast Level\n**********\n",f);
     if(NULL != g_tilemap) {
         for(y=0; y < MAP_HEIGHT; y++){

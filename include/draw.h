@@ -24,16 +24,30 @@
  * draw.c functions
  ******************/
 void init_screenbuf(void);
-void draw_game(void);
-void draw_gui(void);
-void draw_msg(void);
-void draw_msg_log(void);
-void draw_gameover(void);
-Vec2i get_camera(void);
-Glyph* create_full_screen(void);
-
+void draw_screen(Glyph *screen);
 void draw_str(int x, int y, char *str);
 void draw_str_vec(Vec2i a, char *str);
-void draw_screenbuf(void);
+void draw_colorstr(int x, int y, char *str, Color fg, Color bg);
+void draw_colorstr_vec(Vec2i a, char *str, Color fg, Color bg);
+void draw_hline(int x, int y, int w, Color color);
+void draw_hline_vec(Vec2i a, int w, Color color);
+void draw_vline(int x, int y, int h, Color color);
+void draw_vline_vec(Vec2i a, int h, Color color);
+void draw_solid_box(int x, int y, int w, int h, Color color);
+void draw_solid_box_vec(Vec2i a, Vec2i d, Color color);
+void draw_box(int x, int y, int w, int h, Color color);
+void draw_box_vec(Vec2i a, Vec2i d, Color color);
 
+/******************
+ * draw_game.c functions
+ ******************/
+void draw_game(void);
+void draw_hud(void);
+void draw_msg(void);
+Vec2i get_camera(void);
+void draw_msg_log(void);
+void draw_gameover(void);
+
+/* Old function, possibly not needed? */
+Glyph* create_full_screen(void);
 #endif

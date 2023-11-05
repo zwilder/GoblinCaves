@@ -145,3 +145,9 @@ up Gladys will get you cleave, maybe you'll get leap.
 Minor goal: All in game text (the flavor and spice) stored and loaded from an
 external file. Flavor text procedurally generated if appropriate. Advantage is
 that it can be easily added to, modified, and even translated to other languages
+
+Items should be stored in a linked list. The "inventory" for the players and
+monsters should be a list, and each tile should have a list. The list would
+contain the head node (item), and maybe a count? The list should have functions
+to push and pop nodes (items), so that items could be transferred from enemies
+to tiles to player etc. 
