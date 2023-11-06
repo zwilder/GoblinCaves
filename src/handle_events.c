@@ -209,7 +209,7 @@ int handle_keyboard_game(int input) {
             output |= EV_CHST_LOG | EV_PLAYER_KP;
             break;
         case 'S':
-            if(yn_prompt("Save and quit?", BLACK, WHITE)) {
+            if(draw_yn_prompt("Save and quit?", BLACK, WHITE)) {
                 save_game();
                 output |= EV_QUIT | EV_PLAYER_KP;
             }
@@ -218,7 +218,7 @@ int handle_keyboard_game(int input) {
             output |= EV_CHST_HELP | EV_PLAYER_KP;
             break;
         case 'q':
-            if(yn_prompt("Are you sure you want to quit?", BLACK, WHITE)) {
+            if(draw_yn_prompt("Are you sure you want to quit?", BLACK, WHITE)) {
                 output |= EV_QUIT | EV_PLAYER_KP; 
             }
             break;
@@ -234,11 +234,12 @@ int handle_keyboard_game(int input) {
 
 Vec2i get_direction(char* action_str) {
     Vec2i result = {0, 0};
-    char msg_str[32];
-    strcpy(msg_str, action_str);
-    strcat(msg_str, ": Which direction?");
+    int msgsz = strlen(action_str) + strlen(": Which direction?") + 2;
+    char *msg_str = malloc(sizeof(char) * msgsz);
     int input;
-    msg_box(msg_str, BLACK, WHITE);
+    snprintf(msg_str, msgsz, "%s: Which direction?", action_str);
+    draw_msg_box(msg_str, BLACK, WHITE);
+    draw_screen(g_screenbuf);
     input = get_input();
     switch(input) {
         case 'y':
@@ -272,6 +273,6 @@ Vec2i get_direction(char* action_str) {
         default:
             break;
     }
-
+    free(msg_str);
     return result;
 }

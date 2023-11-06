@@ -188,6 +188,36 @@ void draw_msg_box(char *msg, Color fg, Color bg) {
     }
 }
 
+bool draw_yn_prompt(char *prompt, Color fg, Color bg) {
+    /* [y/n] */
+    int msgsz = strlen(prompt) + 7; // " [y/n]\0"
+    char *msg = malloc(sizeof(char) * msgsz);
+    bool result = false, waiting = true;
+    int input;
+    snprintf(msg,msgsz,"%s [y/n]", prompt); 
+    draw_msg_box(msg, fg, bg);
+    draw_screen(g_screenbuf);
+    while(waiting) {
+        input = get_input();
+        switch(input) {
+            case 'Y':
+            case 'y':
+                result = true;
+                waiting = false;
+                break;
+            case 'N':
+            case 'n':
+                result = false;
+                waiting = false;
+                break;
+            default: break;
+        }
+    }
+    engine_draw(); // Clears the prompt from the screen after input
+    free(msg);
+    return result;
+}
+
 /*****
  * Old stuff below
  *****/

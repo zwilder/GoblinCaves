@@ -321,6 +321,7 @@ void draw_gameover(void) {
     draw_art(ART_TOMBSTONE);
     draw_str(xoff,11,g_player->name);
     draw_str(28,13,depth);
+    draw_screen(g_screenbuf);
     // Final messages need to be drawn at 52,7 - 78,22
     free(depth);
 }

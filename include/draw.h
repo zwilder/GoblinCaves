@@ -38,6 +38,7 @@ void draw_solid_box_vec(Vec2i a, Vec2i d, Color color);
 void draw_box(int x, int y, int w, int h, Color color);
 void draw_box_vec(Vec2i a, Vec2i d, Color color);
 void draw_msg_box(char *msg, Color fg, Color bg);
+bool draw_yn_prompt(char *prompt, Color fg, Color bg);
 
 /******************
  * draw_game.c functions

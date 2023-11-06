@@ -194,7 +194,8 @@ void write_memorial(void) {
     /* Draw a message on the screen, "Memorial written to %s",fname */
     snprintf(successmsg,180,"Memorial written to %s", fname);
     write_log(successmsg);
-    msg_box(successmsg, WHITE, GREEN);
+    draw_msg_box(successmsg, WHITE, GREEN);
+    draw_screen(g_screenbuf);
     get_input(); // ask for input to show the msgbox.
     /* Close the file */
     fclose(f);

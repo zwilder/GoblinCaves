@@ -21,6 +21,7 @@
 #include <goblincaves.h>
 
 /* 
+ * An idea.
 ...............................................................................
 .                              - Inventory -
 . A) Head          : None
@@ -48,31 +49,12 @@
  */
 void draw_inv(void) {
     /*curses_draw_msg is not the right function for doing this Zachary - go fix
-     * yo'self */
-    curses_draw_titlebar("- Inventory -", WHITE, BLACK);
-
-    /* For each of the following, the string will have a +
-     * g_player->inv->slot.str or something added to it */
-    curses_draw_msg(1,1, "A) Head       :");
-    curses_draw_msg(1,2, "B) Body       :");
-    curses_draw_msg(1,3, "C) Left Hand  :");
-    curses_draw_msg(1,4, "D) Right Hand :");
-    curses_draw_msg(1,5, "E) Gloves     :");
-
-    curses_draw_msg(1,7, " Your pack contains the following:");
-    curses_draw_msg(1,8, "a) ");
-    curses_draw_msg(1,9, "b) ");
-    curses_draw_msg(1,10, "c) ");
-    curses_draw_msg(1,11, "d) ");
-    curses_draw_msg(1,13, "e) ");
-    curses_draw_msg(1,14, "f) ");
-    curses_draw_msg(1,15, "g) ");
-    curses_draw_msg(1,16, "h) ");
-
-    curses_draw_msg(1,18, "Select equipped [A-E] or pack [a-h]");
-   
-
-
- 
-    curses_draw_msg(1,23, "- Press [q] to close this screen -");
+     * yo'self - update, fixed myself, went down a rabbit hole while fixing this
+     * function, realized I have a lot of other things to fix before I add in
+     * the inventory... so this does absolutely nothing right now, and it should
+     * be in draw_game.c */
+    int x;
+    draw_hline(0,0,SCREEN_WIDTH,WHITE);
+    x = (SCREEN_WIDTH / 2) - (strlen("- Inventory -")/2);
+    draw_colorstr(x,0,"- Inventory -", BLACK, WHITE);
 }

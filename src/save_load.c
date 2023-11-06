@@ -274,7 +274,10 @@ int load_game(void) {
     int bytesread = 0;
 
     if(f == NULL) {
-        error_msg_box("No save data found!", BLACK, WHITE);
+        clear_screen(g_screenbuf);
+        draw_msg_box("No save data found!", BLACK, GREEN);
+        draw_screen(g_screenbuf);
+        get_input();
         return EV_CHST_MENU;
     }
 
