@@ -26,6 +26,11 @@
  * everything to the screen buffer (g_screenbuf), and then draw the screenbuf on
  * the screen by calling the appropriate backend calls (ncurses, SDL, whatev).
  *
+ * Important - the drawing functions (str, hline, vline, etc) draw on the global
+ * screen buffer, g_screenbuf. To actually display them,
+ * draw_screen(g_screenbuf) should be called after drawing (and
+ * clear_screen(g_screenbuf) called before if you want a blank slate). 
+ *
  * The functions that draw the actual "game" screen are in draw_game.c, along
  * with the functions for drawing the message log and game over screen. 
  *****/
@@ -150,6 +155,37 @@ void draw_box(int x, int y, int w, int h, Color color) {
 
 void draw_box_vec(Vec2i a, Vec2i d, Color color) {
     draw_box(a.x,a.y,d.x,d.y,color);
+}
+
+void draw_msg_box(char *msg, Color fg, Color bg) {
+    /* Draw a message in a box at the center of the screen. */
+    int maxw = (SCREEN_WIDTH * 2) / 3;
+    int x,y,w,h,i;
+    SList *lines = NULL, *slistit = NULL;
+    if(strlen(msg) > maxw) {
+        /* We need line wrapping */
+        lines = SList_linewrap(msg, maxw);
+        h = count_SList(lines) + 2;
+        x = (SCREEN_WIDTH / 2) - (maxw / 2) - 1;
+        y = (SCREEN_HEIGHT / 2) - (h / 2);
+        draw_solid_box(x,y,maxw,h,bg);
+        slistit = lines;
+        i = 1;
+        while(slistit) {
+            draw_colorstr(x+1,y+i,slistit->data,fg,bg);
+            i++;
+            slistit = slistit->next;
+        }
+        destroy_SList(&lines);
+    } else {
+        /* No line wrapping needed */
+        w = strlen(msg) + 2;
+        x = (SCREEN_WIDTH / 2) - (strlen(msg) / 2) - 1;
+        h = 3; 
+        y = (SCREEN_HEIGHT / 2) - 1;
+        draw_solid_box(x,y,w,h,bg);
+        draw_colorstr(x+1,y+1,msg,fg,bg);
+    }
 }
 
 /*****

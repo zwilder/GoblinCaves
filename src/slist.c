@@ -214,3 +214,36 @@ SList* split_string(char *s, char delim) {
     }
     return result;
 }
+
+SList* SList_linewrap(char *str, int w) {
+    /* Take a string and return a list of strings, where each string in the list
+     * is under length w */
+    SList *result = NULL;
+    if(!str) return result;
+    SList *words = split_string(str, ' ');
+    SList *it = words;
+    int bufsz = strlen(str) + 1;
+    char *strbuf = malloc(sizeof(char) * bufsz);
+    snprintf(strbuf,bufsz,"%s ",it->data);
+    int i = it->length + 1;
+    it = it->next;
+    while(it) {
+        /* Go through each word, and if the word length + the running length is
+         * greater than w, add it to the result list. If it isn't greater than
+         * w, strcat it with the buffer */
+        if((i + it->length) >= (w-1)) {
+            push_SList(&result, strbuf);
+            i = it->length + 1;
+            snprintf(strbuf,bufsz,"%s ",it->data);            
+        } else {
+            i += it->length + 1;
+            strcat(strbuf, it->data);
+            strcat(strbuf, " ");
+        }
+        it = it->next;
+    }
+    push_SList(&result, strbuf);
+    free(strbuf);
+    destroy_SList(&words);
+    return result;
+}

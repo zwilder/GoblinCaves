@@ -40,5 +40,6 @@ int count_chars_SList(SList *node, bool incSpace);
 char* get_string_SList(SList *node);
 void add_SList(SList **to, SList **from); 
 SList* split_string(char *s, char delim); 
+SList* SList_linewrap(char *str, int w);
 
 #endif
