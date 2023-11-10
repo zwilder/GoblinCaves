@@ -81,27 +81,23 @@ void curses_close(void) {
     endwin();
 }
 
+int get_input(void) {
+    /* Design goal: don't tie engine to curses.
+     * SO - this stupid wrapper function MAY eventually check to see which
+     * engine is running, use that engine to get/interpret the keypress, and
+     * then return the result */
+    int result = 0;
+    if(g_gamestate != ST_NWPL) {
+        result = getch();
+    }
+    return result;
+}
+
+
 /*****
  * Everything below should be rewritten as a function in draw.c to draw to the
  * screen buffer
  *****/
-
-void curses_draw_msg(int x, int y, char *msg) {
-    /* Draws a message (msg) at the given x,y coordinates */
-    int xoffset = COLS / 2;
-    int yoffset = LINES / 2;
-    xoffset -= SCREEN_WIDTH / 2;
-    yoffset -= SCREEN_HEIGHT / 2;
-    yoffset -= MSG_HEIGHT;
-
-    /*
-    setcolor(WHITE, BLACK);
-    */
-    mvprintw(y + yoffset, x + xoffset, msg);
-    /*
-    unsetcolor(WHITE, BLACK);
-    */
-}
 
 void draw_nwpl(void) {
     /* This function displays the "New player" screen, which currently just asks

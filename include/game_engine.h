@@ -27,7 +27,7 @@ void engine_init(void);
 void engine_run(void);
 void engine_close(void);
 void engine_draw(void);
-int get_input(void);
+int engine_get_input(void);
 void new_game(void);
 
 void kr_itoa(int n, char s[]);

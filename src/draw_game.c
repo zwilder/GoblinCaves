@@ -101,15 +101,9 @@ void draw_game(void) {
                             g_player->glyph);
     }
 
-    /* Draw the Message buffer - Temporarily bright 0s to get drawing sorted */
-    for(x = 0; x < SCREEN_WIDTH; x++) {
-        for(y = 0; y < MSG_HEIGHT; y++) {
-            i = get_screen_index(x,y);
-            g_screenbuf[i].ch = ' ';
-            g_screenbuf[i].fg = WHITE;
-            g_screenbuf[i].bg = BLACK;
-        }
-    }
+    /* Draw the Message buffer */
+    draw_msg();
+
     /* Draw the GUI (HUD) */
     draw_hud();
     
@@ -188,21 +182,19 @@ void draw_msg(void) {
         tmp = msgwords;
         while(tmp) {
             if((line == 1) && ((i + tmp->length + 7) > 80)) {
-                curses_draw_msg(0,line,msg);
-                setcolor(BLACK, WHITE);
-                curses_draw_msg(80 - 7, line, "[More]");
-                unsetcolor(BLACK, WHITE);
+                draw_str(0,line,msg);
+                draw_str(80 - 7, line, "[More]");
                 get_input();
                 memset(msg,' ',80);
                 msg[81] = '\0';
-                curses_draw_msg(0,0, msg);
-                curses_draw_msg(0,1, msg);
+                draw_str(0,0,msg);
+                draw_str(0,1,msg);
                 memset(msg,0,500);
                 line = 0;
                 i = 0;
             }
             if(((i + tmp->length) > 80)) {
-                curses_draw_msg(0,line,msg);
+                draw_str(0,line,msg);
                 memset(msg,0,500);
                 line++;
                 i = 0;
@@ -210,7 +202,7 @@ void draw_msg(void) {
             i += snprintf(msg+i, 500 - i, "%s ",tmp->data);
             tmp = tmp->next;
             if(!tmp && (strlen(msg) > 0)) {
-                curses_draw_msg(0,line,msg);
+                draw_str(0,line,msg);
             }
         }
         free(msg);

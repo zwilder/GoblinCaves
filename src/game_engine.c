@@ -71,18 +71,6 @@ void engine_draw(void) {
     refresh();
 }
 
-int get_input(void) {
-    /* Design goal: don't tie engine to curses.
-     * SO - this stupid wrapper function MAY eventually check to see which
-     * engine is running, use that engine to get/interpret the keypress, and
-     * then return the result */
-    int result = 0;
-    if(g_gamestate != ST_NWPL) {
-        result = getch();
-    }
-    return result;
-}
-
 void new_game(void) {
     if(g_player) {
         destroy_player();

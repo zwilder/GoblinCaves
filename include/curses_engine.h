@@ -26,10 +26,10 @@
 bool curses_setup(void);
 void curses_draw_main(int x, int y, Glyph glyph);
 void curses_close(void);
+int get_input(void);
 
 /* Every one of the following functions needs to be removed and replaced with a
  * similar call in draw.c */
-void curses_draw_msg(int x, int y, char *msg);
 void draw_nwpl(void);
 
 #endif
