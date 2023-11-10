@@ -317,3 +317,33 @@ void draw_gameover(void) {
     // Final messages need to be drawn at 52,7 - 78,22
     free(depth);
 }
+
+void draw_nwpl(void) {
+    /* This function displays the "New player" screen, which currently just asks
+     * for the player to enter a name for their adventurer. If they enter
+     * nothing it prints an error asking them to try again. */
+    int xoff = (SCREEN_WIDTH / 2);
+    int yoff = (SCREEN_HEIGHT / 2);
+    char *msg = malloc(sizeof(char) * (33));
+    char *str; 
+    clear_screen(g_screenbuf);
+    snprintf(msg,33,"What is your name, adventurer? ");
+    draw_str(xoff - (strlen(msg)/2), yoff, msg);
+    draw_str(xoff - (strlen(msg)/2), yoff + 1, ">");
+    //scr_set_clr(BRIGHT_WHITE, BLACK);
+    //str = kb_get_str();
+    str = kb_get_str_at(xoff - (strlen(msg)/2) + 2, yoff + 1);
+    draw_screen(g_screenbuf);
+    while(strlen(str) == 0) {
+        /* It would be cool if this whole statement was replaced with a call to
+         * a random name generator... */
+        draw_colorstr(xoff - (strlen(msg)/2),yoff+3, "[Try again]", RED, BLACK);
+        draw_str(xoff - (strlen(msg)/2), yoff + 1, ">");
+        //scr_set_clr(BRIGHT_WHITE, BLACK);
+        str = kb_get_str_at(xoff - (strlen(msg)/2) + 2, yoff + 1);
+        draw_screen(g_screenbuf);
+    }
+    g_player->name = strdup(str);
+    free(msg);
+    free(str);
+}

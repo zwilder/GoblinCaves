@@ -20,6 +20,7 @@
 #include <goblincaves.h>
 
 int main(int argc, char **argv) {
+    /*
     if(curses_setup()) {
         init_genrand(time(NULL));
         engine_init();
@@ -29,5 +30,13 @@ int main(int argc, char **argv) {
     } else {
         printf("Unable to start curses!\n");
     }
+    */
+
+    init_genrand(time(NULL));
+    term_init();
+    engine_init();
+    engine_run();
+    engine_close();
+    term_close();
     return 0;
 }

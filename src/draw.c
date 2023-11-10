@@ -64,7 +64,8 @@ void draw_screen(Glyph *screen) {
             if(i > (SCREEN_WIDTH * SCREEN_HEIGHT - 1)) {
                 break;
             }
-            curses_draw_main(x,y, screen[i]);
+            //curses_draw_main(x,y, screen[i]);
+            scr_pt_xclr_char(x,y,screen[i].fg,screen[i].bg,screen[i].ch);
         }
     }
 }

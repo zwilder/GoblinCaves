@@ -50,25 +50,21 @@ void engine_run(void) {
 }
 
 void engine_draw(void) {
-    erase(); /* Curses call, will need to be fixed if I add graphics */
+    scr_clear();
     switch(g_gamestate) {
-        case ST_GAME:
-            draw_game();
-            //draw_gui();
-            //draw_msg();
-            break;
+        case ST_GAME: draw_game(); break;
         case ST_MENU: draw_art(ART_TITLE); break;
         case ST_HELP: draw_art(ART_HELP); break;
         case ST_NWPL: draw_nwpl(); break;
         case ST_LOG:  draw_msg_log(); break;
         case ST_GAMEOVER: draw_gameover(); break;
-        case ST_INV:
-            //draw_inv();
-            break;
-        default:
-            break;
+        case ST_INV: break;
+        default: break;
     }
-    refresh();
+}
+
+int get_input(void) {
+    return (int)kb_get_char();
 }
 
 void new_game(void) {

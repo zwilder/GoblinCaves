@@ -23,7 +23,7 @@
 /********
  * System 
  ********/
-#include <ncurses.h>
+//#include <ncurses.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -33,7 +33,8 @@
  * Minor data structures
  ***********************/
 #include <toolbox.h>
-#include <color.h>
+#include <term_engine.h>
+//#include <color.h>
 #include <flags.h>
 #include <msg.h>
 
@@ -54,7 +55,7 @@
  * Core 
  ******/
 #include <game_engine.h>
-#include <curses_engine.h>
+//#include <curses_engine.h>
 #include <handle_events.h>
 #include <update.h>
 #include <draw.h>

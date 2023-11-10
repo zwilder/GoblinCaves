@@ -145,25 +145,25 @@ int handle_keyboard_game(int input) {
     int output = EV_NONE;
     Vec2i newPos = {g_player->pos.x, g_player->pos.y};
     switch(input) {
-        case KEY_UP:
+        //case KEY_UP:
         case 'k':
             /* up */
             newPos.y--;
             output |= EV_PLAYER_KP;
             break;
-        case KEY_DOWN:
+        //case KEY_DOWN:
         case 'j':
             /* down */
             newPos.y++;
             output |= EV_PLAYER_KP;
             break;
-        case KEY_LEFT:
+        //case KEY_LEFT:
         case 'h':
             /* left */
             newPos.x--;
             output |= EV_PLAYER_KP;
             break;
-        case KEY_RIGHT:
+        //case KEY_RIGHT:
         case 'l':
             /* right */
             newPos.x++;
