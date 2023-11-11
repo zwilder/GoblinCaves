@@ -322,28 +322,46 @@ void draw_nwpl(void) {
     /* This function displays the "New player" screen, which currently just asks
      * for the player to enter a name for their adventurer. If they enter
      * nothing it prints an error asking them to try again. */
+    if(g_player->name) return; //This prevents weirdness
     int xoff = (SCREEN_WIDTH / 2);
     int yoff = (SCREEN_HEIGHT / 2);
+    int i,x,y;
     char *msg = malloc(sizeof(char) * (33));
     char *str; 
+    scr_clear();
     clear_screen(g_screenbuf);
     snprintf(msg,33,"What is your name, adventurer? ");
     draw_str(xoff - (strlen(msg)/2), yoff, msg);
     draw_str(xoff - (strlen(msg)/2), yoff + 1, ">");
-    //scr_set_clr(BRIGHT_WHITE, BLACK);
     //str = kb_get_str();
-    str = kb_get_str_at(xoff - (strlen(msg)/2) + 2, yoff + 1);
     draw_screen(g_screenbuf);
+    scr_set_clr(BRIGHT_WHITE, BLACK);
+    scr_set_style(ST_BOLD);
+    x = (g_screenW / 2);
+    y = (g_screenH / 2);
+    //str = kb_get_str_at(xoff - (strlen(msg)/2) + 2, yoff + 1);
+    str = kb_get_str_at(x - (strlen(msg)/2) + 2, y + 1);
+    /* It would be cool if this whole statement was replaced with a call to
+     * a random name generator... */
+    /*
     while(strlen(str) == 0) {
-        /* It would be cool if this whole statement was replaced with a call to
-         * a random name generator... */
         draw_colorstr(xoff - (strlen(msg)/2),yoff+3, "[Try again]", RED, BLACK);
         draw_str(xoff - (strlen(msg)/2), yoff + 1, ">");
-        //scr_set_clr(BRIGHT_WHITE, BLACK);
-        str = kb_get_str_at(xoff - (strlen(msg)/2) + 2, yoff + 1);
         draw_screen(g_screenbuf);
+        scr_set_clr(BRIGHT_WHITE, BLACK);
+        str = kb_get_str_at(xoff - (strlen(msg)/2) + 2, yoff + 1);
     }
-    g_player->name = strdup(str);
+    */
+    //g_player->name = strdup(str);
+    if(g_player->name) {
+        free(g_player->name);
+    }
+    g_player->name = malloc(sizeof(char) * (strlen(str)+1));
+    for(i = 0; i < strlen(str); i++) {
+        g_player->name[i] = str[i];
+    }
+    g_player->name[i] = '\0';
+    draw_game();
     free(msg);
     free(str);
 }

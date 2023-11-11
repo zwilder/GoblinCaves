@@ -69,6 +69,9 @@ int get_screen_index(int x, int y) {
     /* The screen array is one dimensional, this takes a coordinate pair and
      * returns the index of the point in the screen array. This function
      * **could** be used with any one dimensional, x/y coordinate array */
+    if((x < 0) || (x > SCREEN_WIDTH) || (y < 0) || (y > SCREEN_HEIGHT)) {
+        return 0;
+    }
     return (x + (SCREEN_WIDTH * y));
 }
 

@@ -51,11 +51,21 @@ void init_screenbuf(void) {
     }
 }
 
+void draw_glyph(int x, int y, Glyph g) {
+    /* Draw a glyph in the appropriate offset spot for the size of the user's
+     * terminal screen */
+    int dx = (g_screenW / 2) - (SCREEN_WIDTH / 2);
+    int dy = (g_screenH / 2) - (SCREEN_HEIGHT / 2);
+    if(g.fg >= BRIGHT_BLACK) {
+        scr_set_style(ST_BOLD);
+    } else {
+        scr_set_style(ST_NONE);
+    }
+    scr_pt_xclr_char(x+dx,y+dy,g.fg,g.bg,g.ch);
+}
+
 void draw_screen(Glyph *screen) {
-    /* This function right here should be the ONLY drawing function that calls
-     * something related to NCurses.
-     *
-     * Take a standard array of Glyphs, length SCREEN_WIDTH x SCREEN_HEIGHT, and
+    /* Take a standard array of Glyphs, length SCREEN_WIDTH x SCREEN_HEIGHT, and
      * render it on the screen. */
     int x, y,i;
     for(x = 0; x < SCREEN_WIDTH; x++) {
@@ -64,8 +74,7 @@ void draw_screen(Glyph *screen) {
             if(i > (SCREEN_WIDTH * SCREEN_HEIGHT - 1)) {
                 break;
             }
-            //curses_draw_main(x,y, screen[i]);
-            scr_pt_xclr_char(x,y,screen[i].fg,screen[i].bg,screen[i].ch);
+            draw_glyph(x,y,screen[i]);
         }
     }
 }
@@ -191,7 +200,7 @@ void draw_msg_box(char *msg, Color fg, Color bg) {
 
 bool draw_yn_prompt(char *prompt, Color fg, Color bg) {
     /* [y/n] */
-    int msgsz = strlen(prompt) + 7; // " [y/n]\0"
+    int msgsz = strlen(prompt) + 10; // " [y/n]\0"
     char *msg = malloc(sizeof(char) * msgsz);
     bool result = false, waiting = true;
     int input;

@@ -50,7 +50,6 @@ void engine_run(void) {
 }
 
 void engine_draw(void) {
-    scr_clear();
     switch(g_gamestate) {
         case ST_GAME: draw_game(); break;
         case ST_MENU: draw_art(ART_TITLE); break;

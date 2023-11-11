@@ -212,7 +212,8 @@ char kb_get_char(void) {
 char* kb_get_str(void) {
     char* input = malloc(1000 * sizeof(char));
     kb_restore();
-    printf("\x1b[?25h\x1b[3 q");
+    //printf("\x1b[?25h\x1b[3 q");
+    printf("\x1b[?25h\x1b[2 q");
     scanf("%[^\n]s",input);
     printf("\x1b[?25l\x1b[0 q");
     kb_init();

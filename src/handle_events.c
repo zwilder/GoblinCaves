@@ -110,6 +110,7 @@ int handle_keyboard_menu(int input) {
 
 int handle_keyboard_newpl(int input){
     int output = EV_CHST_GAME;
+    output |= handle_keyboard_game(input);
     
     return output;
 }
