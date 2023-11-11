@@ -54,7 +54,7 @@ void engine_draw(void) {
         case ST_GAME: draw_game(); break;
         case ST_MENU: draw_art(ART_TITLE); break;
         case ST_HELP: draw_art(ART_HELP); break;
-        case ST_NWPL: draw_nwpl(); break;
+        case ST_NWPL: draw_newpl(); break;
         case ST_LOG:  draw_msg_log(); break;
         case ST_GAMEOVER: draw_gameover(); break;
         case ST_INV: break;

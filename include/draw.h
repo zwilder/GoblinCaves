@@ -49,7 +49,7 @@ void draw_msg(void);
 Vec2i get_camera(void);
 void draw_msg_log(void);
 void draw_gameover(void);
-void draw_nwpl(void);
+void draw_newpl(void);
 
 /* Old function, possibly not needed? */
 Glyph* create_full_screen(void);

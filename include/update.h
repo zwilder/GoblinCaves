@@ -24,6 +24,7 @@
  * update.c functions
  ********************/
 int update(int events);
+int update_newpl(int events);
 int update_game(int events);
 int check_event(int events);
 void update_monster(Monster *monster);

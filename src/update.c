@@ -34,7 +34,14 @@ int update(int events) {
     events = remove_flag(events, check_event(events));
     if(g_gamestate == ST_GAME) {
         events |= update_game(events);
+    } else if (g_gamestate == ST_NWPL) {
+        events |= update_newpl(events);
     }
+    return events;
+}
+
+int update_newpl(int events) {
+
     return events;
 }
 
