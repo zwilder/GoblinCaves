@@ -1,24 +1,38 @@
 /*
-* Goblin Caves
+* Terminal Engine 
 * Copyright (C) Zach Wilder 2022-2023
 * 
-* This file is a part of Goblin Caves
+* This file is a part of Terminal Engine
 *
-* Goblin Caves is free software: you can redistribute it and/or modify
+* Terminal Engine is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
 * (at your option) any later version.
 * 
-* Goblin Caves is distributed in the hope that it will be useful,
+* Terminal Engine is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
 * 
 * You should have received a copy of the GNU General Public License
-* along with Goblin Caves.  If not, see <http://www.gnu.org/licenses/>.
+* along with Terminal Engine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <goblincaves.h>
+#include <term_engine.h>
+
+/******
+ * Terminal Engine
+ *
+ * This is a collection of functions written to "replace" NCurses, and be more
+ * in control of the behavior of the terminal. It is independent of Goblin
+ * Caves and The Toolbox, and can be used in other projects.
+ *
+ * There are two main sets of functions here - drawing functions and keyboard
+ * functions. Drawing handles the screen initialization/close, the physical
+ * placement of characters on the terminal screen, and styling of characters.
+ * Keyboard handles the initialization/resetting of the keyboard mode, and
+ * reading character input from the user's keyboard.
+ *****/
 
 struct termios g_oldkbflags;
 int g_screenW = 0;
@@ -73,14 +87,8 @@ void scr_pt_char(int x, int y, char c) {
     fflush(stdout);
 }
 
-void scr_pt_xclr_char(int x, int y, uint8_t fg, uint8_t bg, char c) {
+void scr_pt_clr_char(int x, int y, uint8_t fg, uint8_t bg, char c) {
     /* Print a char at x,y in one of the 256 colors */
-    scr_set_xclr(fg,bg);
-    scr_pt_char(x,y,c);
-}
-
-void scr_pt_clr_char(int x, int y, Color fg, Color bg, char c) {
-    /* Print a char at x,y in one of the 8+8 colors */
     scr_set_clr(fg,bg);
     scr_pt_char(x,y,c);
 }
@@ -95,63 +103,19 @@ void scr_pt(int x, int y, char *fstr,...) {
     va_end(args);
 }
 
-void scr_pt_xclr(int x, int y, uint8_t fg, uint8_t bg, char *fstr,...) {
-    /* Print a formatted string in one of the 256 colors */
+void scr_pt_clr(int x, int y, uint8_t fg, uint8_t bg, char *fstr,...) {
+    /* Print a formatted string in color */
     va_list args;
     va_start(args, fstr);
     scr_set_curs(x,y);
-    scr_set_xclr(fg,bg);
+    scr_set_clr(fg,bg);
     vprintf(fstr, args);
     fflush(stdout);
     va_end(args);
 }
 
-void scr_pt_clr(int x, int y, Color fg, Color bg, char *fstr,...) {
-    /* Print a formatted string in one of the 8+8 colors */
-    va_list args;
-    va_start(args, fstr);
-    scr_set_curs(x,y);
-    scr_set_clr(fg,bg);
-    vprintf(fstr,args);
-    fflush(stdout);
-    va_end(args);
-}
-
-void scr_set_xclr(uint8_t fg, uint8_t bg) {
+void scr_set_clr(uint8_t fg, uint8_t bg) {
     printf("\x1b[38;5;%dm\x1b[48;5;%dm",fg,bg);
-    fflush(stdout);
-}
-
-int get_clr(Color a, bool bg) {
-    /* Helper function, since the Color enum was originally created for NCurses,
-     * this changes the color from NCurses back to one of the 8+8 colors */
-    int r;
-    switch(a) {
-        case BLACK: r = 30; break;
-        case BLUE: r = 34; break;
-        case GREEN: r = 32; break;
-        case CYAN: r = 36; break;
-        case RED: r = 31; break;
-        case MAGENTA: r = 35; break;
-        case BROWN: r = 33; break;
-        case WHITE: r = 37; break;
-        case BRIGHT_BLACK: r = 90; break;
-        case BRIGHT_BLUE: r = 94; break;
-        case BRIGHT_GREEN: r = 92; break;
-        case BRIGHT_CYAN: r = 96; break;
-        case BRIGHT_RED: r = 91; break;
-        case BRIGHT_MAGENTA: r = 95; break;
-        case BRIGHT_YELLOW: r = 93; break;
-        case BRIGHT_WHITE: r = 97; break;
-        default: break;
-    }
-    if(bg) r+=10;
-    return r;
-}
-
-void scr_set_clr(Color fg, Color bg) {
-    //printf("\x1b[%d;%dm",get_clr(fg,false),get_clr(bg,true));
-    printf("\x1b[%d;%dm",fg,bg);
     fflush(stdout);
 }
 
@@ -193,8 +157,8 @@ void kb_init(void) {
         tcgetattr(0, &newkbflags);
         newkbflags.c_lflag &= ~ICANON;
         newkbflags.c_lflag &= ~ECHO;
-        newkbflags.c_cc[VMIN] = 1;
-        newkbflags.c_cc[VTIME] = 0;
+        newkbflags.c_cc[VMIN] = 0;
+        newkbflags.c_cc[VTIME] = 1;
         tcsetattr(0, TCSANOW, &newkbflags);
     }
 }
@@ -204,23 +168,55 @@ void kb_restore(void) {
 }
 
 char kb_get_char(void) {
-    char c;
-    read(STDIN_FILENO,&c,1);
+    /* This currently is "blocking", removing the while loop changes this to
+     * "non-blocking". Could possibly add a bool "blocking" or something as a
+     * passed in variable? Or maybe make blocking/nonblocking they're own
+     * functions?
+     *
+     * In kb_init(), the flags VMIN and VTIME are important here, VMIN causes
+     * read to return immediately with a keypress, and VTIME causes read to
+     * return after a 1/10th second delay with no keypress */
+    char c = '\0';
+    while('\0' == c) {
+        read(STDIN_FILENO,&c,1);
+    }
+    //c = getchar();
+    //fgets(&c, 2, stdin);
     return c;
 }
 
-char* kb_get_str(void) {
-    char* input = malloc(1000 * sizeof(char));
-    kb_restore();
-    //printf("\x1b[?25h\x1b[3 q");
-    printf("\x1b[?25h\x1b[2 q");
-    scanf("%[^\n]s",input);
-    printf("\x1b[?25l\x1b[0 q");
-    kb_init();
+char* kb_get_str(int maxsz) {
+    /*
+     * 1	Blinking block
+     * 2	Steady block (default)
+     * 3	Blinking underscore
+     * 4	Steady underscore
+     * 5	Blinking bar
+     * 6	Steady bar
+     */
+    char* input = malloc(maxsz * sizeof(char));
+    //char c = '\0';
+    kb_restore(); // Restore terminal keyboard
+    printf("\x1b[?25h\x1b[1 q"); // Show the cursor
+    /* Since scanf(...) is problematic, it **might** be better to rewrite this
+     * to use fgets */
+    /*
+    result = scanf("%[^\n]s",input);
+    while((c = getchar()) != '\n' && c != EOF) {
+        // Discard the extra chracters
+    }
+    */
+    fgets(input, maxsz, stdin);
+    if(input[0] == '\n' || input[0] == '\0') {
+        free(input);
+        input = NULL;
+    }
+    printf("\x1b[?25l\x1b[0 q"); // Hide the cursor
+    kb_init(); // Reinitialize engine keyboard
     return input;
 }
 
-char* kb_get_str_at(int x, int y) {
+char* kb_get_str_at(int x, int y, int maxsz) {
     scr_set_curs(x,y);
-    return kb_get_str();
+    return kb_get_str(maxsz);
 }

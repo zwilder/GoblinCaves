@@ -110,28 +110,31 @@ int handle_keyboard_menu(int input) {
     return output;
 }
 
-int handle_keyboard_newpl(int input){
-    int output = EV_CHST_GAME;
-    int i = 0;
-    char *str; 
-    /* Handle events */
+char* get_player_name(void) {
+    int maxlength = 33;
     scr_set_clr(BRIGHT_WHITE, BLACK);
     scr_set_style(ST_BOLD);
-    str = kb_get_str_at((g_screenW/2) - (strlen("What is your name, adventurer? ")/2) + 2,
-                        (g_screenH/2) + 1);
-    /* TODO: Broken check here to see if an empty string was entered. Fix this.
-     * It would be cool if this whole statement was replaced with a call to
-     * a random name generator... */
-    /*
-    while(strlen(str) == 0) {
-        draw_colorstr(xoff - (strlen(msg)/2),yoff+3, "[Try again]", RED, BLACK);
-        draw_str(xoff - (strlen(msg)/2), yoff + 1, ">");
-        draw_screen(g_screenbuf);
-        scr_set_clr(BRIGHT_WHITE, BLACK);
-        str = kb_get_str_at(xoff - (strlen(msg)/2) + 2, yoff + 1);
-    }
-    */
+    char *str = kb_get_str_at((g_screenW/2) - (strlen("What is your name, adventurer? ")/2) + 2,
+                        (g_screenH/2) + 1,
+                         maxlength);
 
+    return str;
+}
+
+int handle_keyboard_newpl(int input){
+    int output = input;
+    int i = 0;
+    char *str = NULL;
+    while(!str) {
+        str = get_player_name();
+        if(!str) {
+            draw_msg_box("Please try again.",BLACK,GREEN);
+            draw_screen(g_screenbuf);
+            get_input();
+            draw_newpl();
+        }
+    }
+    output = EV_CHST_GAME;
     if(g_player->name) {
         free(g_player->name);
     }
@@ -140,7 +143,6 @@ int handle_keyboard_newpl(int input){
         g_player->name[i] = str[i];
     }
     g_player->name[i] = '\0';
-    free(str);
     return output;
 }
 

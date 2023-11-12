@@ -61,7 +61,7 @@ void draw_glyph(int x, int y, Glyph g) {
     } else {
         scr_set_style(ST_NONE);
     }
-    scr_pt_xclr_char(x+dx,y+dy,g.fg,g.bg,g.ch);
+    scr_pt_clr_char(x+dx,y+dy,g.fg,g.bg,g.ch);
 }
 
 void draw_screen(Glyph *screen) {

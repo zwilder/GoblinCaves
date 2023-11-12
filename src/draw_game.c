@@ -323,8 +323,8 @@ void draw_newpl(void) {
      * for the player to enter a name for their adventurer. */
     int xoff = (SCREEN_WIDTH / 2);
     int yoff = (SCREEN_HEIGHT / 2);
-    int maxlength = 33; // 32 + 1 NULL
-    char *msg = malloc(sizeof(char) * (maxlength));
+    int msglength = 33; // 32 + 1 NULL
+    char *msg = malloc(sizeof(char) * (msglength));
     scr_clear();
     clear_screen(g_screenbuf);
     snprintf(msg,33,"What is your name, adventurer? ");

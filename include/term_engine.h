@@ -1,21 +1,21 @@
 /*
-* Goblin Caves
+* Terminal Engine 
 * Copyright (C) Zach Wilder 2022-2023
 * 
-* This file is a part of Goblin Caves
+* This file is a part of Terminal Engine
 *
-* Goblin Caves is free software: you can redistribute it and/or modify
+* Terminal Engine is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
 * (at your option) any later version.
 * 
-* Goblin Caves is distributed in the hope that it will be useful,
+* Terminal Engine is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
 * 
 * You should have received a copy of the GNU General Public License
-* along with Goblin Caves.  If not, see <http://www.gnu.org/licenses/>.
+* along with Terminal Engine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef TERM_ENGINE_H
@@ -109,13 +109,10 @@ void scr_restore(void);
 void scr_reset(void);
 void scr_clear(void);
 void scr_pt_char(int x, int y, char c);
-void scr_pt_xclr_char(int x, int y, uint8_t fg, uint8_t bg, char c);
-void scr_pt_clr_char(int x, int y, Color fg, Color bg, char c);
+void scr_pt_clr_char(int x, int y, uint8_t fg, uint8_t bg, char c);
 void scr_pt(int x, int y, char *fstr,...);
-void scr_pt_xclr(int x, int y, uint8_t fg, uint8_t bg, char *fstr,...);
-void scr_pt_clr(int x, int y, Color fg, Color bg, char *fstr,...);
-void scr_set_xclr(uint8_t fg, uint8_t bg);
-void scr_set_clr(Color fg, Color bg);
+void scr_pt_clr(int x, int y, uint8_t fg, uint8_t bg, char *fstr,...);
+void scr_set_clr(uint8_t fg, uint8_t bg);
 void scr_set_curs(int x, int y);
 void scr_set_style(int style);
 
@@ -125,7 +122,7 @@ void scr_set_style(int style);
 void kb_init(void);
 void kb_restore(void);
 char kb_get_char(void);
-char* kb_get_str(void);
-char* kb_get_str_at(int x, int y);
+char* kb_get_str(int maxsz);
+char* kb_get_str_at(int x, int y, int maxsz);
 
 #endif // TERM_ENGINE_H
