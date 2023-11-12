@@ -142,7 +142,7 @@ int handle_keyboard_newpl(int input){
     for(i = 0; i < strlen(str); i++) {
         g_player->name[i] = str[i];
     }
-    g_player->name[i] = '\0';
+    g_player->name[i-1] = '\0';
     return output;
 }
 
