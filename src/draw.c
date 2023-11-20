@@ -174,8 +174,8 @@ void draw_msg_box(char *msg, Color fg, Color bg) {
     SList *lines = NULL, *slistit = NULL;
     if(strlen(msg) > maxw) {
         /* We need line wrapping */
-        lines = SList_linewrap(msg, maxw);
-        h = count_SList(lines) + 2;
+        lines = slist_linewrap(msg, maxw);
+        h = slist_count(lines) + 2;
         x = (SCREEN_WIDTH / 2) - (maxw / 2) - 1;
         y = (SCREEN_HEIGHT / 2) - (h / 2);
         draw_solid_box(x,y,maxw,h,bg);
@@ -186,7 +186,7 @@ void draw_msg_box(char *msg, Color fg, Color bg) {
             i++;
             slistit = slistit->next;
         }
-        destroy_SList(&lines);
+        destroy_slist(&lines);
     } else {
         /* No line wrapping needed */
         w = strlen(msg) + 2;

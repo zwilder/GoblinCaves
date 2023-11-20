@@ -74,7 +74,7 @@ void open_art(Glyph *screen, int id) {
             /* Reached end of a line, add it to the SList */
             instr[i] = '\0';
             if(!skip) {
-                push_SList(&lines, instr);
+                slist_push(&lines, instr);
             }
             i = 0;
             instr[i] = '\0';
@@ -98,7 +98,7 @@ void open_art(Glyph *screen, int id) {
                 numlines = atoi(tmp->next->next->data);
                 break;
             }
-            destroy_SList(&tmp);
+            destroy_slist(&tmp);
         }
         linesit = linesit->next;
     }
@@ -106,17 +106,17 @@ void open_art(Glyph *screen, int id) {
     /* If we found the id, proceed through lineit, adding strings to new slist
      * tmp until we read another !id line */
     if(linesit) {
-        destroy_SList(&tmp);
+        destroy_slist(&tmp);
         for(i = 0; i < numlines; i++) {
-            push_SList(&tmp, linesit->data);
+            slist_push(&tmp, linesit->data);
             linesit = linesit->next;
         }
         process_art(screen, tmp);
     }
 
     /* Release memory */
-    destroy_SList(&lines);
-    destroy_SList(&tmp);
+    destroy_slist(&lines);
+    destroy_slist(&tmp);
     
     fclose(f);
 }
@@ -147,9 +147,9 @@ void process_art(Glyph *screen, SList *art) {
                 set_xy_screen_glyph(screen, x, y, make_glyph(c,fg,bg));
                 xit = xit->next;
             }
-            destroy_SList(&xspl);
+            destroy_slist(&xspl);
         }
-        destroy_SList(&yspl);
+        destroy_slist(&yspl);
         artit = artit->next;
     }
 }

@@ -169,8 +169,8 @@ void draw_msg(void) {
             msgwords = tmp;
             tmp = NULL;
         } else {
-            add_SList(&msgwords, &tmp);
-            destroy_SList(&tmp);
+            slist_add(&msgwords, &tmp);
+            destroy_slist(&tmp);
         }
         push_msg(&g_msgloghead, msg);
         free(msg); 
@@ -207,7 +207,7 @@ void draw_msg(void) {
         }
         free(msg);
     }
-    destroy_SList(&msgwords);
+    destroy_slist(&msgwords);
 }
 
 Vec2i get_camera(void) {
