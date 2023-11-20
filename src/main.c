@@ -32,8 +32,16 @@ int main(int argc, char **argv) {
     }
     */
 
+    int x,y;
     init_genrand(time(NULL));
     term_init();
+    // For terminal emulators with transparency, this makes sure everything is
+    // blacked out before drawing the screen
+    for(x = 0; x < g_screenW; x++) {
+        for(y = 0; y < g_screenH; y++) {
+            scr_pt_clr_char(x,y,WHITE,BLACK,' ');
+        }
+    }
     engine_init();
     engine_run();
     engine_close();

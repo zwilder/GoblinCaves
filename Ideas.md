@@ -129,7 +129,12 @@ fun things that could be done here. What happens if you apply an inkcap to a
 scroll you found? Apply the milky fluid from a mushroom to your sword? Eat the
 spotted mushroom? Maybe the player can "forage" a tile (and only once per tile,
 it would be easy to add a "foraged" flag like "explored"), and certain tiles
-have a higher chance of producing forageable items. 
+have a higher chance of producing forageable items. Unidentified flora should
+have hints somewhere to what they do - maybe Goblins will randomly drop 'notes'
+that have a hint on it: "This scrap of paper shows a wounded goblin smiling
+while holding a small brown mushroom" - the small brown mushroom heals minor
+wounds. "A crude drawing of a goblin shaman cooking inkcaps on a writing desk" -
+the ink caps can be applied to a scroll to change what spell it casts. 
 
 Idea: Experience points are spent to upgrade skills: eg Weapon (offensive power), Armor
 (defensive power), or Luck (bonuses?). Player doesn't find new weapons in the
@@ -151,3 +156,7 @@ monsters should be a list, and each tile should have a list. The list would
 contain the head node (item), and maybe a count? The list should have functions
 to push and pop nodes (items), so that items could be transferred from enemies
 to tiles to player etc. 
+
+IDEA: Use random word generator to generate "seed" keys to seed the random
+number generator. Those seed keys could be specified via command line when the
+game starts up, and written to the log. 
