@@ -63,7 +63,21 @@ void engine_draw(void) {
 }
 
 int get_input(void) {
-    return (int)kb_get_char();
+    int input = (int)kb_get_char();
+    if(input == 27) {
+        // Esc code entered, read next two chars on buffer
+        // Not the most elegant solution, but it works?
+        input = kb_get_char(); // '['
+        input = kb_get_char(); // The escape code
+        switch(input) {
+            case 'A': input = 'k'; break; // Up arrow
+            case 'B': input = 'j'; break; // Down arrow
+            case 'C': input = 'l'; break; // Right arrow
+            case 'D': input = 'h'; break; // Left arrow
+            default: break;
+        }
+    }
+    return input;
 }
 
 void new_game(void) {

@@ -306,16 +306,22 @@ bool close_door(Vec2i pos) {
     bool success = false;
     /*check to see if there is even an open door at the location first */
     if(check_flag(mask, TF_ODOOR)) {
-        if(mt_bool()) {
-            push_msg(&g_msghead, "You shut the door.");
-        } else if (mt_bool()) {
-            push_msg(&g_msghead, "The door creaks closed.");
+        if(living_monster_at_pos(g_mlist, pos, g_mapcur->lvl) ||
+                corpse_at_pos(g_mlist, pos, g_mapcur->lvl)) {
+            // Door blocked
+            push_msg(&g_msghead, "The doorway is blocked!");
         } else {
-            push_msg(&g_msghead, "With some effort, the door closes.");
+            if(mt_bool()) {
+                push_msg(&g_msghead, "You shut the door.");
+            } else if (mt_bool()) {
+                push_msg(&g_msghead, "The door creaks closed.");
+            } else {
+                push_msg(&g_msghead, "With some effort, the door closes.");
+            }
+            place_tile(pos, TILE_CDOOR);
+            update_fov();
+            success = true;
         }
-        place_tile(pos, TILE_CDOOR);
-        update_fov();
-        success = true;
     } else {
         push_msg(&g_msghead, "What door?");
     }

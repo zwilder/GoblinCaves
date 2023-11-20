@@ -177,9 +177,9 @@ char kb_get_char(void) {
      * read to return immediately with a keypress, and VTIME causes read to
      * return after a 1/10th second delay with no keypress */
     char c = '\0';
-    while('\0' == c) {
+    //while('\0' == c) {
         read(STDIN_FILENO,&c,1);
-    }
+    //}
     //c = getchar();
     //fgets(&c, 2, stdin);
     return c;

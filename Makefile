@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = -lncurses -lm -I./include/
+CFLAGS = -lm -I./include/
 
 OFLAGS = -O2
 

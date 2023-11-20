@@ -178,25 +178,21 @@ int handle_keyboard_game(int input) {
     int output = EV_NONE;
     Vec2i newPos = {g_player->pos.x, g_player->pos.y};
     switch(input) {
-        //case KEY_UP:
         case 'k':
             /* up */
             newPos.y--;
             output |= EV_PLAYER_KP;
             break;
-        //case KEY_DOWN:
         case 'j':
             /* down */
             newPos.y++;
             output |= EV_PLAYER_KP;
             break;
-        //case KEY_LEFT:
         case 'h':
             /* left */
             newPos.x--;
             output |= EV_PLAYER_KP;
             break;
-        //case KEY_RIGHT:
         case 'l':
             /* right */
             newPos.x++;
@@ -269,11 +265,13 @@ Vec2i get_direction(char* action_str) {
     Vec2i result = {0, 0};
     int msgsz = strlen(action_str) + strlen(": Which direction?") + 2;
     char *msg_str = malloc(sizeof(char) * msgsz);
-    int input;
+    int input = '\0';
     snprintf(msg_str, msgsz, "%s: Which direction?", action_str);
     draw_msg_box(msg_str, BLACK, WHITE);
     draw_screen(g_screenbuf);
-    input = get_input();
+    while((input = get_input()) == '\0') {
+        // Wait for input
+    }
     switch(input) {
         case 'y':
             result.y--;
