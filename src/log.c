@@ -30,8 +30,10 @@ void start_log(void) {
     fclose(fp);
 }
 
-void write_log(char *msg) {
+void write_log(char *msg,...) {
     FILE *fp;
+    va_list args;
+    va_start(args,msg);
     fp = fopen("log.txt", "a");
     /*
     time_t t = time(NULL);
@@ -39,9 +41,10 @@ void write_log(char *msg) {
     fprintf(fp, "%02d:%02d:%02d: ", now.tm_hour, now.tm_min, now.tm_sec);
     */
     log_time();
-    fprintf(fp,"%s", msg);
+    vfprintf(fp,msg,args);
     fprintf(fp, "\n");
     fclose(fp);
+    va_end(args);
 }
 
 void log_tilemap(Tile *tilemap, int lvl) {

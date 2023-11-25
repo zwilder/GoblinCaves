@@ -27,7 +27,7 @@
  * copies of for every project. It relies on vec2i.h.
  *
  * A Glyph is a container holding a single char, an integer foreground color,
- * and an integer background color (see color.h).
+ * and an integer background color.
  *
  * A screen is a 1 dimensional array of Glyph - and the index related to the x,y
  * coordinates can be found with get_screen_index(x,y). 

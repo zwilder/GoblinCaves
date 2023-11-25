@@ -24,7 +24,7 @@
  * log.c functions 
  *****************/
 void start_log(void);
-void write_log(char *msg);
+void write_log(char *msg,...);
 void log_tilemap(Tile *tilemap, int lvl);
 void log_time(void);
 void log_vec(Vec2i a);

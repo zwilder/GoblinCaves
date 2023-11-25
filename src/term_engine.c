@@ -168,10 +168,10 @@ void kb_restore(void) {
 }
 
 char kb_get_char(void) {
-    /* This currently is "blocking", removing the while loop changes this to
-     * "non-blocking". Could possibly add a bool "blocking" or something as a
-     * passed in variable? Or maybe make blocking/nonblocking they're own
-     * functions?
+    /* The while loop below makes this function "blocking"; with it commented
+     * out this changes to "non-blocking". Could possibly add a bool "blocking"
+     * or something as a passed in variable? Or maybe make blocking/nonblocking
+     * they're own functions?
      *
      * In kb_init(), the flags VMIN and VTIME are important here, VMIN causes
      * read to return immediately with a keypress, and VTIME causes read to
