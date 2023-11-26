@@ -1,6 +1,6 @@
 /*
 * Goblin Caves
-* Copyright (C) Zach Wilder 2022
+* Copyright (C) Zach Wilder 2022-2023
 * 
 * This file is a part of Goblin Caves
 *
@@ -20,6 +20,15 @@
 #include <goblincaves.h>
 
 int g_events = 0;
+
+char *g_mfiles[] = {
+    "data/markov/fnames_100.txt",
+    "data/markov/tolkein.txt",
+    "data/markov/orcs.txt",
+    "data/markov/mexican_mnames.txt",
+    "data/markov/mexican_fnames.txt",
+    "data/markov/mnames_100.txt"};
+const int MARKOV_NUM = 5;
 
 int handle_events(void) {
     int events = g_events;
@@ -121,16 +130,65 @@ char* get_player_name(void) {
     return str;
 }
 
+char* get_random_name(void) {
+    char *result = NULL;
+    int i = -1;
+    int j = 0;
+    SList *names = NULL, *slit = NULL, *in = NULL, *tmp = NULL;
+    bool waiting = true;
+    in = slist_load_dataset(g_mfiles[mt_rand(0,MARKOV_NUM)],' ');
+    tmp = slist_load_dataset(g_mfiles[mt_rand(0,MARKOV_NUM)],' ');
+    slist_add(&in, &tmp);
+    MHTable *ht = markov_generate_mht(in);
+    while(waiting) {
+        names = generate_random_word(ht,NULL);
+        for(j = 1; j < 9; j++) {
+            slist_push_node(&names, generate_random_word(ht,NULL));
+        }
+        slist_push(&names, "Generate New Random Names");
+        char c = draw_menu("Select a random name:", 
+                "(Any other key to enter a name)", "123456789*",
+                names,WHITE,BLACK);
+        switch(c) {
+            case '1': i = 0; break;
+            case '2': i = 1; break;
+            case '3': i = 2; break;
+            case '4': i = 3; break;
+            case '5': i = 4; break;
+            case '6': i = 5; break;
+            case '7': i = 6; break;
+            case '8': i = 7; break;
+            case '9': i = 8; break;
+            case '*':
+                // Generate new names
+                break;
+            default:
+                waiting = false;
+                break;
+        }
+        if (i >= 0) {
+            // Find result in names
+            slit = slist_get_node(names, i);
+            if(slit) {
+                result = strdup(slit->data);
+                waiting = false;
+            }
+        }
+        i = -1;
+        destroy_slist(&names);
+    }
+    destroy_slist(&in);
+    destroy_mhtable(ht);
+    return result;
+}
+
 int handle_keyboard_newpl(int input){
     int output = input;
-    int i = 0;
     char *str = NULL;
     while(!str) {
         str = get_player_name();
         if(!str) {
-            draw_msg_box("Please try again.",BLACK,GREEN);
-            draw_screen(g_screenbuf);
-            get_input();
+            str = get_random_name();
             draw_newpl();
         }
     }
@@ -138,11 +196,7 @@ int handle_keyboard_newpl(int input){
     if(g_player->name) {
         free(g_player->name);
     }
-    g_player->name = malloc(sizeof(char) * (strlen(str)+1));
-    for(i = 0; i < strlen(str); i++) {
-        g_player->name[i] = str[i];
-    }
-    g_player->name[i-1] = '\0';
+    g_player->name = str;
     return output;
 }
 

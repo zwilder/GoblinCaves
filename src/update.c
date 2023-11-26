@@ -70,8 +70,10 @@ int update_game(int events) {
          * player sees (by drawing the damn buffer). This needs to be fixed
          * before animations are added.
          *
+         * FIXME: This is still a broken idea. 
          * */
         //engine_draw();
+
         if(!check_flag(g_player->flags, MF_ALIVE)) {
             playerbreak = true;
             continue;

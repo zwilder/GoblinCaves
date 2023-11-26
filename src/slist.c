@@ -101,6 +101,13 @@ void slist_push(SList **head, char *s) {
     tmp->next = newNode;
 }
 
+void slist_push_node(SList **head, SList *s) {
+    /* Push an SList node onto the front of the SList */
+    if(!s || !(*head)) return;
+    s->next = *head;
+    *head = s;
+}
+
 int slist_count(SList *node) {
     /* Count and return the number of nodes in the SList */
     if(!node) {
@@ -222,7 +229,7 @@ SList* slist_linewrap(char *str, int w) {
     if(!str) return result;
     SList *words = split_string(str, ' ');
     SList *it = words;
-    int bufsz = strlen(str) + 1;
+    int bufsz = strlen(str) + 10;
     char *strbuf = malloc(sizeof(char) * bufsz);
     snprintf(strbuf,bufsz,"%s ",it->data);
     int i = it->length + 1;
@@ -231,7 +238,7 @@ SList* slist_linewrap(char *str, int w) {
         /* Go through each word, and if the word length + the running length is
          * greater than w, add it to the result list. If it isn't greater than
          * w, strcat it with the buffer */
-        if((i + it->length) >= (w-1)) {
+        if((i + it->length) >= (w-2)) {
             slist_push(&result, strbuf);
             i = it->length + 1;
             snprintf(strbuf,bufsz,"%s ",it->data);            
@@ -248,13 +255,11 @@ SList* slist_linewrap(char *str, int w) {
     return result;
 }
 
-void slist_print(SList *head) {
+void slist_print(SList *head, char d) {
     SList *tmp = head;
-    int i = 1;
     while(tmp) {
-        printf("%d - %s\n",i, tmp->data);
+        printf("%s%c",tmp->data,d);
         tmp = tmp->next;
-        i++;
     }
 }
 
@@ -334,4 +339,16 @@ SList* slist_load_dataset(char *fname, char d) {
     }
     fclose(f);
     return words;
+}
+
+SList* slist_get_node(SList *s, int n) {
+    /* Return node n from SList s */
+    SList *it = s;
+    int i = 0;
+    while(it) {
+        if(i == n) return it;
+        it = it->next;
+        i++;
+    }
+    return NULL;
 }

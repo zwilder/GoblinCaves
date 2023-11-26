@@ -28,13 +28,13 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
+#include <ctype.h>
 
 /***********************
  * Minor data structures
  ***********************/
 #include <toolbox.h>
 #include <term_engine.h>
-//#include <color.h>
 #include <flags.h>
 #include <msg.h>
 
@@ -71,5 +71,6 @@
 #include <log.h>
 #include <pathfinding.h>
 #include <art.h>
+#include <markov.h>
 
 #endif

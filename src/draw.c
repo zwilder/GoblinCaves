@@ -158,13 +158,21 @@ void draw_solid_box_vec(Vec2i a, Vec2i d, Color color) {
     draw_solid_box(a.x,a.y,d.x,d.y,color);
 }
 
+void draw_solid_box_rect(Rect a, Color color) {
+    draw_solid_box_vec(a.pos,a.dim, color);
+}
+
 void draw_box(int x, int y, int w, int h, Color color) {
     draw_solid_box(x,y,w,h,color);
-    draw_solid_box(x+1,y+1,w-2,h-2,BLACK);
+    draw_solid_box(x+1,y+1,w-2,h-2,BLACK); // Might need a global fg/bg color default
 }
 
 void draw_box_vec(Vec2i a, Vec2i d, Color color) {
     draw_box(a.x,a.y,d.x,d.y,color);
+}
+
+void draw_box_rect(Rect a, Color color) {
+    draw_box_vec(a.pos, a.dim, color);
 }
 
 void draw_msg_box(char *msg, Color fg, Color bg) {
@@ -225,6 +233,96 @@ bool draw_yn_prompt(char *prompt, Color fg, Color bg) {
     }
     engine_draw(); // Clears the prompt from the screen after input
     free(msg);
+    return result;
+}
+
+char draw_menu(char *prompt, char *instr, char *optitems, SList *options, Color fg, Color bg) {
+    /* Draws a message box containing a prompt, with a list of options.
+     * Options are passed into the function as a SList, and presented to the
+     * player as a list of numbered options 1-9 (* for more or any other key to
+     * abort). The player presses a number and that character (1-9,*, or other)
+     * is returned as a char*/
+    SList *slit = NULL, *slprompt = NULL, *slinstr = NULL;
+    int x,y,w,h,cx,cy,i;
+    char numstr[5] = "[1] ";
+    char result = '\0';
+    numstr[4] = '\0';
+    w = (SCREEN_WIDTH * 2) / 3; // width is 2/3 screen width (66%)
+    slprompt = slist_linewrap(prompt,w);
+    
+    // Height is number of options + 2 for the border top/btm + number of lines in prompt
+    h = slist_count(slprompt) + 2 + slist_count(options); 
+    if(instr) {
+        slinstr = slist_linewrap(instr, w);
+        h += slist_count(slinstr);
+    }
+    // x/y are centered on the screen
+    x = (SCREEN_WIDTH / 2) - (w / 2) - 1;
+    y = (SCREEN_HEIGHT / 2) - (h / 2);
+    cx = x + 1;
+    cy = y + 1;
+    // Draw a solid box
+    draw_solid_box(x,y,w,h,bg);
+    // Draw the prompt
+    slit = slprompt;
+    while(slit) {
+        // Bold the foreground color if possible
+        i = fg + 8;
+        if(i > 15) i = fg;
+        draw_colorstr(cx,cy,slit->data,i,bg);
+        cy++;
+        slit = slit->next;
+    }
+    destroy_slist(&slprompt);
+    // Draw the options
+    slit = options;
+    if(optitems) {
+        i = 0;
+    } else {
+        i='1';
+    }
+    while(slit) {
+        draw_colorstr(cx+4,cy,slit->data,fg,bg);
+        // "[1] " = 4 chars, 5 with null
+        if(optitems) {
+            numstr[1] = optitems[i];    
+        } else {
+            numstr[1] = i;
+        }
+        draw_colorstr(cx,cy,numstr,fg,bg);
+        i++;
+        cy++;
+        if(i>'9') break; // Limited to nine options currently
+        if(optitems) {
+            if(i > strlen(optitems)) i = 0; // Shouldn't happen, but if it do
+        }
+        slit = slit->next;
+    }
+
+    // If instructions, draw them
+    if(slinstr) {
+        slit = slinstr;
+        while(slit) {
+            draw_colorstr(cx,cy,slit->data,fg,bg);
+            cy++;
+            slit = slit->next;
+        }
+        destroy_slist(&slinstr);
+    }
+
+    // Draw on the screen
+    draw_screen(g_screenbuf);
+
+    // Wait for input
+    while(true) {
+        result = get_input();
+        if(result != '\0') break;
+    }
+
+    // Returns screen to normal
+    engine_draw();
+
+    // Return input
     return result;
 }
 
