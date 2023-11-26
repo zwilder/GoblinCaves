@@ -102,10 +102,26 @@ void slist_push(SList **head, char *s) {
 }
 
 void slist_push_node(SList **head, SList *s) {
-    /* Push an SList node onto the front of the SList */
-    if(!s || !(*head)) return;
+    /* Push an SList node onto the back of the SList */
+    if(!s) return;
+    /*
     s->next = *head;
     *head = s;
+    */
+    SList *tmp;
+    if(!(*head)) {
+        (*head) = s;
+        return;
+    }
+    if(!(*head)->next) {
+        (*head)->next = s;
+        return;
+    }
+    tmp = *head;
+    while(tmp->next) {
+        tmp = tmp->next;
+    }
+    tmp->next = s;
 }
 
 int slist_count(SList *node) {

@@ -95,6 +95,7 @@ int main(int argc, char **argv) {
 
     // Cleanup
     free(seedstr);
+    destroy_slist(&s);
     engine_close();
     term_close();
     return 0;

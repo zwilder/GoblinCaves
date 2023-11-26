@@ -122,25 +122,26 @@ char* get_player_name(void) {
 }
 
 char* get_random_name(void) {
+    /* Display a menu with a list of markov chain generated names for the player
+     * to choose from. */
     char *result = NULL;
     int i = -1;
     int j = 0;
-    SList *names = NULL, *slit = NULL, *in = NULL, *tmp = NULL;
+    SList *menu = NULL, *slit = NULL, *in = NULL, *tmp = NULL;
     bool waiting = true;
     in = slist_load_dataset(g_mfiles[mt_rand(0,MARKOV_NUM)],' ');
     tmp = slist_load_dataset(g_mfiles[mt_rand(0,MARKOV_NUM)],' ');
     slist_add(&in, &tmp);
     MHTable *ht = markov_generate_mht(in);
     while(waiting) {
-        names = generate_random_word(ht,NULL);
-        for(j = 1; j < 9; j++) {
-            slist_push_node(&names, generate_random_word(ht,NULL));
+        menu = create_slist("Select a random name:");
+        slist_push(&menu,"(Any other key to return to name entry)");
+        slist_push(&menu,"123456789*");
+        for(j = 0; j < 9; j++) {
+            slist_push_node(&menu, generate_random_word(ht,NULL));
         }
-        slist_push(&names, "Generate New Random Names");
-        char c = draw_menu("Select a random name:", 
-                "(Any other key to return to name entry)",
-                "123456789*",
-                names,WHITE,BRIGHT_BLACK);
+        slist_push(&menu, "Generate New Random Names");
+        char c = draw_cmenu(menu,WHITE,BLACK,GREEN);
         switch(c) {
             case '1': i = 0; break;
             case '2': i = 1; break;
@@ -160,14 +161,14 @@ char* get_random_name(void) {
         }
         if (i >= 0) {
             // Find result in names
-            slit = slist_get_node(names, i);
+            slit = slist_get_node(menu, i+3);// first 3 items in menu aren't names
             if(slit) {
                 result = strdup(slit->data);
                 waiting = false;
             }
         }
         i = -1;
-        destroy_slist(&names);
+        destroy_slist(&menu);
     }
     destroy_slist(&in);
     destroy_mhtable(ht);
@@ -181,7 +182,6 @@ int handle_keyboard_newpl(int input){
         str = get_player_name();
         if(!str) {
             str = get_random_name();
-            draw_newpl();
         }
     }
     output = EV_CHST_GAME;

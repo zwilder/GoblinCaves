@@ -36,12 +36,15 @@ void draw_vline_vec(Vec2i a, int h, Color color);
 void draw_solid_box(int x, int y, int w, int h, Color color);
 void draw_solid_box_vec(Vec2i a, Vec2i d, Color color);
 void draw_solid_box_rect(Rect a, Color color);
-void draw_box(int x, int y, int w, int h, Color color);
-void draw_box_vec(Vec2i a, Vec2i d, Color color);
-void draw_box_rect(Rect a, Color color);
+void draw_box(int x, int y, int w, int h, Color fg, Color bg);
+void draw_box_vec(Vec2i a, Vec2i d, Color fg, Color bg);
+void draw_box_rect(Rect a, Color fg, Color bg);
 void draw_msg_box(char *msg, Color fg, Color bg);
 bool draw_yn_prompt(char *prompt, Color fg, Color bg);
-char draw_menu(char *prompt, char *instr, char *optitems, SList *options, Color fg, Color bg);
+char draw_cmenu(SList *menu, Color fg, Color bg, Color boxcolor);
+char draw_menu_basic(SList *menu);
+char draw_menu(SList *menu, Color fg, Color bg);
+char draw_menu_nobox(SList *menu, Color fg, Color bg);
 
 /******************
  * draw_game.c functions
