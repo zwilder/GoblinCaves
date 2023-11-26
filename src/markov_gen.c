@@ -21,14 +21,11 @@
 
 // TODO Both of these would be ideal to put in a config file...
 char *g_mfiles[] = {
-    "data/markov/fnames_100.txt",
     "data/markov/tolkein.txt",
     "data/markov/orcs.txt",
-    "data/markov/russian.txt",
-    "data/markov/mexican_mnames.txt",
-    "data/markov/mexican_fnames.txt",
-    "data/markov/mnames_100.txt"};
-const int MARKOV_NUM = 6;
+    "data/markov/output_fnames.txt",
+    "data/markov/output_mnames.txt"};
+const int MARKOV_NUM = 3; // 0 indexed
 
 /*****
  * Markov chain generator functions

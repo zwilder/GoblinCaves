@@ -127,11 +127,11 @@ char* get_random_name(void) {
     char *result = NULL;
     int i = -1;
     int j = 0;
-    SList *menu = NULL, *slit = NULL, *in = NULL, *tmp = NULL;
+    SList *menu = NULL, *slit = NULL, *in = NULL;
     bool waiting = true;
-    in = slist_load_dataset(g_mfiles[mt_rand(0,MARKOV_NUM)],' ');
-    tmp = slist_load_dataset(g_mfiles[mt_rand(0,MARKOV_NUM)],' ');
-    slist_add(&in, &tmp);
+    in = slist_load_datasets(' ',2,
+            g_mfiles[mt_rand(0,MARKOV_NUM)],
+            g_mfiles[mt_rand(0,MARKOV_NUM)]);
     MHTable *ht = markov_generate_mht(in);
     while(waiting) {
         menu = create_slist("Select a random name:");

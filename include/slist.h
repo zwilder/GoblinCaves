@@ -53,6 +53,7 @@ bool slist_delete(SList **s, char *str);
 int slist_get_max(SList *s);
 int slist_get_min(SList *s);
 SList* slist_load_dataset(char *fname, char d);
+SList* slist_load_datasets(char d, int n, ...);
 SList* slist_get_node(SList *s, int n);
 
 #endif

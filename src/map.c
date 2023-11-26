@@ -134,7 +134,7 @@ Tile* create_tilemap(void) {
 
 void destroy_tilemap(Tile *tilemap, int lvl) {
     if(NULL != tilemap) {
-        log_tilemap(tilemap, lvl);
+        //log_tilemap(tilemap, lvl);
         free(tilemap);
     }
     tilemap = NULL;

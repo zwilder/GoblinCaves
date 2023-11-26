@@ -27,21 +27,29 @@ unsigned long kr_hash(char *s) {
     for (hashval = 0; *s != '\0'; s++) {
         hashval = *s + 31 * hashval;
     }
-    return hashval;
+    return hashval % INT_MAX;
 }
 
 int main(int argc, char **argv) {
     int x,y;
     int c = 0;
     unsigned long seed = time(NULL);
-    init_genrand(seed); // Seed temporarily to generate random words for seed
     char *seedstr = malloc(sizeof(char) * 100);
-    // Pick three random words from the markov file to use for the seed
     memset(seedstr,'\0',100);
-    SList *s = slist_load_dataset(g_mfiles[mt_rand(0,MARKOV_NUM)],' ');
-    strcat(seedstr, slist_get_random(s)->data);
-    strcat(seedstr, slist_get_random(s)->data);
-    strcat(seedstr, slist_get_random(s)->data);
+
+    // Generate two random words from the markov file to use for the seed
+    init_genrand(seed); // Seed temporarily to generate random words
+    SList *s = slist_load_datasets(' ',2,"data/markov/orcs.txt","data/markov/tolkein.txt");
+    SList *tmp = slist_load_dataset("data/markov/superlatives.txt",' ');
+    strcat(seedstr, slist_get_random(tmp)->data);
+    destroy_slist(&tmp);
+    MHTable *ht = markov_generate_mht(s);
+    while(c < 1) {
+        tmp = generate_random_word(ht,NULL);
+        strcat(seedstr, tmp->data);
+        destroy_slist(&tmp);
+        c++;
+    }
 
     // Process command line arguments
     opterr = 0; // Don't show default errors
@@ -90,7 +98,7 @@ int main(int argc, char **argv) {
 
     // Start the game, and run it
     engine_init();
-    write_log("Seed: %s",seedstr);
+    write_log("Seed: \"%s\", %ld",seedstr,seed);
     engine_run();
 
     // Cleanup

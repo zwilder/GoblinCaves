@@ -18,6 +18,7 @@
 * along with Toolbox.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdarg.h>
 #include <slist.h>
 
 /*******
@@ -327,6 +328,7 @@ int slist_get_min(SList *s) {
 }
 
 SList* slist_load_dataset(char *fname, char d) {
+    /* Load a file into an slist, with each entry separated by delimiter 'd' */
     if(!fname) return NULL;
     FILE *f = fopen(fname, "r+");
     if(!f) return NULL;
@@ -355,6 +357,25 @@ SList* slist_load_dataset(char *fname, char d) {
     }
     fclose(f);
     return words;
+}
+
+SList* slist_load_datasets(char d, int n, ...) {
+    /* Load files into an slist, with each entry separated by delimiter 'd' */
+    int i = 0;
+    va_list ptr;
+    SList *result = NULL;
+    SList *tmp = NULL;
+    va_start(ptr,n);
+    for(i = 0; i < n; i++) {
+        if(!result) {
+            result = slist_load_dataset(va_arg(ptr,char*),d);
+        } else {
+            tmp = slist_load_dataset(va_arg(ptr,char*),d);
+            if(tmp) slist_add(&result,&tmp);
+        }
+    }
+    va_end(ptr);
+    return result;
 }
 
 SList* slist_get_node(SList *s, int n) {
