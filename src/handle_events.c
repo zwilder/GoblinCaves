@@ -21,15 +21,6 @@
 
 int g_events = 0;
 
-char *g_mfiles[] = {
-    "data/markov/fnames_100.txt",
-    "data/markov/tolkein.txt",
-    "data/markov/orcs.txt",
-    "data/markov/mexican_mnames.txt",
-    "data/markov/mexican_fnames.txt",
-    "data/markov/mnames_100.txt"};
-const int MARKOV_NUM = 5;
-
 int handle_events(void) {
     int events = g_events;
     g_events = EV_NONE;
@@ -147,8 +138,9 @@ char* get_random_name(void) {
         }
         slist_push(&names, "Generate New Random Names");
         char c = draw_menu("Select a random name:", 
-                "(Any other key to enter a name)", "123456789*",
-                names,WHITE,BLACK);
+                "(Any other key to return to name entry)",
+                "123456789*",
+                names,WHITE,BRIGHT_BLACK);
         switch(c) {
             case '1': i = 0; break;
             case '2': i = 1; break;

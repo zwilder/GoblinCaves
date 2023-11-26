@@ -18,7 +18,6 @@
 * along with Goblin Caves.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <unistd.h>
-#include <ctype.h>
 #include <goblincaves.h>
 
 unsigned long kr_hash(char *s) {
@@ -35,7 +34,15 @@ int main(int argc, char **argv) {
     int x,y;
     int c = 0;
     unsigned long seed = time(NULL);
-    char *seedstr = strdup("Seeded with \"time(NULL)\"");
+    init_genrand(seed); // Seed temporarily to generate random words for seed
+    char *seedstr = malloc(sizeof(char) * 100);
+    // Pick three random words from the markov file to use for the seed
+    memset(seedstr,'\0',100);
+    SList *s = slist_load_dataset(g_mfiles[mt_rand(0,MARKOV_NUM)],' ');
+    strcat(seedstr, slist_get_random(s)->data);
+    strcat(seedstr, slist_get_random(s)->data);
+    strcat(seedstr, slist_get_random(s)->data);
+
     // Process command line arguments
     opterr = 0; // Don't show default errors
     while((c = getopt(argc,argv,"vhts:")) != -1) {
@@ -51,7 +58,6 @@ int main(int argc, char **argv) {
                 break;
             case 's':
                 // Seed prng with optarg
-                seed = kr_hash(optarg);
                 free(seedstr);
                 seedstr = strdup(optarg);
                 break;
@@ -67,6 +73,7 @@ int main(int argc, char **argv) {
                 break;
         }
     }
+    seed = kr_hash(seedstr);
 
     // Initialize the psuedo random number generator
     init_genrand(seed);
@@ -84,10 +91,10 @@ int main(int argc, char **argv) {
     // Start the game, and run it
     engine_init();
     write_log("Seed: %s",seedstr);
-    free(seedstr);
     engine_run();
 
     // Cleanup
+    free(seedstr);
     engine_close();
     term_close();
     return 0;

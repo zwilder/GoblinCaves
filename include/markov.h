@@ -103,6 +103,7 @@ void slist_to_upper(SList *words);
 char markov_find_key_str(char *str, char *key);
 
 // Random name functions
+SList* slist_get_random(SList *s);
 MHTNode* mht_get_random_node(MHTable *ht);
 char clist_get_random(CList *cl, int n);
 SList* generate_random_word(MHTable *ht,char *outf);

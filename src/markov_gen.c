@@ -18,6 +18,18 @@
 * along with Markov Generator.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <markov.h>
+
+// TODO Both of these would be ideal to put in a config file...
+char *g_mfiles[] = {
+    "data/markov/fnames_100.txt",
+    "data/markov/tolkein.txt",
+    "data/markov/orcs.txt",
+    "data/markov/russian.txt",
+    "data/markov/mexican_mnames.txt",
+    "data/markov/mexican_fnames.txt",
+    "data/markov/mnames_100.txt"};
+const int MARKOV_NUM = 6;
+
 /*****
  * Markov chain generator functions
  *****/
@@ -156,6 +168,11 @@ CList* markov_find_match(char *key, SList *words) {
 /*****
  * Random name functions
  *****/
+SList* slist_get_random(SList *s) {
+    /* Return a random node from Slist s */
+    return slist_get_node(s, mt_rand(0, slist_count(s) - 1));
+}
+
 MHTNode* mht_get_random_node(MHTable *ht) {
     MHTNode *result = NULL;
     int r = mt_rand(0,slist_count(ht->stkeys)-1);

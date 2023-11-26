@@ -29,6 +29,7 @@ extern Msg *g_msgloghead; /* Reference to message log head, msg.c */
 extern MList *g_mlist; /* Reference to monster list mlist.c */
 extern int g_events; /* Global events, handle_events.c */
 extern Glyph *g_screenbuf; /* Screen buffer, draw.c */
+extern char *g_mfiles[]; /* List of markov files for random names, markov_gen.c */
 
 extern StateFlags g_gamestate; /* Simple int state flag game_engine.c */
 
@@ -43,5 +44,6 @@ extern const int MAX_ROOM_SIZE; /* map.c */
 extern const int MIN_NUM_ROOMS; /* map.c */
 extern const int MAX_NUM_ROOMS; /* map.c */
 extern const int MAX_MONSTERS; /* map.c */
+extern const int MARKOV_NUM; /* markov_gen.c */
 
 #endif
