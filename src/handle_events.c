@@ -111,12 +111,16 @@ int handle_keyboard_menu(int input) {
 }
 
 char* get_player_name(void) {
-    int maxlength = 33;
+    int maxlength = 27;
     scr_set_clr(BRIGHT_WHITE, BLACK);
     scr_set_style(ST_BOLD);
+    //28,8 is where cursor needs to be for name, without offset
+    char *str = kb_get_str_at((g_screenW/2) - 12,(g_screenH/2)-4,maxlength);
+    /*
     char *str = kb_get_str_at((g_screenW/2) - (strlen("What is your name, adventurer? ")/2) + 2,
                         (g_screenH/2) + 1,
                          maxlength);
+                         */
 
     return str;
 }
@@ -182,6 +186,14 @@ int handle_keyboard_newpl(int input){
         str = get_player_name();
         if(!str) {
             str = get_random_name();
+            engine_draw(); // Refreshes the screen
+        }
+        if(str) {
+            // Test validity, name must start with a character
+            if(!(str[0] >= 'A' && str[0] <= 'z')) {
+                free(str);
+                str = NULL;
+            }
         }
     }
     output = EV_CHST_GAME;

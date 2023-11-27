@@ -321,6 +321,7 @@ void draw_gameover(void) {
 void draw_newpl(void) {
     /* This function displays the "New player" screen, which currently just asks
      * for the player to enter a name for their adventurer. */
+    /*
     int xoff = (SCREEN_WIDTH / 2);
     int yoff = (SCREEN_HEIGHT / 2);
     int msglength = 33; // 32 + 1 NULL
@@ -330,6 +331,8 @@ void draw_newpl(void) {
     snprintf(msg,33,"What is your name, adventurer? ");
     draw_str(xoff - (strlen(msg)/2), yoff, msg);
     draw_str(xoff - (strlen(msg)/2), yoff + 1, ">");
-    draw_screen(g_screenbuf);
-    free(msg);
+    draw_str(xoff - 19, yoff + 4, "(Enter nothing to choose a random name)");
+    */
+    draw_art(ART_NEWPL);
+    //free(msg);
 }

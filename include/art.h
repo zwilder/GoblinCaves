@@ -25,7 +25,8 @@ typedef enum {
     ART_TOMBSTONE,
     ART_HELLO_WORLD,
     ART_TITLE,
-    ART_HELP
+    ART_HELP,
+    ART_NEWPL
 } ART_TYPES;
 
 void draw_art(int art);

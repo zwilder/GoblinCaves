@@ -131,7 +131,8 @@ char draw_cmenu(SList *menu, Color fg, Color bg, Color boxcolor) {
     }
 
     // Returns screen to whatever it was before drawing the menu
-    engine_draw();
+    // (makes the screen flicker during new player creation, so disabling)
+    //engine_draw();
 
     // Return input
     return result;
